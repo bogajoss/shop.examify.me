@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import { compress } from "wawoff2";
 
 async function convert() {

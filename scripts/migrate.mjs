@@ -1,6 +1,6 @@
+import fs from "node:fs";
 import dotenv from "dotenv";
-import fs from "fs";
-import { Client, Databases, ID, Permission, Role } from "node-appwrite";
+import { Client, Databases, Permission, Role } from "node-appwrite";
 
 if (fs.existsSync(".env.local")) {
   dotenv.config({ path: ".env.local" });
@@ -38,7 +38,7 @@ async function setup() {
     console.log(
       `✅ Database "${NEXT_PUBLIC_APPWRITE_DATABASE_ID}" already exists.`,
     );
-  } catch (e) {
+  } catch (_e) {
     console.log(
       `⏳ Creating Database "${NEXT_PUBLIC_APPWRITE_DATABASE_ID}"...`,
     );
@@ -54,7 +54,7 @@ async function setup() {
     console.log(
       `✅ Collection "${NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID}" already exists.`,
     );
-  } catch (e) {
+  } catch (_e) {
     console.log(
       `⏳ Creating Collection "${NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID}"...`,
     );
@@ -77,7 +77,7 @@ async function setup() {
       console.log(
         `✅ Collection "${NEXT_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID}" already exists.`,
       );
-    } catch (e) {
+    } catch (_e) {
       console.log(
         `⏳ Creating Collection "${NEXT_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID}"...`,
       );
@@ -116,7 +116,7 @@ async function setup() {
         attr.key,
       );
       console.log(`✅ User Attribute "${attr.key}" already exists.`);
-    } catch (e) {
+    } catch (_e) {
       console.log(`⏳ Creating User Attribute "${attr.key}"...`);
       if (attr.type === "string") {
         await databases.createStringAttribute(
@@ -162,7 +162,7 @@ async function setup() {
           attr.key,
         );
         console.log(`✅ Order Attribute "${attr.key}" already exists.`);
-      } catch (e) {
+      } catch (_e) {
         console.log(`⏳ Creating Order Attribute "${attr.key}"...`);
         if (attr.type === "string") {
           await databases.createStringAttribute(
@@ -195,7 +195,7 @@ async function setup() {
       "idx_roll_unique",
     );
     console.log('✅ Index "idx_roll_unique" already exists.');
-  } catch (e) {
+  } catch (_e) {
     console.log('⏳ Creating Unique Index for "roll"...');
     // Wait for attributes to be "available"
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -207,7 +207,7 @@ async function setup() {
         "unique",
         ["roll"],
       );
-    } catch (idxError) {
+    } catch (_idxError) {
       console.warn(
         "⚠️ Could not create index (it might still be processing attributes). Please run again later.",
       );

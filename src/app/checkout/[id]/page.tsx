@@ -52,8 +52,9 @@ export default function Checkout() {
       await submitOrder(course);
       showToast("অর্ডার জমা হয়েছে! ভেরিফিকেশনের জন্য অপেক্ষা করুন।", "info");
       router.push("/dashboard");
-    } catch (error: any) {
-      showToast(error.message || "অর্ডার সাবমিট করতে সমস্যা হয়েছে", "error");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "অর্ডার সাবমিট করতে সমস্যা হয়েছে";
+      showToast(message, "error");
     }
   };
 

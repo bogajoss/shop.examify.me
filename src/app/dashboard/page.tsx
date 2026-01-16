@@ -37,8 +37,9 @@ export default function Dashboard() {
       } else {
         showToast("ভুল টোকেন বা টোকেনটি একটিভ নয়!", "error");
       }
-    } catch (error: any) {
-      showToast(error.message || "একটি সমস্যা হয়েছে", "error");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "একটি সমস্যা হয়েছে";
+      showToast(message, "error");
     }
   };
 
@@ -138,8 +139,9 @@ export default function Dashboard() {
                             try {
                               await approveOrder(order.id);
                               showToast("অর্ডার অ্যাপ্রুভ করা হয়েছে (সিমুলেশন)");
-                            } catch (e: any) {
-                              showToast(e.message, "error");
+                            } catch (e) {
+                              const msg = e instanceof Error ? e.message : "Error";
+                              showToast(msg, "error");
                             }
                           }}
                         >
@@ -184,14 +186,11 @@ export default function Dashboard() {
                                 if (order.token) {
                                   try {
                                     const ok = await redeemToken(order.token);
-                                    if (ok)
-                                      showToast(
-                                        "সফলভাবে এনরোল করা হয়েছে!",
-                                        "success",
-                                      );
+                                    if (ok) showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
                                     else showToast("টোকেনটি কার্যকর নয়", "error");
-                                  } catch (e: any) {
-                                    showToast(e.message, "error");
+                                  } catch (e) { 
+                                    const msg = e instanceof Error ? e.message : "Error";
+                                    showToast(msg, "error"); 
                                   }
                                 }
                               }}

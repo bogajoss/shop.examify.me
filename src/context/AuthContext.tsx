@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const userData = await fetchUserData(session.$id, session.name);
       setUser(userData);
       document.cookie = "auth-token=true; path=/; max-age=86400; samesite=lax";
-    } catch (error) {
+    } catch (_error) {
       setUser(null);
       document.cookie =
         "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";

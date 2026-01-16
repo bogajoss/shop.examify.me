@@ -60,10 +60,11 @@ export default function QuestionBankClient({
                     <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold mb-3">
                       উদ্দীপক {idx + 1} ({q.tag})
                     </span>
-                    <div
-                      className="text-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: q.stem }}
-                    />
+                    <div className="text-foreground leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+                      {q.stem.split(/<br\s*\/?>/i).map((line, i) => (
+                        <p key={`${q.id}-stem-${i}`}>{line}</p>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-4">

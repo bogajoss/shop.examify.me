@@ -5,21 +5,15 @@ import {
   ArrowRight,
   BarChart,
   BookOpen,
-  Check,
-  Clock,
   FileText,
-  Image as ImageIcon,
   Lightbulb,
   MessageCircle,
   Monitor,
-  Play,
   Search,
   Smartphone,
   Star,
-  Trophy,
   Users,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import Footer from "@/components/layout/Footer";

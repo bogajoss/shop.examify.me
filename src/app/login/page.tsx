@@ -23,7 +23,6 @@ const registerSchema = z.object({
   password: z.string().min(4, "পাসওয়ার্ড কমপক্ষে ৪ ডিজিটের হতে হবে"),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function LoginPage() {
@@ -61,8 +60,9 @@ export default function LoginPage() {
         showToast("রেজিস্ট্রেশন সফল হয়েছে!", "success");
       }
       router.push("/dashboard");
-    } catch (error: any) {
-      showToast(error.message || "একটি সমস্যা হয়েছে!", "error");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "একটি সমস্যা হয়েছে!";
+      showToast(message, "error");
     }
   };
 
