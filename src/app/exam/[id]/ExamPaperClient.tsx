@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -204,13 +203,9 @@ export default function ExamPaperClient({
           const isAnswered = selected !== undefined;
 
           return (
-            <motion.div
+            <div
               key={q.id}
               id={`q-${q.id}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.4, delay: idx * 0.05 }}
               className="bg-card border border-border rounded-xl p-6 shadow-sm scroll-mt-32"
             >
               <h3 className="font-semibold text-lg mb-4 flex gap-3 text-foreground">
@@ -231,11 +226,11 @@ export default function ExamPaperClient({
                       if (isPracticeMode) {
                         statusStyles =
                           optIdx === q.ans
-                            ? "border-green-500 bg-green-50 ring-1 ring-green-500"
-                            : "border-red-500 bg-red-50 ring-1 ring-red-500";
+                            ? "border-primary bg-primary/10 ring-1 ring-primary"
+                            : "border-destructive bg-destructive/10 ring-1 ring-destructive";
                       }
                     } else if (isPracticeMode && optIdx === q.ans) {
-                      statusStyles = "border-green-500 bg-green-50/30";
+                      statusStyles = "border-primary bg-primary/5";
                     }
                   }
 
@@ -253,7 +248,7 @@ export default function ExamPaperClient({
                         disabled={isPracticeMode && isAnswered}
                       />
                       <span
-                        className={`text-sm font-medium ${isPracticeMode && isAnswered && optIdx === q.ans ? "text-green-700" : ""}`}
+                        className={`text-sm font-medium ${isPracticeMode && isAnswered && optIdx === q.ans ? "text-primary font-bold" : ""}`}
                       >
                         {opt}
                       </span>
@@ -270,7 +265,7 @@ export default function ExamPaperClient({
                   </p>
                 </div>
               )}
-            </motion.div>
+            </div>
           );
         })}
       </main>

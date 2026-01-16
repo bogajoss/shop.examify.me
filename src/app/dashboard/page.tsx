@@ -110,8 +110,8 @@ export default function Dashboard() {
                       <span
                         className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                           order.status === "Approved"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-yellow-100 text-yellow-700"
+                            ? "bg-secondary text-primary border border-primary/20"
+                            : "bg-accent text-accent-foreground border border-accent-foreground/10"
                         }`}
                       >
                         {order.status}
@@ -119,7 +119,7 @@ export default function Dashboard() {
                     </div>
 
                     {order.status === "Pending" ? (
-                      <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100 text-xs text-yellow-800 space-y-2">
+                      <div className="mt-4 p-3 bg-accent/30 rounded-lg border border-accent/50 text-xs text-accent-foreground space-y-2">
                         <div className="flex items-center gap-2">
                           <Clock className="h-3.5 w-3.5" />
                           <span>অ্যাডমিন ভেরিফিকেশনের জন্য অপেক্ষা করুন...</span>
@@ -128,7 +128,7 @@ export default function Dashboard() {
                           variant="outline"
                           size="sm"
                           fullWidth
-                          className="h-8 text-[10px] border-yellow-200 hover:bg-yellow-100"
+                          className="h-8 text-[10px] border-accent/50 hover:bg-accent/50"
                           onClick={() => approveOrder(order.id)}
                         >
                           Simulate Admin Approve

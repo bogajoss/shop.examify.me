@@ -72,7 +72,7 @@ const Header = () => {
                   <button
                     type="button"
                     onClick={logout}
-                    className="text-destructive hover:text-red-700 text-xs font-bold px-3 py-2"
+                    className="text-destructive hover:text-destructive/90 text-xs font-bold px-3 py-2"
                   >
                     লগআউট
                   </button>

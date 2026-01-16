@@ -86,7 +86,7 @@ export default function ExamResult() {
 
           <div className="p-6 grid grid-cols-3 gap-4 text-center divide-x divide-border">
             <div>
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-primary">
                 {result.correct}
               </div>
               <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
@@ -94,7 +94,7 @@ export default function ExamResult() {
               </div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-red-500">
+              <div className="text-2xl font-bold text-destructive">
                 {result.wrong}
               </div>
               <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
@@ -130,8 +130,8 @@ export default function ExamResult() {
                   isSkipped
                     ? "border-border bg-muted/20"
                     : isCorrect
-                      ? "border-green-200 bg-green-50/50"
-                      : "border-red-200 bg-red-50/50"
+                      ? "border-primary/20 bg-primary/5"
+                      : "border-destructive/20 bg-destructive/5"
                 }`}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -143,9 +143,9 @@ export default function ExamResult() {
                   </h3>
                   <div className="ml-4 shrink-0">
                     {isCorrect ? (
-                      <Check className="h-6 w-6 text-green-600" />
+                      <Check className="h-6 w-6 text-primary" />
                     ) : (
-                      !isSkipped && <X className="h-6 w-6 text-red-500" />
+                      !isSkipped && <X className="h-6 w-6 text-destructive" />
                     )}
                   </div>
                 </div>
@@ -156,9 +156,10 @@ export default function ExamResult() {
                       "flex items-center gap-3 p-3 rounded-lg border text-sm transition-all";
                     if (optIdx === q.ans) {
                       optionClass +=
-                        " border-green-500 bg-green-100 text-green-900 font-bold";
+                        " border-primary bg-primary/10 text-primary font-bold shadow-sm";
                     } else if (optIdx === selected && !isCorrect) {
-                      optionClass += " border-red-500 bg-red-100 text-red-900";
+                      optionClass +=
+                        " border-destructive bg-destructive/10 text-destructive";
                     } else {
                       optionClass +=
                         " border-border bg-card text-muted-foreground";
@@ -169,8 +170,8 @@ export default function ExamResult() {
                         <div
                           className={`w-6 h-6 rounded-full border flex items-center justify-center text-[10px] shrink-0 ${
                             optIdx === q.ans
-                              ? "bg-green-600 border-green-600 text-white"
-                              : "border-gray-400"
+                              ? "bg-primary border-primary text-white"
+                              : "border-border"
                           }`}
                         >
                           {String.fromCharCode(65 + optIdx)}

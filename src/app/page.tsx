@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
@@ -168,13 +167,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {db.courses.map((course) => (
                   <div
                     key={course.id}
@@ -241,7 +234,7 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </section>
 
@@ -265,13 +258,7 @@ export default function Home() {
                 </button>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {db.freeExams.map((exam) => (
                   <div
                     key={exam.id}
@@ -357,7 +344,7 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </section>
 
