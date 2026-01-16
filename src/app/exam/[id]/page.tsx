@@ -1,8 +1,7 @@
-import React from 'react';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { db } from '@/data/mockData';
-import ExamPaperClient from './ExamPaperClient';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { db } from "@/data/mockData";
+import ExamPaperClient from "./ExamPaperClient";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -10,11 +9,11 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const examInfo = db.freeExams.find(e => e.id === id);
+  const examInfo = db.freeExams.find((e) => e.id === id);
 
   if (!examInfo) {
     return {
-      title: 'Exam Not Found | Examify',
+      title: "Exam Not Found | Examify",
     };
   }
 
@@ -24,14 +23,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: examInfo.title,
       description: `Take the ${examInfo.title} on Examify.`,
-      images: [`https://placehold.co/1200x630?text=${encodeURIComponent(examInfo.title)}`],
+      images: [
+        `https://placehold.co/1200x630?text=${encodeURIComponent(examInfo.title)}`,
+      ],
     },
   };
 }
 
 export default async function ExamPage({ params }: Props) {
   const { id } = await params;
-  const examInfo = db.freeExams.find(e => e.id === id);
+  const examInfo = db.freeExams.find((e) => e.id === id);
   const questions = db.examQuestions[id];
 
   if (!examInfo || !questions) {

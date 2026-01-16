@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Skeleton = ({ className }: { className?: string }) => (
   <div className={`bg-muted animate-pulse rounded-md ${className}`} />
 );
@@ -38,7 +36,10 @@ export default function Loading() {
             <Skeleton className="h-10 w-48" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="border border-border rounded-lg p-4 space-y-4">
+                <div
+                  key={i}
+                  className="border border-border rounded-lg p-4 space-y-4"
+                >
                   <Skeleton className="aspect-video w-full rounded-md" />
                   <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-full" />
