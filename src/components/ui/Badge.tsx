@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
@@ -16,18 +16,17 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground border-border hover:bg-muted/50",
-        success: 
+        success:
           "border-transparent bg-primary/10 text-primary hover:bg-primary/20",
         warning:
           "border-transparent bg-accent text-accent-foreground hover:bg-accent/80",
-        live: 
-          "border-transparent bg-destructive text-destructive-foreground animate-pulse shadow-sm",
+        live: "border-transparent bg-destructive text-destructive-foreground animate-pulse shadow-sm",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export interface BadgeProps

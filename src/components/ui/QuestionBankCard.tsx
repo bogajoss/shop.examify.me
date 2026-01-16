@@ -32,10 +32,10 @@ export default function QuestionBankCard({ item }: QuestionBankCardProps) {
             </span>
           </div>
         </div>
-        
+
         {/* Overlay Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent opacity-80 transition-opacity group-hover:opacity-90"></div>
-        
+
         {item.isLive && (
           <div className="absolute top-3 right-3">
             <Badge variant="live" className="gap-1.5 px-2 py-0.5">
@@ -44,7 +44,7 @@ export default function QuestionBankCard({ item }: QuestionBankCardProps) {
             </Badge>
           </div>
         )}
-        
+
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <h3 className="text-white text-xs sm:text-sm font-bold leading-tight line-clamp-2 drop-shadow-md group-hover:text-primary-foreground transition-colors">
             {item.title}

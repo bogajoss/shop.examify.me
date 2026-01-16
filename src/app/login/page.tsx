@@ -37,7 +37,7 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
-    resolver: zodResolver(isLogin ? loginSchema : registerSchema),
+    resolver: zodResolver(isLogin ? loginSchema : registerSchema) as any,
     defaultValues: {
       name: "",
       roll: "",
@@ -76,11 +76,19 @@ export default function LoginPage() {
         <div className="w-full max-w-sm bg-card border border-border rounded-xl p-8 shadow-xl space-y-8 relative z-10 animate-in fade-in zoom-in duration-500">
           <div className="text-center space-y-2">
             <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-4">
-              {isLogin ? <LogIn className="h-6 w-6" /> : <UserPlus className="h-6 w-6" />}
+              {isLogin ? (
+                <LogIn className="h-6 w-6" />
+              ) : (
+                <UserPlus className="h-6 w-6" />
+              )}
             </div>
-            <h1 className="text-2xl font-bold text-primary">{isLogin ? "লগইন" : "রেজিস্ট্রেশন"}</h1>
+            <h1 className="text-2xl font-bold text-primary">
+              {isLogin ? "লগইন" : "রেজিস্ট্রেশন"}
+            </h1>
             <p className="text-xs text-muted-foreground">
-              {isLogin ? "রোল/আইডি ও পাসওয়ার্ড দিয়ে একাউন্টে প্রবেশ করুন" : "নতুন একাউন্ট খুলতে নিচের তথ্যগুলো দিন"}
+              {isLogin
+                ? "রোল/আইডি ও পাসওয়ার্ড দিয়ে একাউন্টে প্রবেশ করুন"
+                : "নতুন একাউন্ট খুলতে নিচের তথ্যগুলো দিন"}
             </p>
           </div>
 
@@ -88,7 +96,10 @@ export default function LoginPage() {
             <div className="space-y-4">
               {!isLogin && (
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-xs font-medium text-foreground/70">
+                  <label
+                    htmlFor="name"
+                    className="text-xs font-medium text-foreground/70"
+                  >
                     পূর্ণ নাম
                   </label>
                   <input
@@ -99,13 +110,18 @@ export default function LoginPage() {
                     placeholder="আপনার নাম"
                   />
                   {errors.name && (
-                    <p className="text-[10px] text-destructive font-medium">{errors.name.message}</p>
+                    <p className="text-[10px] text-destructive font-medium">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
               )}
 
               <div className="space-y-2">
-                <label htmlFor="roll" className="text-xs font-medium text-foreground/70">
+                <label
+                  htmlFor="roll"
+                  className="text-xs font-medium text-foreground/70"
+                >
                   রোল / আইডি
                 </label>
                 <input
@@ -116,17 +132,25 @@ export default function LoginPage() {
                   placeholder="ID-XXXXX"
                 />
                 {errors.roll && (
-                  <p className="text-[10px] text-destructive font-medium">{errors.roll.message}</p>
+                  <p className="text-[10px] text-destructive font-medium">
+                    {errors.roll.message}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <label htmlFor="password" className="text-xs font-medium text-foreground/70">
+                  <label
+                    htmlFor="password"
+                    className="text-xs font-medium text-foreground/70"
+                  >
                     পাসওয়ার্ড
                   </label>
                   {isLogin && (
-                    <button type="button" className="text-xs text-primary hover:underline">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:underline"
+                    >
                       ভুলে গেছেন?
                     </button>
                   )}
@@ -139,7 +163,9 @@ export default function LoginPage() {
                   placeholder="••••••••"
                 />
                 {errors.password && (
-                  <p className="text-[10px] text-destructive font-medium">{errors.password.message}</p>
+                  <p className="text-[10px] text-destructive font-medium">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -151,7 +177,11 @@ export default function LoginPage() {
               className="gap-2 shadow-primary/20"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "প্রসেসিং..." : (isLogin ? "লগইন করুন" : "রেজিস্ট্রেশন করুন")}{" "}
+              {isSubmitting
+                ? "প্রসেসিং..."
+                : isLogin
+                  ? "লগইন করুন"
+                  : "রেজিস্ট্রেশন করুন"}{" "}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </form>

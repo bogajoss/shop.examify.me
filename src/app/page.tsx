@@ -170,19 +170,11 @@ export default function Home() {
                 </div>
               </div>
 
-                                          <div
-
-                                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
-
-                                          >
-
-                                            {db.courses.map((course) => (
-
-                                              <CourseCard key={course.id} course={course} />
-
-                                            ))}
-
-                                          </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
+                {db.courses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
             </div>
           </section>
 
@@ -206,19 +198,11 @@ export default function Home() {
                 </button>
               </div>
 
-                                          <div
-
-                                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both"
-
-                                          >
-
-                                            {db.freeExams.map((exam) => (
-
-                                              <ExamCard key={exam.id} exam={exam} />
-
-                                            ))}
-
-                                          </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
+                {db.freeExams.map((exam) => (
+                  <ExamCard key={exam.id} exam={exam} />
+                ))}
+              </div>
             </div>
           </section>
 

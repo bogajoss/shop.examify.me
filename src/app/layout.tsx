@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
-import { Hind_Siliguri } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AuthProvider } from "@/context/AuthContext";
 
-const hindSiliguri = Hind_Siliguri({
-  subsets: ["bengali", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
+const hindSiliguri = localFont({
+  src: [
+    {
+      path: "../../public/fonts/HindSiliguri-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/HindSiliguri-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-hind-siliguri",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="bn" suppressHydrationWarning>
-      <body className={`${hindSiliguri.variable} antialiased`} suppressHydrationWarning>
+      <body
+        className={`${hindSiliguri.variable} antialiased`}
+        suppressHydrationWarning
+      >
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>
         </AuthProvider>

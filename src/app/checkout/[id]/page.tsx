@@ -41,16 +41,20 @@ export default function Checkout() {
 
   if (!course) return null;
 
-  const onSubmit = (_data: CheckoutFormValues) => {
+  const onSubmit = async (_data: CheckoutFormValues) => {
     if (!user) {
       showToast("অর্ডার করার আগে লগইন করুন।", "error");
       router.push("/login");
       return;
     }
 
-    submitOrder(course);
-    showToast("অর্ডার জমা হয়েছে! ভেরিফিকেশনের জন্য অপেক্ষা করুন।", "info");
-    router.push("/dashboard");
+    try {
+      await submitOrder(course);
+      showToast("অর্ডার জমা হয়েছে! ভেরিফিকেশনের জন্য অপেক্ষা করুন।", "info");
+      router.push("/dashboard");
+    } catch (error: any) {
+      showToast(error.message || "অর্ডার সাবমিট করতে সমস্যা হয়েছে", "error");
+    }
   };
 
   const copyToClipboard = (text: string) => {

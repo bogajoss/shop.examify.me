@@ -23,11 +23,3 @@ CREATE TABLE IF NOT EXISTS users (
 --   created_at: string (ISO)
 --   updated_at: string (ISO)
 
--- Courses Table (Optional tracking)
-CREATE TABLE IF NOT EXISTS courses (
-  id UUID DEFAULT uuid_generate_v4() NOT NULL PRIMARY KEY,
-  title TEXT NOT NULL,
-  price NUMERIC,
-  batch TEXT,
-  description TEXT
-);

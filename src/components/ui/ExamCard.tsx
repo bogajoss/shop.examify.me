@@ -2,8 +2,8 @@
 
 import { Check, Clock, FileText, Play, Trophy, Users } from "lucide-react";
 import Link from "next/link";
-import Button from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import type { FreeExam } from "@/data/mockData";
 
 interface ExamCardProps {
@@ -12,9 +12,7 @@ interface ExamCardProps {
 
 export default function ExamCard({ exam }: ExamCardProps) {
   return (
-    <div
-      className="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group"
-    >
+    <div className="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
       <div className="w-full aspect-video relative overflow-hidden bg-muted flex items-center justify-center text-muted-foreground/30">
         <div className="flex flex-col items-center">
           <FileText className="h-10 w-10" />
@@ -26,7 +24,10 @@ export default function ExamCard({ exam }: ExamCardProps) {
           </Badge>
         </div>
         <div className="absolute bottom-2 left-2">
-          <Badge variant="outline" className="bg-foreground/80 text-background border-none backdrop-blur-md text-[10px]">
+          <Badge
+            variant="outline"
+            className="bg-foreground/80 text-background border-none backdrop-blur-md text-[10px]"
+          >
             {exam.subject}
           </Badge>
         </div>
@@ -56,7 +57,8 @@ export default function ExamCard({ exam }: ExamCardProps) {
               <Clock className="h-3 w-3 text-primary" /> {exam.time}
             </div>
             <div className="flex items-center gap-1.5">
-              <FileText className="h-3 w-3 text-primary" /> {exam.questions} Ques.
+              <FileText className="h-3 w-3 text-primary" /> {exam.questions}{" "}
+              Ques.
             </div>
             <div className="flex items-center gap-1.5">
               <Check className="h-3 w-3 text-primary" /> {exam.questions} Marks

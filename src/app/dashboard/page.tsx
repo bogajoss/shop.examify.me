@@ -7,8 +7,8 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import Button from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/context/AuthContext";
 
@@ -27,13 +27,18 @@ export default function Dashboard() {
 
   if (!user) return null;
 
-  const handleRedeem = (e: React.FormEvent) => {
+  const handleRedeem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (redeemToken(tokenInput)) {
-      showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
-      setTokenInput("");
-    } else {
-      showToast("ভুল টোকেন বা টোকেনটি একটিভ নয়!", "error");
+    try {
+      const success = await redeemToken(tokenInput);
+      if (success) {
+        showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
+        setTokenInput("");
+      } else {
+        showToast("ভুল টোকেন বা টোকেনটি একটিভ নয়!", "error");
+      }
+    } catch (error: any) {
+      showToast(error.message || "একটি সমস্যা হয়েছে", "error");
     }
   };
 
@@ -109,7 +114,9 @@ export default function Dashboard() {
                         </p>
                       </div>
                       <Badge
-                        variant={order.status === "Approved" ? "success" : "warning"}
+                        variant={
+                          order.status === "Approved" ? "success" : "warning"
+                        }
                         className="uppercase tracking-wider text-[10px]"
                       >
                         {order.status}
@@ -127,7 +134,14 @@ export default function Dashboard() {
                           size="sm"
                           fullWidth
                           className="h-8 text-[10px] border-border hover:bg-background"
-                          onClick={() => approveOrder(order.id)}
+                          onClick={async () => {
+                            try {
+                              await approveOrder(order.id);
+                              showToast("অর্ডার অ্যাপ্রুভ করা হয়েছে (সিমুলেশন)");
+                            } catch (e: any) {
+                              showToast(e.message, "error");
+                            }
+                          }}
                         >
                           Simulate Admin Approve
                         </Button>
@@ -166,9 +180,20 @@ export default function Dashboard() {
                             <Button
                               fullWidth
                               className="gap-2 animate-pulse"
-                              onClick={() => {
-                                if (order.token) redeemToken(order.token);
-                                showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
+                              onClick={async () => {
+                                if (order.token) {
+                                  try {
+                                    const ok = await redeemToken(order.token);
+                                    if (ok)
+                                      showToast(
+                                        "সফলভাবে এনরোল করা হয়েছে!",
+                                        "success",
+                                      );
+                                    else showToast("টোকেনটি কার্যকর নয়", "error");
+                                  } catch (e: any) {
+                                    showToast(e.message, "error");
+                                  }
+                                }
                               }}
                             >
                               <Key className="h-4 w-4" /> এনরোল করুন

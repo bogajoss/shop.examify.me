@@ -78,6 +78,9 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      wawoff2:
+        specifier: ^2.0.1
+        version: 2.0.1
 
 packages:
 
@@ -470,6 +473,9 @@ packages:
   appwrite@21.5.0:
     resolution: {integrity: sha512-643bMRZVYXMluXvSXbdaLAi9qqTJLWbVGguKH4vH6IdKHur6gGIirhCOqAEt33pV4TOFJ55VBu8c/+Ft1ke2SA==}
 
+  argparse@2.0.1:
+    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
   babel-plugin-react-compiler@1.0.0:
     resolution: {integrity: sha512-Ixm8tFfoKKIPYdCCKYTsqv+Fd4IJ0DQqMyEimo+pxUOMUR9cVPlwTrFt9Avu+3cb6Zp3mAzl+t1MrG2fxxKsxw==}
 
@@ -720,6 +726,10 @@ packages:
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
+
+  wawoff2@2.0.1:
+    resolution: {integrity: sha512-r0CEmvpH63r4T15ebFqeOjGqU4+EgTx4I510NtK35EMciSdcTxCw3Byy3JnBonz7iyIFZ0AbVo0bbFpEVuhCYA==}
+    hasBin: true
 
   zod@4.3.5:
     resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
@@ -1013,6 +1023,8 @@ snapshots:
 
   appwrite@21.5.0: {}
 
+  argparse@2.0.1: {}
+
   babel-plugin-react-compiler@1.0.0:
     dependencies:
       '@babel/types': 7.28.6
@@ -1231,5 +1243,9 @@ snapshots:
   typescript@5.9.3: {}
 
   undici-types@7.16.0: {}
+
+  wawoff2@2.0.1:
+    dependencies:
+      argparse: 2.0.1
 
   zod@4.3.5: {}
