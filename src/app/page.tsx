@@ -25,6 +25,9 @@ import { useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
+import CourseCard from "@/components/ui/CourseCard";
+import ExamCard from "@/components/ui/ExamCard";
+import QuestionBankCard from "@/components/ui/QuestionBankCard";
 import { db } from "@/data/mockData";
 
 export default function Home() {
@@ -103,18 +106,18 @@ export default function Home() {
               <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
               মেডিকেল ভর্তি প্রস্তুতি ২০২৬
             </div>
-            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground leading-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground leading-tight animate-in fade-in slide-in-from-top-4 duration-1000">
               স্বপ্ন যখন{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary-foreground">
                 ডাক্তার
               </span>{" "}
               হওয়ার
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 animate-in fade-in slide-in-from-top-2 duration-1000 delay-200 fill-mode-both">
               Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে টোকেন
               সংগ্রহ করুন এবং নিজের সুবিধামতো এনরোল করুন।
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 px-4 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 px-4 w-full sm:w-auto animate-in fade-in zoom-in-95 duration-1000 delay-500 fill-mode-both">
               <Link href="/#courses" className="w-full sm:w-auto">
                 <Button
                   size="lg"
@@ -167,74 +170,19 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {db.courses.map((course) => (
-                  <div
-                    key={course.id}
-                    className="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-md hover:shadow-primary/5 transition-all flex flex-col h-full group"
-                  >
-                    <div className="w-full aspect-video relative overflow-hidden bg-muted">
-                      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 font-bold text-lg">
-                        <div className="flex flex-col items-center">
-                          <ImageIcon className="h-12 w-12" />
-                          <span className="mt-2 text-sm">Course Preview</span>
-                        </div>
-                      </div>
-                      <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
-                        <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/90 text-white shadow-sm">
-                          {course.batch}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex-1 p-5 flex flex-col justify-between gap-4">
-                      <div>
-                        <h3 className="text-lg font-bold mb-2 leading-tight group-hover:text-primary transition-colors">
-                          {course.title}
-                        </h3>
-                        <p className="text-muted-foreground text-xs mb-4 line-clamp-3">
-                          {course.description}
-                        </p>
-                        <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                          {[
-                            "লাইভ ক্লাস",
-                            "লেকচার নোট",
-                            "স্ট্যান্ডার্ড এক্সাম",
-                            "সলভ শিট",
-                          ].map((f) => (
-                            <div
-                              key={f}
-                              className="flex items-center gap-1 text-primary"
-                            >
-                              <Check className="h-3 w-3" />{" "}
-                              <span className="text-muted-foreground">{f}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-dashed border-border">
-                        <div className="flex flex-col items-start">
-                          <span className="text-[10px] text-destructive line-through font-medium">
-                            ৳{course.oldPrice}
-                          </span>
-                          <div className="text-base font-bold text-primary">
-                            ৳{course.price}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Link href={`/courses/${course.id}`}>
-                            <Button variant="outline" size="sm">
-                              বিস্তারিত
-                            </Button>
-                          </Link>
-                          <Link href={`/checkout/${course.id}`}>
-                            <Button size="sm">ভর্তি হন</Button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                                          <div
+
+                                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+
+                                          >
+
+                                            {db.courses.map((course) => (
+
+                                              <CourseCard key={course.id} course={course} />
+
+                                            ))}
+
+                                          </div>
             </div>
           </section>
 
@@ -258,93 +206,19 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {db.freeExams.map((exam) => (
-                  <div
-                    key={exam.id}
-                    className="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-md hover:shadow-primary/5 transition-all flex flex-col h-full group"
-                  >
-                    <div className="w-full aspect-video relative overflow-hidden bg-muted flex items-center justify-center text-muted-foreground/30">
-                      <div className="flex flex-col items-center">
-                        <FileText className="h-10 w-10" />
-                        <span className="mt-2 text-sm font-medium">
-                          Exam Preview
-                        </span>
-                      </div>
-                      <div className="absolute top-2 right-2">
-                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary text-primary-foreground shadow-sm">
-                          Free
-                        </span>
-                      </div>
-                      <div className="absolute bottom-2 left-2">
-                        <span className="inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium bg-foreground/80 text-background backdrop-blur-md">
-                          {exam.subject}
-                        </span>
-                      </div>
-                    </div>
+                                          <div
 
-                    <div className="flex-1 p-5 flex flex-col justify-between gap-4">
-                      <div>
-                        <h3 className="text-lg font-bold mb-2 leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                          {exam.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-                          <span className="flex items-center gap-1">
-                            <Users className="h-3 w-3" /> {exam.students}{" "}
-                            students
-                          </span>
-                          <span className="text-muted-foreground/30">•</span>
-                          <span className="text-primary font-medium flex items-center gap-1">
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                            </span>{" "}
-                            Live Now
-                          </span>
-                        </div>
+                                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both"
 
-                        <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground bg-muted/40 p-3 rounded-lg border border-border/50">
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="h-3 w-3 text-primary" />{" "}
-                            {exam.time}
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <FileText className="h-3 w-3 text-primary" />{" "}
-                            {exam.questions} Ques.
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Check className="h-3 w-3 text-primary" />{" "}
-                            {exam.questions} Marks
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-destructive font-bold">
-                              -
-                            </span>{" "}
-                            0.25 Neg.
-                          </div>
-                        </div>
-                      </div>
+                                          >
 
-                      <div className="mt-auto pt-4 border-t border-dashed border-border flex gap-2">
-                        <Link href={`/exam/${exam.id}`} className="flex-1">
-                          <Button fullWidth variant="primary" className="gap-2">
-                            <Play className="h-4 w-4 fill-current" /> এখন শুরু করুন
-                          </Button>
-                        </Link>
-                        <Link
-                          href={`/exam/${exam.id}/leaderboard`}
-                          className="flex-1"
-                        >
-                          <Button fullWidth variant="outline" className="gap-2">
-                            <Trophy className="h-4 w-4 text-yellow-500" />{" "}
-                            লিডারবোর্ড
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                                            {db.freeExams.map((exam) => (
+
+                                              <ExamCard key={exam.id} exam={exam} />
+
+                                            ))}
+
+                                          </div>
             </div>
           </section>
 
@@ -401,45 +275,7 @@ export default function Home() {
                 {filteredQbItems.length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {filteredQbItems.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={`/question-bank/${item.id}`}
-                        className="group relative block h-full"
-                      >
-                        <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1 group-active:scale-[0.98]">
-                          <div className="h-full w-full relative group-hover:scale-105 transition-transform duration-500">
-                            <Image
-                              src={item.image}
-                              alt={item.title}
-                              fill
-                              className="object-cover opacity-60"
-                            />
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/50">
-                              <BookOpen className="h-12 w-12" />
-                              <span className="mt-2 text-xs font-bold uppercase tracking-wider">
-                                Question Bank
-                              </span>
-                            </div>
-                          </div>
-                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-80"></div>
-                          {item.isLive && (
-                            <div className="absolute top-2 right-2">
-                              <span className="flex items-center gap-1 bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-1 rounded-full animate-pulse shadow-sm backdrop-blur-md bg-opacity-90">
-                                <span className="h-2 w-2 rounded-full bg-white animate-ping"></span>{" "}
-                                Live
-                              </span>
-                            </div>
-                          )}
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 className="text-background text-xs sm:text-sm font-bold leading-tight line-clamp-3 drop-shadow-md group-hover:text-primary-foreground transition-colors">
-                              {item.title}
-                            </h3>
-                            <p className="text-background/70 text-[10px] mt-1 flex items-center gap-1">
-                              Tap to practice <ArrowRight className="h-3 w-3" />
-                            </p>
-                          </div>
-                        </div>
-                      </Link>
+                      <QuestionBankCard key={item.id} item={item} />
                     ))}
                   </div>
                 ) : (

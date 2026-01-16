@@ -17,13 +17,13 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all active:scale-95 disabled:pointer-events-none disabled:opacity-50 rounded-full";
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-50 rounded-full";
 
   const variants = {
     primary:
-      "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm border-[3px] border-transparent",
+      "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 shadow-sm border-[3px] border-transparent",
     outline:
-      "border-[3px] border-input bg-background hover:bg-accent hover:text-accent-foreground",
+      "border-[3px] border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/30",
     secondary:
       "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-[3px] border-transparent",
     ghost: "hover:bg-accent hover:text-accent-foreground border-none",

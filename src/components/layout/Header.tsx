@@ -25,7 +25,7 @@ const Header = () => {
     { name: "হোম", href: "/" },
     { name: "কোর্সসমূহ", href: "/#courses" },
     { name: "প্রশ্নব্যাংক", href: "/#question-bank" },
-    { name: "ফ্রি এক্সam", href: "/#free-exams" },
+    { name: "ফ্রি এক্সাম", href: "/#free-exams" },
   ];
 
   return (
@@ -61,43 +61,27 @@ const Header = () => {
             ))}
 
             <div className="flex gap-2 ml-2">
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="hover:text-primary transition-colors cursor-pointer font-bold px-3 py-2"
-                  >
-                    ড্যাশবোর্ড
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={logout}
-                    className="text-destructive hover:text-destructive/90 text-xs font-bold px-3 py-2"
-                  >
-                    লগআউট
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/#free-exams"
-                    className="hover:text-primary transition-colors cursor-pointer px-3 py-2"
-                  >
-                    ফ্রি এক্সাম
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="hover:text-primary transition-colors cursor-pointer px-3 py-2"
-                  >
-                    লগইন
-                  </Link>
-                </>
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="hover:text-primary transition-colors cursor-pointer font-bold px-3 py-2"
+                >
+                  ড্যাশবোর্ড
+                </Link>
               )}
             </div>
           </nav>
 
           <div className="flex items-center gap-2">
-            {!user && (
+            {user ? (
+              <button
+                type="button"
+                onClick={logout}
+                className="hidden sm:flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-transparent text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-[25px] h-10 px-6 transition-all"
+              >
+                লগআউট
+              </button>
+            ) : (
               <Link
                 href="/login"
                 className="hidden sm:flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-transparent text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-[25px] h-10 px-6 transition-all"

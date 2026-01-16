@@ -8,17 +8,30 @@ import {
   useEffect,
   useState,
 } from "react";
-import { type Course, db, type Order, type User } from "@/data/mockData";
+import { ID, Query, type Models } from "appwrite";
+import { account, databases, APPWRITE_DB_ID, USERS_COLLECTION_ID } from "@/lib/appwrite";
+import type { Course, Order } from "@/data/mockData";
+
+// Extended Appwrite User Type
+export interface User {
+  id: string;
+  name: string;
+  phone: string;
+  roll: string;
+  enrolledBatches: string[];
+  enrolledCourses: Course[]; // For UI convenience
+  orders: Order[]; // For UI convenience
+}
 
 interface AuthContextType {
   user: User | null;
-  login: (phone: string, name?: string) => void;
-  logout: () => void;
-  submitOrder: (course: Course) => void;
-  approveOrder: (orderId: string) => void;
-  redeemToken: (token: string) => boolean;
+  isLoading: boolean;
+  login: (roll: string, pass: string) => Promise<void>;
+  register: (name: string, roll: string, pass: string) => Promise<void>;
+  logout: () => Promise<void>;
   theme: "light" | "dark";
   toggleTheme: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,14 +40,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
-  // Load user from localStorage on mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  const fetchUserData = useCallback(async (userId: string, accountName: string) => {
+    try {
+      // Get document from users collection
+      const docs = await databases.listDocuments(
+        APPWRITE_DB_ID,
+        USERS_COLLECTION_ID,
+        [Query.equal("userId", userId)]
+      );
+
+      if (docs.total > 0) {
+        const doc = docs.documents[0];
+        return {
+          id: userId,
+          name: accountName,
+          phone: doc.phone || "",
+          roll: doc.roll,
+          enrolledBatches: doc.enrolled_batches || [],
+          enrolledCourses: [], // This would ideally be fetched from a courses collection mapping
+          orders: [] // This would ideally be fetched from an orders collection mapping
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching user document:", error);
+      return null;
     }
+  }, []);
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const session = await account.get();
+      const userData = await fetchUserData(session.$id, session.name);
+      setUser(userData);
+      
+      // Sync cookie for middleware if needed
+      document.cookie = "auth-token=true; path=/; max-age=86400; samesite=lax";
+    } catch (error) {
+      setUser(null);
+      document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchUserData]);
+
+  useEffect(() => {
+    refreshUser();
+    
+    // Theme initialization
     const storedTheme = localStorage.getItem("theme") as "light" | "dark";
     if (storedTheme) {
       setTheme(storedTheme);
@@ -42,114 +98,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         document.documentElement.classList.add("dark");
       }
     }
-  }, []);
+  }, [refreshUser]);
 
-  const login = useCallback((phone: string, name: string = "Student") => {
-    // In a real app, this would be an API call
-    const newUser: User = {
-      name,
-      phone,
-      enrolledCourses: [],
-      orders: db.initialOrders.filter((o) => o.phone === phone),
-    };
-    setUser(newUser);
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
-    // Set cookie for middleware
-    document.cookie = "auth-token=true; path=/; max-age=86400; samesite=lax";
-  }, []);
+  const login = useCallback(async (roll: string, pass: string) => {
+    // Appwrite needs an email. We'll use roll@examify.me as a pseudo-email.
+    const email = `${roll}@examify.me`;
+    await account.createEmailPasswordSession(email, pass);
+    await refreshUser();
+  }, [refreshUser]);
 
-  const logout = useCallback(() => {
+  const register = useCallback(async (name: string, roll: string, pass: string) => {
+    const email = `${roll}@examify.me`;
+    // 1. Create Account
+    const newUser = await account.create(ID.unique(), email, pass, name);
+    
+    // 2. Create Profile Document
+    await databases.createDocument(
+      APPWRITE_DB_ID,
+      USERS_COLLECTION_ID,
+      ID.unique(),
+      {
+        userId: newUser.$id,
+        name: name,
+        roll: roll,
+        enrolled_batches: [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    );
+
+    // 3. Auto Login
+    await login(roll, pass);
+  }, [login]);
+
+  const logout = useCallback(async () => {
+    await account.deleteSession('current');
     setUser(null);
-    localStorage.removeItem("currentUser");
-    // Remove cookie
-    document.cookie =
-      "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }, []);
-
-  const submitOrder = useCallback(
-    (course: Course) => {
-      if (!user) return;
-
-      const newOrder: Order = {
-        id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
-        student: user.name,
-        phone: user.phone,
-        courseId: course.id,
-        courseName: course.title,
-        amount: course.price,
-        status: "Pending",
-        token: null,
-        date: new Date().toLocaleDateString("en-GB", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
-      };
-
-      const updatedUser = {
-        ...user,
-        orders: [newOrder, ...user.orders],
-      };
-
-      setUser(updatedUser);
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-    },
-    [user],
-  );
-
-  const approveOrder = useCallback(
-    (orderId: string) => {
-      if (!user) return;
-
-      const updatedOrders = user.orders.map((o) => {
-        if (o.id === orderId) {
-          return {
-            ...o,
-            status: "Approved" as const,
-            token: `EXM-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-          };
-        }
-        return o;
-      });
-
-      const updatedUser = {
-        ...user,
-        orders: updatedOrders,
-      };
-
-      setUser(updatedUser);
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-    },
-    [user],
-  );
-
-  const redeemToken = useCallback(
-    (token: string): boolean => {
-      if (!user) return false;
-
-      const order = user.orders.find(
-        (o) => o.token === token && o.status === "Approved",
-      );
-      if (!order) return false;
-
-      // Check if already enrolled
-      if (user.enrolledCourses.some((c) => c.id === order.courseId))
-        return true;
-
-      const course = db.courses.find((c) => c.id === order.courseId);
-      if (!course) return false;
-
-      const updatedUser = {
-        ...user,
-        enrolledCourses: [...user.enrolledCourses, course],
-      };
-
-      setUser(updatedUser);
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-      return true;
-    },
-    [user],
-  );
 
   const toggleTheme = useCallback(() => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -163,18 +149,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [theme]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        submitOrder,
-        approveOrder,
-        redeemToken,
-        theme,
-        toggleTheme,
-      }}
-    >
+    <AuthContext.Provider value={{ 
+      user, 
+      isLoading, 
+      login, 
+      register, 
+      logout, 
+      theme, 
+      toggleTheme,
+      refreshUser
+    }}>
       {children}
     </AuthContext.Provider>
   );

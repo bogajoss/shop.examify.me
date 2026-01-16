@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="bn" suppressHydrationWarning>
-      <body className={`${hindSiliguri.variable} antialiased`}>
+      <body className={`${hindSiliguri.variable} antialiased`} suppressHydrationWarning>
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>
         </AuthProvider>

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/context/AuthContext";
 
@@ -107,19 +108,16 @@ export default function Dashboard() {
                           {order.date} • ৳{order.amount}
                         </p>
                       </div>
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          order.status === "Approved"
-                            ? "bg-secondary text-primary border border-primary/20"
-                            : "bg-accent text-accent-foreground border border-accent-foreground/10"
-                        }`}
+                      <Badge
+                        variant={order.status === "Approved" ? "success" : "warning"}
+                        className="uppercase tracking-wider text-[10px]"
                       >
                         {order.status}
-                      </span>
+                      </Badge>
                     </div>
 
                     {order.status === "Pending" ? (
-                      <div className="mt-4 p-3 bg-accent/30 rounded-lg border border-accent/50 text-xs text-accent-foreground space-y-2">
+                      <div className="mt-4 p-3 bg-secondary/30 rounded-lg border border-border text-xs text-secondary-foreground space-y-2">
                         <div className="flex items-center gap-2">
                           <Clock className="h-3.5 w-3.5" />
                           <span>অ্যাডমিন ভেরিফিকেশনের জন্য অপেক্ষা করুন...</span>
@@ -128,7 +126,7 @@ export default function Dashboard() {
                           variant="outline"
                           size="sm"
                           fullWidth
-                          className="h-8 text-[10px] border-accent/50 hover:bg-accent/50"
+                          className="h-8 text-[10px] border-border hover:bg-background"
                           onClick={() => approveOrder(order.id)}
                         >
                           Simulate Admin Approve
