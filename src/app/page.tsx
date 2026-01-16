@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   GraduationCap, 
   ArrowRight, 
@@ -213,9 +214,11 @@ export default function Home() {
                             <Play className="h-4 w-4 fill-current" /> এখন শুরু করুন
                           </Button>
                         </Link>
-                        <Button variant="outline" className="flex-1 gap-2">
-                          <Trophy className="h-4 w-4 text-yellow-500" /> লিডারবোর্ড
-                        </Button>
+                        <Link href={`/exam/${exam.id}/leaderboard`} className="flex-1">
+                          <Button fullWidth variant="outline" className="gap-2">
+                            <Trophy className="h-4 w-4 text-yellow-500" /> লিডারবোর্ড
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -269,9 +272,17 @@ export default function Home() {
                     {filteredQbItems.map(item => (
                       <Link key={item.id} href={`/question-bank/${item.id}`} className="group relative block h-full">
                         <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1 group-active:scale-[0.98]">
-                          <div className="h-full w-full bg-muted flex flex-col items-center justify-center text-muted-foreground/30 group-hover:scale-105 transition-transform duration-500">
-                            <BookOpen className="h-12 w-12" />
-                            <span className="mt-2 text-xs font-bold uppercase tracking-wider">Question Bank</span>
+                          <div className="h-full w-full relative group-hover:scale-105 transition-transform duration-500">
+                            <Image 
+                              src={item.image} 
+                              alt={item.title}
+                              fill
+                              className="object-cover opacity-60"
+                            />
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/50">
+                              <BookOpen className="h-12 w-12" />
+                              <span className="mt-2 text-xs font-bold uppercase tracking-wider">Question Bank</span>
+                            </div>
                           </div>
                           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-80"></div>
                           {item.isLive && (
@@ -389,7 +400,7 @@ export default function Home() {
         rel="noopener noreferrer"
         className="fixed bottom-6 right-4 sm:right-8 z-40 h-14 w-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer text-white active:scale-95 group"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
         <span className="absolute right-16 bg-black/80 text-white text-xs py-1 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">WhatsApp Support</span>
       </a>
 

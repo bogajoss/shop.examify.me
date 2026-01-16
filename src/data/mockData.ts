@@ -71,8 +71,16 @@ export interface User {
   orders: Order[];
 }
 
+export interface LeaderboardEntry {
+  name: string;
+  score: string;
+  time: string;
+  rank: number;
+}
+
 export const db = {
   courses: [
+    // ... existing courses
     { id: 'C-001', title: '2nd Timer Full Course', category: 'Admission', price: 4500, oldPrice: 5500, students: 450, status: 'Published', batch: 'HSC 25', description: 'মেডিকেল ভর্তি পরীক্ষার পূর্ণাঙ্গ প্রস্তুতি। সেকেন্ড টাইমারদের জন্য বিশেষায়িত কেয়ার এবং এক্সাম সিস্টেম।' },
     { id: 'C-002', title: 'HSC 26 - Biology Cycle 1', category: 'HSC Academic', price: 1500, oldPrice: 2000, students: 120, status: 'Published', batch: 'HSC 26', description: 'এইচএসসি ২৬ ব্যাচের জন্য বায়োলজি সাইকেল ১। মানব শরীরতত্ত্ব এবং কোষ ও কোষের গঠন।' },
     { id: 'C-003', title: 'Medical Admission Exam Batch', category: 'Admission', price: 2000, oldPrice: 3000, students: 800, status: 'Published', batch: 'HSC 25', description: 'শুধুমাত্র এক্সাম ব্যাচ। ডেইলি এক্সাম, উইকলি টেস্ট এবং সলভ ক্লাস।' },
@@ -151,5 +159,22 @@ export const db = {
   ],
   initialOrders: [
     { id: 'ORD-101', student: 'Tanvir Hasan', phone: '01700000000', courseId: 'C-001', courseName: '2nd Timer Full Course', amount: 4500, status: 'Approved', token: 'EXM-DEMO', date: '14 Jan, 2026' }
-  ] as Order[]
+  ] as Order[],
+  leaderboards: {
+    'FE-001': [
+      { name: 'Tanvir Hasan', score: '3/3', time: '01:45', rank: 1 },
+      { name: 'Sadia Afrin', score: '2.75/3', time: '02:12', rank: 2 },
+      { name: 'Rahim Uddin', score: '2/3', time: '02:30', rank: 3 },
+    ],
+    'FE-002': [
+      { name: 'Karim Mia', score: '3/3', time: '01:10', rank: 1 },
+      { name: 'Fatema Begum', score: '2.75/3', time: '01:50', rank: 2 },
+      { name: 'Jamil Ahmed', score: '2.5/3', time: '02:00', rank: 3 },
+    ],
+    'FE-003': [
+      { name: 'Anika Tahsin', score: '3/3', time: '00:55', rank: 1 },
+      { name: 'Sabbir Hossain', score: '3/3', time: '01:05', rank: 2 },
+      { name: 'Nusrat Jahan', score: '2.75/3', time: '01:20', rank: 3 },
+    ],
+  } as Record<string, LeaderboardEntry[]>
 };

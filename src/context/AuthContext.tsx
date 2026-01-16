@@ -45,11 +45,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     setUser(newUser);
     localStorage.setItem('currentUser', JSON.stringify(newUser));
+    // Set cookie for middleware
+    document.cookie = "auth-token=true; path=/; max-age=86400; samesite=lax";
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('currentUser');
+    // Remove cookie
+    document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }, []);
 
   const submitOrder = useCallback((course: Course) => {

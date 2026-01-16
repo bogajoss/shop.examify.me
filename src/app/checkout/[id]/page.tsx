@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Copy, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Copy } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
@@ -10,21 +13,36 @@ import { db } from '@/data/mockData';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 
+const checkoutSchema = z.object({
+  senderPhone: z.string().min(11, 'সঠিক ফোন নাম্বার দিন (১১ ডিজিট)'),
+  trxId: z.string().min(6, 'সঠিক TrxID দিন (কমপক্ষে ৬ ডিজিট)'),
+});
+
+type CheckoutFormValues = z.infer<typeof checkoutSchema>;
+
 export default function Checkout() {
   const { id } = useParams();
   const router = useRouter();
   const { user, submitOrder } = useAuth();
   const { showToast } = useToast();
-  
-  const [senderPhone, setSenderPhone] = useState('');
-  const [trxId, setTrxId] = useState('');
 
   const course = db.courses.find(c => c.id === id);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      senderPhone: '',
+      trxId: '',
+    },
+  });
+
   if (!course) return null;
 
-  const handleCheckout = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: CheckoutFormValues) => {
     if (!user) {
       showToast('অর্ডার করার আগে লগইন করুন।', 'error');
       router.push('/login');
@@ -124,30 +142,41 @@ export default function Checkout() {
               </div>
               
               {user ? (
-                <form onSubmit={handleCheckout} className="ml-4 sm:ml-8 space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="ml-4 sm:ml-8 space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-medium">যে নাম্বার থেকে টাকা পাঠিয়েছেন</label>
-                    <input 
-                      type="tel" 
-                      value={senderPhone}
-                      onChange={(e) => setSenderPhone(e.target.value)}
-                      placeholder="01XXXXXXXXX" 
-                      className="flex h-12 sm:h-10 w-full rounded-md border border-input bg-background px-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono" 
-                      required 
-                    />
+                    <label className="text-xs font-medium text-foreground/70">যে নাম্বার থেকে টাকা পাঠিয়েছেন</label>
+                    <div className="flex flex-col gap-1">
+                      <input 
+                        type="tel" 
+                        {...register('senderPhone')}
+                        placeholder="01XXXXXXXXX" 
+                        className={`flex h-12 sm:h-10 w-full rounded-md border border-input bg-background px-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${errors.senderPhone ? 'border-destructive' : ''}`}
+                      />
+                      {errors.senderPhone && <p className="text-[10px] text-destructive font-medium">{errors.senderPhone.message}</p>}
+                    </div>
                   </div>
+                  
                   <div className="space-y-2">
-                    <label className="text-xs font-medium">TrxID</label>
-                    <input 
-                      type="text" 
-                      value={trxId}
-                      onChange={(e) => setTrxId(e.target.value)}
-                      placeholder="Transaction ID" 
-                      className="flex h-12 sm:h-10 w-full rounded-md border border-input bg-background px-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono" 
-                      required 
-                    />
+                    <label className="text-xs font-medium text-foreground/70">TrxID</label>
+                    <div className="flex flex-col gap-1">
+                      <input 
+                        type="text" 
+                        {...register('trxId')}
+                        placeholder="Transaction ID" 
+                        className={`flex h-12 sm:h-10 w-full rounded-md border border-input bg-background px-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono ${errors.trxId ? 'border-destructive' : ''}`}
+                      />
+                      {errors.trxId && <p className="text-[10px] text-destructive font-medium">{errors.trxId.message}</p>}
+                    </div>
                   </div>
-                  <Button type="submit" fullWidth size="lg">অর্ডার কনফার্ম করুন</Button>
+                  
+                  <Button 
+                    type="submit" 
+                    fullWidth 
+                    size="lg"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'প্রসেসিং...' : 'অর্ডার কনফার্ম করুন'}
+                  </Button>
                 </form>
               ) : (
                 <div className="ml-4 sm:ml-8 text-center py-8 border-2 border-dashed border-border rounded-lg bg-muted/20">

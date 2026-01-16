@@ -1,20 +1,40 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogIn, Phone, Lock, ArrowRight } from 'lucide-react';
+import { LogIn, ArrowRight } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 
+const loginSchema = z.object({
+  phone: z.string().min(11, 'সঠিক ফোন নাম্বার দিন (১১ ডিজিট)'),
+  password: z.string().min(4, 'পাসওয়ার্ড কমপক্ষে ৪ ডিজিটের হতে হবে'),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 export default function LoginPage() {
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
   const { user, login } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      phone: '',
+      password: '',
+    },
+  });
 
   useEffect(() => {
     if (user) {
@@ -22,18 +42,8 @@ export default function LoginPage() {
     }
   }, [user, router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (phone.length < 11) {
-      showToast('সঠিক ফোন নাম্বার দিন!', 'error');
-      return;
-    }
-    if (password.length < 4) {
-      showToast('পাসওয়ার্ড খুব ছোট!', 'error');
-      return;
-    }
-    
-    login(phone);
+  const onSubmit = (data: LoginFormValues) => {
+    login(data.phone);
     showToast('লগইন সফল হয়েছে!');
     router.push('/dashboard');
   };
@@ -54,41 +64,49 @@ export default function LoginPage() {
             <p className="text-xs text-muted-foreground">ফোন নাম্বার ও পাসওয়ার্ড দিয়ে একাউন্টে প্রবেশ করুন</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-medium text-foreground/70">ফোন নাম্বার</label>
-                <div className="flex h-12">
-                  <span className="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-input bg-muted text-muted-foreground text-sm font-mono font-medium">+88</span>
-                  <input 
-                    type="tel" 
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="flex-1 h-full rounded-r-lg border border-input bg-background px-4 text-base focus:ring-2 focus:ring-primary focus:outline-none font-mono" 
-                    placeholder="01XXXXXXXXX" 
-                    required 
-                  />
+                <div className="flex flex-col gap-1">
+                  <div className="flex h-12">
+                    <span className="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-input bg-muted text-muted-foreground text-sm font-mono font-medium">+88</span>
+                    <input 
+                      type="tel" 
+                      {...register('phone')}
+                      className={`flex-1 h-full rounded-r-lg border border-input bg-background px-4 text-base focus:ring-2 focus:ring-primary focus:outline-none font-mono ${errors.phone ? 'border-destructive' : ''}`}
+                      placeholder="01XXXXXXXXX" 
+                    />
+                  </div>
+                  {errors.phone && <p className="text-[10px] text-destructive font-medium">{errors.phone.message}</p>}
                 </div>
               </div>
+              
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <label className="text-xs font-medium text-foreground/70">পাসওয়ার্ড</label>
                   <button type="button" className="text-xs text-primary hover:underline">ভুলে গেছেন?</button>
                 </div>
-                <div className="relative">
+                <div className="flex flex-col gap-1">
                   <input 
                     type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="flex h-12 w-full rounded-lg border border-input bg-background px-4 text-base focus:ring-2 focus:ring-primary focus:outline-none" 
+                    {...register('password')}
+                    className={`flex h-12 w-full rounded-lg border border-input bg-background px-4 text-base focus:ring-2 focus:ring-primary focus:outline-none ${errors.password ? 'border-destructive' : ''}`}
                     placeholder="••••••••" 
-                    required 
                   />
+                  {errors.password && <p className="text-[10px] text-destructive font-medium">{errors.password.message}</p>}
                 </div>
               </div>
             </div>
-            <Button type="submit" fullWidth size="lg" className="gap-2 shadow-primary/20">
-              লগইন করুন <ArrowRight className="h-4 w-4" />
+            
+            <Button 
+              type="submit" 
+              fullWidth 
+              size="lg" 
+              className="gap-2 shadow-primary/20"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'প্রসেসিং...' : 'লগইন করুন'} <ArrowRight className="h-4 w-4" />
             </Button>
           </form>
           
