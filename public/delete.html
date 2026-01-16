@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="bn" class="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Examify - Medical Admission Preparation</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS v4 (Standalone) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <style type="text/tailwindcss">
+        @theme {
+            --font-sans: "Hind Siliguri", sans-serif;
+            
+            --color-border: #bbf7d0; 
+            --color-input: #bbf7d0;
+            --color-ring: #15803d; 
+            --color-background: #ffffff;
+            --color-foreground: #052e16; 
+            
+            --color-primary: #15803d; 
+            --color-primary-foreground: #ffffff;
+            
+            --color-secondary: #f0fdf4; 
+            --color-secondary-foreground: #166534; 
+            
+            --color-destructive: #dc2626; 
+            --color-destructive-foreground: #ffffff;
+            
+            --color-muted: #f0fdf4; 
+            --color-muted-foreground: #166534; 
+            
+            --color-accent: #dcfce7; 
+            --color-accent-foreground: #14532d; 
+            
+            --color-popover: #ffffff;
+            --color-popover-foreground: #052e16;
+            
+            --color-card: #ffffff;
+            --color-card-foreground: #052e16;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root { color-scheme: dark; }
+        }
+        
+        .dark {
+            --color-background: #020617; 
+            --color-foreground: #f0fdf4;
+            --color-card: #052e16; 
+            --color-card-foreground: #f0fdf4;
+            --color-popover: #052e16;
+            --color-popover-foreground: #f0fdf4;
+            --color-primary: #4ade80; 
+            --color-primary-foreground: #020617;
+            --color-secondary: #14532d; 
+            --color-secondary-foreground: #f0fdf4;
+            --color-muted: #064e3b; 
+            --color-muted-foreground: #86efac; 
+            --color-accent: #14532d;
+            --color-accent-foreground: #f0fdf4;
+            --color-destructive: #ef4444;
+            --color-destructive-foreground: #ffffff;
+            --color-border: #14532d;
+            --color-input: #14532d;
+            --color-ring: #4ade80;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Toast Animation */
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease-out forwards; }
+
+        /* Mobile Tap Highlights */
+        * { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-background text-foreground min-h-screen flex flex-col font-sans transition-colors duration-300 relative overflow-x-hidden selection:bg-primary/30">
+
+    <!-- Announcement Bar -->
+    <div class="bg-primary text-primary-foreground text-center text-[10px] sm:text-xs py-2 px-4 font-medium sticky top-0 z-[60] shadow-sm">
+        🎉 ২০২৬ সেশনের ভর্তি চলছে! আজই এনরোল করে নিশ্চিত করুন আপনার সিট।
+    </div>
+
+    <!-- Header -->
+    <header id="main-header" class="w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sticky top-[32px] z-50 transition-all duration-200">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer" onclick="navigate(event, 'home')">
+                <div class="bg-primary/10 rounded-lg p-1.5">
+                    <svg class="h-6 w-6 sm:h-8 sm:w-8 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="font-bold text-lg sm:text-2xl text-primary tracking-tight">Examify</span>
+            </div>
+            
+            <nav class="hidden items-center gap-1 text-sm font-medium md:flex text-foreground/80">
+                <a href="#" onclick="navigate(event, 'home')" class="hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md transition-all">হোম</a>
+                <a href="#courses" onclick="navigate(event, 'home', 'courses')" class="hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md transition-all">কোর্সসমূহ</a>
+                <a href="#question-bank" onclick="navigate(event, 'home', 'question-bank')" class="hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md transition-all">প্রশ্নব্যাংক</a>
+                <a href="#free-exams" onclick="navigate(event, 'home', 'free-exams')" class="hover:text-primary hover:bg-primary/5 px-3 py-2 rounded-md transition-all">ফ্রি এক্সাম</a>
+                <!-- Dynamic Auth Links -->
+                <span id="nav-auth-desktop" class="flex gap-2 ml-2"></span>
+            </nav>
+            
+            <div class="flex items-center gap-2">
+                <!-- Mobile Header Auth (Usually empty or minimal) -->
+                <span id="nav-auth-mobile" class="hidden sm:block"></span>
+
+                <button id="theme-toggle" class="items-center justify-center border-none bg-transparent hover:bg-muted text-foreground/70 hover:text-primary h-9 w-9 rounded-full transition-all hidden sm:flex" aria-label="Toggle theme">
+                </button>
+                
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:text-primary hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-border bg-background absolute w-full left-0 shadow-lg animate-in slide-in-from-top-5 duration-200">
+            <div class="px-4 py-4 space-y-3">
+                <nav class="flex flex-col gap-2 text-base font-medium text-foreground/80">
+                    <a href="#" onclick="navigate(event, 'home')" class="block px-3 py-2 rounded-md hover:bg-primary/10 hover:text-primary transition-colors">হোম</a>
+                    <a href="#courses" onclick="navigate(event, 'home', 'courses')" class="block px-3 py-2 rounded-md hover:bg-primary/10 hover:text-primary transition-colors">কোর্সসমূহ</a>
+                    <a href="#question-bank" onclick="navigate(event, 'home', 'question-bank')" class="block px-3 py-2 rounded-md hover:bg-primary/10 hover:text-primary transition-colors">প্রশ্নব্যাংক</a>
+                    <a href="#free-exams" onclick="navigate(event, 'home', 'free-exams')" class="block px-3 py-2 rounded-md hover:bg-primary/10 hover:text-primary transition-colors">ফ্রি এক্সাম</a>
+                </nav>
+                <div class="pt-4 border-t border-border flex flex-col gap-3">
+                    <!-- Mobile Auth Dropdown Content -->
+                    <div id="nav-auth-dropdown" class="flex flex-col gap-2 w-full"></div>
+                    
+                    <button onclick="toggleTheme()" class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-muted rounded-md transition-colors">
+                        <span>থিম পরিবর্তন করুন</span>
+                        <span id="mobile-theme-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div id="app-root" class="flex-1 flex flex-col w-full overflow-x-hidden">
+        <!-- Views will be injected here -->
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-20 sm:bottom-10 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 z-[100] flex flex-col gap-2 pointer-events-none items-center sm:items-end w-full max-w-sm px-4 sm:px-0"></div>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/8801999681290" target="_blank" class="fixed bottom-6 right-4 sm:right-8 z-40 h-14 w-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer text-white active:scale-95 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+        <span class="absolute right-16 bg-black/80 text-white text-xs py-1 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">WhatsApp Support</span>
+    </a>
+
+    <!-- Footer -->
+    <footer id="main-footer" class="bg-foreground text-background dark:bg-card dark:text-foreground border-t border-border mt-auto transition-colors duration-300">
+        <div class="mx-auto max-w-7xl px-6 py-12 md:py-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-center md:text-left">
+                <div class="space-y-4 flex flex-col items-center md:items-start">
+                    <div class="flex items-center gap-2 bg-background w-fit px-3 py-2 rounded-md shadow-sm">
+                        <span class="font-bold text-primary px-2 text-lg">Examify</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground/80 leading-relaxed max-w-xs md:max-w-none">উন্নত শিক্ষা, লাইভ ক্লাস এবং তাৎক্ষণিক এক্সাম রেজাল্ট নিয়ে শিক্ষার্থীদের পাশে আমরা। টোকেন সিস্টেমের মাধ্যমে সহজে এনরোল করুন।</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-background dark:text-foreground mb-4">প্রয়োজনীয় লিংক</h4>
+                    <ul class="space-y-3 text-sm text-muted-foreground/80">
+                        <li><a href="#" onclick="navigate(event, 'home')" class="hover:text-primary transition-colors cursor-pointer block p-1">হোম</a></li>
+                        <li><a href="#courses" onclick="navigate(event, 'home', 'courses')" class="hover:text-primary transition-colors cursor-pointer block p-1">সকল কোর্স</a></li>
+                        <li><a href="#question-bank" onclick="navigate(event, 'home', 'question-bank')" class="hover:text-primary transition-colors cursor-pointer block p-1">প্রশ্নব্যাংক</a></li>
+                        <li><a href="#free-exams" onclick="navigate(event, 'home', 'free-exams')" class="hover:text-primary transition-colors cursor-pointer block p-1">ফ্রি এক্সাম</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-background dark:text-foreground mb-4">যোগাযোগ</h4>
+                    <ul class="space-y-4 text-sm text-muted-foreground/80 flex flex-col items-center md:items-start">
+                        <li class="flex items-center md:items-start gap-3">
+                            <span>সিলেট, বাংলাদেশ</span>
+                        </li>
+                        <li class="flex items-center md:items-start gap-3">
+                            <a href="tel:+8801999681290" class="hover:text-primary transition-colors py-1 px-3 border border-border/30 rounded-full bg-background/5 inline-block">+8801999681290</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-10 pt-6 border-t border-border/30 text-center text-xs text-muted-foreground/50">
+                <p>© 2026 Examify. সর্বস্বত্ব সংরক্ষিত।</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA & STATE ---
+        const state = {
+            view: 'home',
+            theme: localStorage.getItem('theme') || 'light',
+            isMenuOpen: false,
+            slideIndex: 0,
+            currentUser: null, 
+            selectedCourse: null,
+            selectedQbItem: null, 
+            loginPhone: '',
+            
+            // Exam State
+            activeExam: null,
+            examAnswers: {}, 
+            examResult: null,
+
+            // Question Bank State
+            activeQbTab: 'model-test'
+        };
+
+        // Icons (kept same as before)
+        const icons = {
+            moon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon h-5 w-5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>',
+            sun: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun h-5 w-5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>',
+            check: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check h-3 w-3 text-primary"><path d="M20 6 9 17l-5-5"></path></svg>',
+            star: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-3 w-3 fill-yellow-400 text-yellow-400"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>',
+            filter: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-filter h-4 w-4"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>',
+            arrowLeft: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left h-4 w-4"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>',
+            arrowRight: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>',
+            tag: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg>',
+            copy: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>',
+            alert: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>',
+            circleCheck: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>',
+            play: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
+            clock: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            fileText: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
+            key: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>',
+            users: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+            search: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="h-4 w-4"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path></svg>',
+            live: '<svg stroke="currentColor" fill="none" stroke-width="0" viewBox="0 0 24 24" class="mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12ZM13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 17C14.7614 17 17 14.7614 17 12C17 9.23858 14.7614 7 12 7C9.23858 7 7 9.23858 7 12C7 14.7614 9.23858 17 12 17Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="currentColor"></path></svg>',
+            trophy: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy text-yellow-500"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+            close: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+            flag: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"></path></svg>',
+            bookmark: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>',
+            lock: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 flex-shrink-0"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd"></path></svg>',
+            chevronDown: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down ml-auto transition-transform"><path d="m6 9 6 6 6-6"></path></svg>'
+        };
+
+        const features = [
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor h-5 w-5"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>', title: 'অনলাইন প্রোগ্রাম', desc: 'ঘরে বসেই সেরা প্রস্তুতি।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users h-5 w-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>', title: 'অভিজ্ঞ শিক্ষকবৃন্দ', desc: 'সেরা মেন্টরদের সান্নিধ্যে।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open h-5 w-5"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 0 0 0-3-3z"></path></svg>', title: 'স্টাডি ম্যাটেরিয়ালস', desc: 'মানসম্মত নোট এবং রিসোর্স।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb h-5 w-5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>', title: 'কনসেপ্ট ভিত্তিক ক্লাস', desc: 'বেসিক হোক শক্তিশালী।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text h-5 w-5"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>', title: 'ইউনিক এক্সাম সিস্টেম', desc: 'নিজেকে যাচাইয়ের সেরা মাধ্যম।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle h-5 w-5"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>', title: 'Q&A সাপোর্ট', desc: 'তাৎক্ষণিক সমস্যার সমাধান।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone h-5 w-5"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>', title: 'সঠিক গাইডলাইন', desc: 'সাফল্যের পথে এগিয়ে চলুন।' },
+            { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-column-increasing h-5 w-5"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>', title: 'এক্সাম লিডারবোর্ড', desc: 'অন্যদের সাথে নিজের অবস্থান যাচাই।' }
+        ];
+
+        // Simulated Database
+        const db = {
+            courses: [
+                { id: 'C-001', title: '2nd Timer Full Course', category: 'Admission', price: 4500, oldPrice: 5500, students: 450, status: 'Published', batch: 'HSC 25', description: 'মেডিকেল ভর্তি পরীক্ষার পূর্ণাঙ্গ প্রস্তুতি। সেকেন্ড টাইমারদের জন্য বিশেষায়িত কেয়ার এবং এক্সাম সিস্টেম।' },
+                { id: 'C-002', title: 'HSC 26 - Biology Cycle 1', category: 'HSC Academic', price: 1500, oldPrice: 2000, students: 120, status: 'Published', batch: 'HSC 26', description: 'এইচএসসি ২৬ ব্যাচের জন্য বায়োলজি সাইকেল ১। মানব শরীরতত্ত্ব এবং কোষ ও কোষের গঠন।' },
+                { id: 'C-003', title: 'Medical Admission Exam Batch', category: 'Admission', price: 2000, oldPrice: 3000, students: 800, status: 'Published', batch: 'HSC 25', description: 'শুধুমাত্র এক্সাম ব্যাচ। ডেইলি এক্সাম, উইকলি টেস্ট এবং সলভ ক্লাস।' },
+            ],
+            freeExams: [
+                { id: 'FE-001', title: 'Biology Weekly Model Test', subject: 'Biology', time: '20 min', questions: 3, students: 1200 },
+                { id: 'FE-002', title: 'Chemistry Chapter 3 Quiz', subject: 'Chemistry', time: '15 min', questions: 3, students: 850 },
+                { id: 'FE-003', title: 'Medical GK & English Test', subject: 'GK & English', time: '10 min', questions: 3, students: 2000 },
+            ],
+            questionBanks: [
+                { id: 'QB-CQ-001', title: 'HSC ICT Test Paper (CQ)', category: 'model-test', isLive: true, type: 'cq', image: 'https://placehold.co/400x400?text=ICT+CQ' }, // ADDED CQ ITEM
+                { id: 'QB-001', title: 'Admission Model Test-2025(Science)', category: 'model-test', isLive: true, image: 'https://placehold.co/400x400?text=Model+Test' },
+                { id: 'QB-002', title: 'Varsity "Ka" 2nd Timer Model Test-2025', category: 'model-test', isLive: true, image: 'https://placehold.co/400x400?text=Varsity+A' },
+                { id: 'QB-003', title: 'Varsity "Kha" 2nd Timer Model Test-2025', category: 'model-test', isLive: true, image: 'https://placehold.co/400x400?text=Varsity+B' },
+                { id: 'QB-004', title: 'Engineering weekly 2025', category: 'model-test', isLive: true, image: 'https://placehold.co/400x400?text=Engineering' },
+                { id: 'QB-005', title: 'Medical weekly - 2025', category: 'model-test', isLive: true, image: 'https://placehold.co/400x400?text=Medical' },
+            ],
+            qbQuestions: [
+                { id: 2, q: 'তৃতীয় টেবিল তৈরির প্রয়োজন পড়ে কোনটিতে?', tag: 'CCC 20', options: ['One to many', 'Many to one', 'One to one', 'Many to many'], ans: 3, locked: true },
+                { id: 3, q: 'টেবিলদ্বয়ের মধ্যে কিরূপ সম্পর্ক বিদ্যমান?', img: 'https://placehold.co/600x200?text=Table+Image', tag: 'PCC 20', options: ['One to one', 'One to many', 'Many to one', 'Many to many'], ans: 0, locked: true },
+                { id: 4, q: 'কোন অনুবাদক একবারে কোড চেক করে?', tag: 'BCC 23', options: ['ইন্টারপ্রেটার', 'কম্পাইলার', 'অ্যাসেম্বলার', 'ইন্টারপ্রিটর'], ans: 1, locked: true },
+                { id: 5, q: 'কোন কী এর সাহায্যে নির্দিষ্ট রেকর্ড/তথ্য খোঁজা হয়?', tag: 'JGCC 20', options: ['ফরেন কী', 'মৌলিক কী', 'প্রাইমারি কী', 'কম্পোজিট কী'], ans: 2, locked: true },
+                { id: 6, q: 'শিক্ষক স্বল্পতার কারণে বাংলা শিক্ষক মোস্তাক সাহেবকে ইংরেজি, বাংলা ও গণিত ক্লাস নিতে হয়। উল্লিখিত পরিস্থিতি ডেটাবেজের কোন ধরনের রিলেশনকে ইঙ্গিত করে?', tag: 'MAD.B 17', options: ['ওয়ান টু ওয়ান', 'মেনি টু ওয়ান', 'ওয়ান টু মেনি', 'মেনি টু মেনি'], ans: 2, locked: true },
+                { id: 7, q: 'টেবিল দুটির মধ্যে রিলেশন কোন ধরনের?', tag: 'BB 17', options: ['One to one', 'One to many', 'Many to one', 'Many to many'], ans: 0, locked: true },
+                { id: 8, q: 'A ও B টেবিল এর মধ্যে রিলেশন স্থাপনের জন্য প্রয়োজন হবে- <br>(i) A টেবিলে একটি প্রাইমারি কী <br>(ii) B টেবিলে একটি ফরেন কী <br>(iii) A ও B টেবিল এর জাংশন টেবিল <br>নিচের কোনটি সঠিক?', tag: 'RB 19', options: ['i, ii', 'i, iii', 'ii, iii', 'i, ii, iii'], ans: 0, locked: true },
+                { id: 9, q: '‘অ্যাসোসিয়েশন ভোট টেবিল’ কোন রিলেশনে গঠিত হয়?', tag: 'CTG.B 19', options: ['One to one', 'One to many', 'Many to One', 'Many to Many'], ans: 3, locked: true },
+                { id: 10, q: '>= কোন ধরনের অপারেটর?', tag: 'NDCM 23', options: ['কন্ডিশনাল', 'গাণিতিক', 'লজিক্যাল', 'রিলেশনাল'], ans: 3, locked: true }
+            ],
+            // Added CQ Questions Data
+            cqQuestions: {
+                'QB-CQ-001': [
+                    {
+                        id: 2,
+                        stem: 'ডাঃ ফারিহা শহরের কর্মস্থলে অবস্থান করেও প্রত্যন্ত অঞ্চলের নাগরিকদের চিকিৎসা সেবা দিয়ে থাকেন। তিনি কৃত্রিম পরিবেশে অপারেশনের প্রশিক্ষণ গ্রহণ করেছেন।',
+                        tag: 'CTG.B 16',
+                        questions: [
+                            { label: 'ক', text: 'হ্যাকিং কী?', answer: 'কম্পিউটার বা নেটওয়ার্কে অবৈধ প্রবেশ।' },
+                            { label: 'খ', text: '“যন্ত্র স্বয়ংক্রিয়ভাবে কাজ করে”- ব্যাখ্যা কর ।', answer: 'রোবোটিক্স ও এআই ব্যবহারের মাধ্যমে যন্ত্র মানুষের সাহায্য ছাড়াই কাজ করে।' },
+                            { label: 'গ', text: 'ডাঃ ফারিহা কীভাবে চিকিৎসা সেবা দিয়ে থাকেন? ব্যাখ্যা কর।', answer: 'তিনি টেলিমেডিসিন প্রযুক্তি ব্যবহার করে দূরবর্তী স্থানে সেবা দিচ্ছেন।' },
+                            { label: 'ঘ', text: 'ডাঃ ফারিহার প্রশিক্ষণে ব্যবহৃত প্রযুক্তিটি প্রাত্যহিক জীবনে কী প্রভাব রাখছে? আলোচনা কর ।', answer: 'তিনি ভার্চুয়াল রিয়েলিটি (VR) প্রযুক্তি ব্যবহার করেছেন যা প্রশিক্ষণকে নিরাপদ ও সহজ করেছে।' }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        stem: 'উদ্দীপকটি মনোযোগ সহকারে পড়ো এবং প্রশ্নগুলোর উত্তর দাও: <br> আহমেদ চৌধুরী পরীক্ষা সংক্রান্ত প্রজেক্ট পেপার তৈরির জন্য ইন্টারনেটের সাহায্য নেন। তিনি নিয়ম মেনে প্রতিটি তথ্যের উৎস উল্লেখ করেন। কিন্তু আজিম ইন্টারনেট থেকে বিভিন্ন ফাইলের সফট কপি সংগ্রহ করে উৎস উল্লেখ না করে নিজের নামে ঐ ফাইলগুলো প্রকাশ করেন।',
+                        tag: 'BCC 24',
+                        questions: [
+                            { label: 'ক', text: 'বায়োইনফরমেটিক্স কী?', answer: 'জীববিজ্ঞান ও কম্পিউটার বিজ্ঞানের সমন্বয়ে গঠিত একটি ক্ষেত্র।' },
+                            { label: 'খ', text: '"বাস্তব জগতে কল্পনাকে স্পর্শ করা সম্ভব"-ব্যাখ্যা করো।', answer: 'ভার্চুয়াল রিয়েলিটির মাধ্যমে এটি সম্ভব।' },
+                            { label: 'গ', text: 'উদ্দীপকে উল্লিখিত প্রযুক্তিটি ব্যাখ্যা করো।', answer: 'এখানে প্লেজিয়ারিজম (Plagiarism) বা কুম্ভীলকবৃত্তির কথা বলা হয়েছে।' },
+                            { label: 'ঘ', text: 'তথ্য প্রযুক্তির নৈতিকতার ভিত্তিতে আহমেদ চৌধুরী ও আজিমের আচরণ মূল্যায়ন করো।', answer: 'আহমেদ চৌধুরী নৈতিকতা মেনেছেন, কিন্তু আজিম কপিরাইট আইন ভঙ্গ করেছেন।' }
+                        ]
+                    }
+                ]
+            },
+            examQuestions: {
+                'FE-001': [
+                    { id: 1, q: 'মানবদেহে ক্রোমোজোম সংখ্যা কত?', options: ['২৩ জোড়া', '২২ জোড়া', '৪৪ টি', '৪৬ জোড়া'], ans: 0, explain: 'মানবদেহে ২৩ জোড়া বা ৪৬টি ক্রোমোজোম থাকে। এর মধ্যে ২২ জোড়া অটোজোম এবং ১ জোড়া সেক্স ক্রোমোজোম।' },
+                    { id: 2, q: 'মাইটোকন্ড্রিয়ার কাজ কী?', options: ['শক্তি উৎপাদন', 'প্রোটিন সংশ্লেষ', 'সালোকসংশ্লেষণ', 'লিপিড তৈরি'], ans: 0, explain: 'মাইটোকন্ড্রিয়া কোষের যাবতীয় জৈবিক কাজের জন্য শক্তি উৎপাদন করে, তাই একে কোষের শক্তিঘর বা Power House বলা হয়।' },
+                    { id: 3, q: 'রক্তের গ্রুপ কয়টি?', options: ['২টি', '৩টি', '৪টি', '৫টি'], ans: 2, explain: 'ABO পদ্ধতি অনুযায়ী মানুষের রক্তের গ্রুপ ৪টি: A, B, AB এবং O।' }
+                ],
+                'FE-002': [
+                    { id: 1, q: 'পানির রাসায়নিক সংকেত কী?', options: ['H2O', 'CO2', 'O2', 'NaCl'], ans: 0, explain: 'পানির রাসায়নিক সংকেত H2O, অর্থাৎ দুই পরমাণু হাইড্রোজেন ও এক পরমাণু অক্সিজেনের সমন্বয়ে পানি গঠিত।' },
+                    { id: 2, q: 'নিচের কোনটি ক্ষারীয় ধাতু?', options: ['Na', 'Fe', 'Al', 'Au'], ans: 0, explain: 'সোডিয়াম (Na) একটি ক্ষারীয় ধাতু যা পর্যায় সারণির গ্রুপ ১-এ অবস্থিত।' },
+                    { id: 3, q: 'PH এর মান ৭ হলে সেটি কী?', options: ['অম্লীয়', 'ক্ষারীয়', 'নিরপেক্ষ', 'কোনোটিই না'], ans: 2, explain: 'PH স্কেলে ৭ হলো নিরপেক্ষ মান। ৭ এর নিচে অম্লীয় এবং ৭ এর উপরে ক্ষারীয়।' }
+                ],
+                'FE-003': [
+                    { id: 1, q: 'What is the synonym of "Happy"?', options: ['Sad', 'Joyful', 'Angry', 'Boring'], ans: 1, explain: '"Joyful" means feeling, expressing, or causing great pleasure and happiness.' },
+                    { id: 2, q: 'বাংলাদেশের জাতীয় খেলা কোনটি?', options: ['ক্রিকেট', 'ফুটবল', 'কাবাডি', 'হকি'], ans: 2, explain: 'হাডুডু বা কাবাডি বাংলাদেশের জাতীয় খেলা।' },
+                    { id: 3, q: 'Which one is a noun?', options: ['Run', 'Beautiful', 'Dhaka', 'Quickly'], ans: 2, explain: '"Dhaka" is the name of a place, so it is a Proper Noun.' }
+                ]
+            },
+            categories: [
+                { id: 1, name: 'HSC Academic', slug: 'hsc-academic', count: 12 },
+                { id: 2, name: 'Admission', slug: 'admission', count: 5 },
+                { id: 3, name: 'Model Test', slug: 'model-test', count: 8 },
+            ],
+            orders: [
+                { id: 'ORD-101', student: 'Tanvir Hasan', phone: '01700000000', courseId: 'C-001', courseName: '2nd Timer Full Course', amount: 4500, status: 'Approved', token: 'EXM-DEMO', date: '14 Jan, 2026' }
+            ],
+            enrollments: {}
+        };
+
+        // --- APP INITIALIZATION ---
+        const appRoot = document.getElementById('app-root');
+        const mainHeader = document.getElementById('main-header');
+        const mainFooter = document.getElementById('main-footer');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const menuToggleBtn = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function init() {
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                state.currentUser = JSON.parse(storedUser);
+                state.currentUser.enrolledCourses = db.enrollments[state.currentUser.phone] || [];
+                state.currentUser.orders = db.orders.filter(o => o.phone === state.currentUser.phone);
+            }
+
+            applyTheme();
+            updateAuthUI();
+            renderView();
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            menuToggleBtn.addEventListener('click', toggleMenu);
+        }
+
+        // --- HELPER FUNCTIONS ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-primary' : (type === 'error' ? 'bg-destructive' : 'bg-primary/80');
+            toast.className = `${bgColor} text-primary-foreground px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 pointer-events-auto min-w-[300px] max-w-[90vw] toast-enter justify-center sm:justify-start`;
+            toast.innerHTML = `${type === 'success' ? icons.circleCheck.replace('text-primary', 'text-white') : icons.alert}<span class="text-sm font-medium text-center sm:text-left">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => { showToast(`Number copied: ${text}`); });
+        }
+        
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.classList.toggle('hidden');
+                // Rotate chevron logic could be added here if we had a reference to the button
+                const btn = element.previousElementSibling.querySelector('svg.lucide-chevron-down');
+                if(btn) btn.classList.toggle('rotate-180');
+            }
+        }
+
+        // --- AUTH FUNCTIONS ---
+        function loginWithPassword(e) {
+            e.preventDefault();
+            const phone = document.getElementById('login-phone').value;
+            const password = document.getElementById('login-password').value;
+            if (phone.length < 11) { showToast('সঠিক ফোন নাম্বার দিন!', 'error'); return; }
+            if (password.length < 4) { showToast('পাসওয়ার্ড খুব ছোট!', 'error'); return; }
+            let enrolled = db.enrollments[phone] || [];
+            let userOrders = db.orders.filter(o => o.phone === phone);
+            state.currentUser = { name: 'Student', phone: phone, enrolledCourses: enrolled, orders: userOrders };
+            localStorage.setItem('currentUser', JSON.stringify(state.currentUser));
+            updateAuthUI();
+            navigate(null, 'dashboard');
+            showToast('লগইন সফল হয়েছে!');
+        }
+
+        function logoutUser() {
+            state.currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateAuthUI();
+            navigate(null, 'home');
+            showToast('লগআউট করা হয়েছে', 'info');
+        }
+
+        function updateAuthUI() {
+            const desktopAuth = document.getElementById('nav-auth-desktop');
+            const mobileAuth = document.getElementById('nav-auth-mobile');
+            // const mobileDropdown = document.getElementById('nav-auth-dropdown'); // Removed
+
+            if (state.currentUser) {
+                desktopAuth.innerHTML = `<a href="#" onclick="navigate(event, 'dashboard')" class="hover:text-primary transition-colors cursor-pointer font-bold">ড্যাশবোর্ড</a> <button onclick="logoutUser()" class="text-destructive hover:text-red-700 text-xs font-bold ml-2">লগআউট</button>`;
+                // Use mobileAuth for the mobile menu content
+                mobileAuth.innerHTML = `<a href="#" onclick="navigate(event, 'dashboard')" class="hover:text-primary transition-colors cursor-pointer block p-2 rounded hover:bg-muted text-center border border-border/50 bg-card mb-2">ড্যাশবোর্ড</a><button onclick="logoutUser()" class="w-full text-destructive transition-colors cursor-pointer block p-2 rounded hover:bg-destructive/10 border border-destructive/20 text-center">লগআউট</button>`;
+                // mobileDropdown.innerHTML = ... // Removed
+            } else {
+                desktopAuth.innerHTML = `<a href="#" onclick="navigate(event, 'free-exam')" class="hover:text-primary transition-colors cursor-pointer">ফ্রি এক্সাম</a><a href="#" onclick="navigate(event, 'login')" class="hover:text-primary transition-colors cursor-pointer">লগইন</a>`;
+                // Use mobileAuth for mobile menu login button
+                mobileAuth.innerHTML = `<a href="#" onclick="navigate(event, 'login')" class="flex items-center justify-center w-full gap-2 whitespace-nowrap border-[3px] border-transparent text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-[25px] h-10 px-4">লগইন</a>`;
+                // mobileDropdown.innerHTML = ... // Removed
+            }
+        }
+
+        // --- ORDER & ENROLLMENT FUNCTIONS ---
+        function submitOrder(e, courseId) {
+            e.preventDefault();
+            if (!state.currentUser) { showToast('অর্ডার করার আগে লগইন করুন।', 'error'); navigate(null, 'login'); return; }
+            const course = db.courses.find(c => c.id === courseId);
+            const newOrder = {
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000), 
+                student: state.currentUser.name, phone: state.currentUser.phone,
+                courseId: course.id, courseName: course.title, amount: course.price, 
+                status: 'Pending', token: null, date: new Date().toLocaleDateString()
+            };
+            db.orders.unshift(newOrder);
+            state.currentUser.orders = db.orders.filter(o => o.phone === state.currentUser.phone);
+            localStorage.setItem('currentUser', JSON.stringify(state.currentUser));
+            showToast('অর্ডার জমা হয়েছে! ভেরিফিকেশনের জন্য অপেক্ষা করুন।', 'info');
+            navigate(null, 'dashboard');
+        }
+
+        function approveOrder(orderId) {
+            const order = db.orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'Approved';
+                order.token = 'EXM-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                state.currentUser.orders = db.orders.filter(o => o.phone === state.currentUser.phone);
+                localStorage.setItem('currentUser', JSON.stringify(state.currentUser));
+                renderView();
+                showToast(`অর্ডার অনুমোদিত! টোকেন: ${order.token}`);
+            }
+        }
+
+        function autoRedeem(token) {
+            const validOrder = db.orders.find(o => o.token === token && o.status === 'Approved');
+            
+            if (validOrder) {
+                if (state.currentUser.enrolledCourses.find(c => c.id === validOrder.courseId)) { 
+                    showToast('আপনি ইতিমধ্যে এনরোল করেছেন!', 'error'); 
+                    return; 
+                }
+                
+                const course = db.courses.find(c => c.id === validOrder.courseId);
+                state.currentUser.enrolledCourses.push(course);
+                
+                if (!db.enrollments[state.currentUser.phone]) db.enrollments[state.currentUser.phone] = [];
+                db.enrollments[state.currentUser.phone].push(course);
+                
+                localStorage.setItem('currentUser', JSON.stringify(state.currentUser)); // Save
+                
+                showToast('সফলভাবে এনরোল করা হয়েছে!', 'success');
+                renderView();
+            } else {
+                showToast('ত্রুটি! টোকেন খুঁজে পাওয়া যায়নি।', 'error');
+            }
+        }
+
+        function redeemToken(e) {
+            e.preventDefault();
+            const tokenInput = document.getElementById('token-input').value.trim();
+            const validOrder = db.orders.find(o => o.token === tokenInput && o.status === 'Approved');
+            if (validOrder) {
+                if (state.currentUser.enrolledCourses.find(c => c.id === validOrder.courseId)) { showToast('আপনি ইতিমধ্যে এনরোল করেছেন!', 'error'); return; }
+                const course = db.courses.find(c => c.id === validOrder.courseId);
+                state.currentUser.enrolledCourses.push(course);
+                if (!db.enrollments[state.currentUser.phone]) db.enrollments[state.currentUser.phone] = [];
+                db.enrollments[state.currentUser.phone].push(course);
+                localStorage.setItem('currentUser', JSON.stringify(state.currentUser));
+                showToast('সফলভাবে এনরোল করা হয়েছে!');
+                document.getElementById('token-input').value = '';
+                renderView();
+            } else {
+                showToast('ভুল টোকেন বা টোকেনটি একটিভ নয়!', 'error');
+            }
+        }
+
+        // --- EXAM FUNCTIONS ---
+        function startExam(examId) {
+            const questions = db.examQuestions[examId];
+            const examInfo = db.freeExams.find(e => e.id === examId);
+            if (!questions) { showToast('প্রশ্নপত্র পাওয়া যায়নি!', 'error'); return; }
+            state.activeExam = { ...examInfo, questions: questions };
+            state.examAnswers = {};
+            state.examResult = null;
+            navigate(null, 'exam-paper');
+        }
+
+        function selectAnswer(questionId, optionIndex) {
+            state.examAnswers[questionId] = optionIndex;
+            renderView(); 
+        }
+
+        function submitExam() {
+            if (!confirm('আপনি কি নিশ্চিত যে সাবমিট করতে চান?')) return;
+            
+            let score = 0;
+            let correct = 0;
+            let wrong = 0;
+            
+            state.activeExam.questions.forEach(q => {
+                const selected = state.examAnswers[q.id];
+                if (selected !== undefined) {
+                    if (selected === q.ans) {
+                        score++;
+                        correct++;
+                    } else {
+                        score -= 0.25; // Negative marking
+                        wrong++;
+                    }
+                }
+            });
+
+            state.examResult = { score, correct, wrong, total: state.activeExam.questions.length };
+            navigate(null, 'exam-result');
+            showToast('এক্সাম সম্পন্ন হয়েছে!');
+        }
+
+        // --- VIEW NAVIGATION ---
+        function navigate(e, viewName, sectionId = null, itemId = null) {
+            if(e) e.preventDefault();
+            if (viewName === 'login') state.loginStep = 'phone';
+            
+            // Handle QB Item Navigation
+            if (viewName === 'qb-details' && itemId) {
+                state.selectedQbItem = db.questionBanks.find(q => q.id === itemId);
+            }
+
+            state.view = viewName;
+            state.isMenuOpen = false; mobileMenu.classList.add('hidden');
+            renderView(); window.scrollTo(0, 0);
+            if (sectionId) setTimeout(() => document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' }), 100);
+        }
+        
+        function toggleTheme() { state.theme = state.theme === 'light' ? 'dark' : 'light'; localStorage.setItem('theme', state.theme); applyTheme(); }
+        function applyTheme() { if (state.theme === 'dark') document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); themeToggleBtn.innerHTML = state.theme === 'light' ? icons.moon : icons.sun; }
+        function toggleMenu() { state.isMenuOpen = !state.isMenuOpen; mobileMenu.classList.toggle('hidden', !state.isMenuOpen); }
+        function nextSlide() { state.slideIndex = (state.slideIndex + 1) % 5; updateSlideTransform(); }
+        function prevSlide() { state.slideIndex = (state.slideIndex - 1 + 5) % 5; updateSlideTransform(); }
+        function setSlide(i) { state.slideIndex = i; updateSlideTransform(); }
+        function updateSlideTransform() { 
+            const slider = document.getElementById('review-slider'); 
+            if(slider) slider.style.transform = `translate3d(-${state.slideIndex * 100}%, 0px, 0px)`; 
+            const indicators = document.getElementById('slider-indicators');
+            if(indicators) Array.from(indicators.children).forEach((btn, i) => btn.className = i === state.slideIndex ? "h-2 rounded-full transition-all duration-300 bg-primary w-6" : "h-2 w-2 rounded-full transition-all duration-300 bg-primary/20 hover:bg-primary/40");
+        }
+
+        // --- RENDER LOGIC ---
+        function renderView() {
+            const views = {
+                'home': getHomeHtml, 'details': getDetailsHtml, 'checkout': getCheckoutHtml,
+                'dashboard': getDashboardHtml, 'login': getLoginHtml, 'classroom': getClassroomHtml,
+                'exam-paper': getExamPaperHtml, 'exam-result': getExamResultHtml,
+                'leaderboard': getLeaderboardHtml, 'qb-details': getQuestionBankDetailsHtml
+            };
+            const renderFn = views[state.view] || getHomeHtml;
+            appRoot.innerHTML = renderFn();
+            if (state.view === 'home') updateSlideTransform();
+        }
+
+        // --- UI GENERATORS ---
+
+        function getHomeHtml() {
+            const tabs = [
+                { id: 'model-test', label: 'মডেল টেস্ট' },
+                { id: 'subject-wise', label: 'বিষয় ভিত্তিক' },
+                { id: 'institution', label: 'প্রতিষ্ঠান ভিত্তিক' }
+            ];
+            
+            const filteredQbItems = db.questionBanks.filter(item => item.category === state.activeQbTab);
+            const isModelTestTab = state.activeQbTab === 'model-test';
+
+            return `
+            <section class="w-full bg-secondary/30 py-10 md:py-24 lg:py-32 px-4 border-b border-border relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-10">
+                    <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-primary blur-[100px]"></div>
+                    <div class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] rounded-full bg-primary blur-[100px]"></div>
+                </div>
+                <div class="mx-auto max-w-5xl text-center space-y-8">
+                    <div class="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs sm:text-sm font-medium text-primary mb-4 animate-in fade-in zoom-in duration-500">
+                        <span class="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
+                        মেডিকেল ভর্তি প্রস্তুতি ২০২৬
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground leading-tight">
+                        স্বপ্ন যখন <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary-foreground">ডাক্তার</span> হওয়ার
+                    </h1>
+                    <p class="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
+                        Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে টোকেন সংগ্রহ করুন এবং নিজের সুবিধামতো এনরোল করুন।
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 px-4 w-full sm:w-auto">
+                        <a href="#courses" onclick="navigate(event, 'home', 'courses')" class="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full bg-primary px-8 text-base font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:scale-105 active:scale-95">কোর্সসমূহ দেখুন</a>
+                        <a href="#free-exams" onclick="navigate(event, 'home', 'free-exams')" class="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border border-input bg-background px-8 text-base font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground active:scale-95">ফ্রি এক্সাম দিন</a>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-12 pt-8 border-t border-border/50 max-w-4xl mx-auto px-4">
+                        <div class="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-card/50 hover:border-primary/10 transition-all border border-transparent"><span class="text-2xl sm:text-3xl font-bold text-primary">৫,০০০+</span><span class="text-xs sm:text-sm text-muted-foreground mt-1">শিক্ষার্থী</span></div>
+                        <div class="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-card/50 hover:border-primary/10 transition-all border border-transparent"><span class="text-2xl sm:text-3xl font-bold text-primary">২০+</span><span class="text-xs sm:text-sm text-muted-foreground mt-1">মেন্টর</span></div>
+                        <div class="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-card/50 hover:border-primary/10 transition-all border border-transparent"><span class="text-2xl sm:text-3xl font-bold text-primary">৫০০+</span><span class="text-xs sm:text-sm text-muted-foreground mt-1">লেকচার</span></div>
+                        <div class="flex flex-col items-center p-3 sm:p-4 rounded-lg bg-card/50 hover:border-primary/10 transition-all border border-transparent"><span class="text-2xl sm:text-3xl font-bold text-primary">৯৮%</span><span class="text-xs sm:text-sm text-muted-foreground mt-1">সফলতার হার</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <main class="mx-auto flex max-w-7xl flex-col gap-12 sm:gap-16 px-4 pb-16 pt-10 sm:pt-14 flex-1 w-full">
+                <!-- Courses Section -->
+                <section id="courses" class="space-y-6 w-full">
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-end justify-between gap-4">
+                            <div><h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">চলমান কোর্সসমূহ</h2><p class="text-sm text-muted-foreground">আপনার সফলতার জন্য বিশেষভাবে ডিজাইন করা প্রিমিয়াম প্রোগ্রাম।</p></div>
+                        </div>
+                        <div class="bg-muted/10 border border-border/50 rounded-xl p-4 sm:p-6 space-y-4 w-full">
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-sm text-muted-foreground font-medium mb-1">${icons.filter}<span>কোর্স ফিল্টার করুন</span></div>
+                                <div class="w-full overflow-x-auto pb-2 sm:mx-0 sm:px-0 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0"><div class="flex flex-row gap-3 min-w-max pr-4">
+                                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-primary/20 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 py-2 rounded-full px-6 h-10 shadow-md">All Batches</button>
+                                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-primary/20 text-sm font-medium bg-background hover:bg-primary/5 hover:text-primary hover:border-primary py-2 rounded-full px-6 h-10 transition-all">HSC 25</button>
+                                    <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-primary/20 text-sm font-medium bg-background hover:bg-primary/5 hover:text-primary hover:border-primary py-2 rounded-full px-6 h-10 transition-all">HSC 26</button>
+                                </div></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${db.courses.filter(c => c.status === 'Published').map(course => `
+                            <div class="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-md hover:shadow-primary/5 transition-all flex flex-col h-full group">
+                                <div class="w-full aspect-video relative overflow-hidden bg-muted">
+                                    <div class="absolute inset-0 flex items-center justify-center text-muted-foreground/30 font-bold text-lg">
+                                      <div class="flex flex-col items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                        <span class="mt-2 text-sm">Course Preview</span>
+                                      </div>
+                                    </div>
+                                    <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
+                                        <div class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary/90 text-white shadow-sm">${course.batch}</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 p-5 flex flex-col justify-between gap-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold mb-2 leading-tight group-hover:text-primary transition-colors">${course.title}</h3>
+                                        <p class="text-muted-foreground text-xs mb-4 line-clamp-3">${course.description.replace(/<[^>]*>?/gm, '').substring(0, 100)}...</p>
+                                        <div class="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                                            <div class="flex items-center gap-1 text-primary">${icons.check} <span class="text-muted-foreground">লাইভ ক্লাস</span></div>
+                                            <div class="flex items-center gap-1 text-primary">${icons.check} <span class="text-muted-foreground">লেকচার নোট</span></div>
+                                            <div class="flex items-center gap-1 text-primary">${icons.check} <span class="text-muted-foreground">স্ট্যান্ডার্ড এক্সাম</span></div>
+                                            <div class="flex items-center gap-1 text-primary">${icons.check} <span class="text-muted-foreground">সলভ শিট</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-dashed border-border">
+                                        <div class="flex flex-col items-start">
+                                            <span class="text-[10px] text-destructive line-through font-medium">৳${course.oldPrice}</span>
+                                            <div class="text-base font-bold text-primary">৳${course.price}</div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button onclick="state.selectedCourse='${course.id}'; navigate(event, 'details')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-input font-medium bg-background hover:bg-accent hover:text-accent-foreground rounded-[25px] h-9 px-4 text-xs transition-colors active:scale-95">বিস্তারিত</button>
+                                            <button onclick="state.selectedCourse='${course.id}'; navigate(event, 'checkout')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-transparent font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-[25px] h-9 px-5 text-xs transition-colors shadow-sm active:scale-95">ভর্তি হন</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Free Exams Section (UPDATED) -->
+                <section id="free-exams" class="space-y-6 w-full">
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">ফ্রি এক্সামসমূহ</h2>
+                                <p class="text-sm text-muted-foreground">নিজেদের যাচাই করুন সম্পূর্ণ বিনামূল্যে।</p>
+                            </div>
+                            <button class="text-primary text-sm font-medium hover:underline">সব দেখুন →</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${db.freeExams.map(exam => `
+                            <div class="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-md hover:shadow-primary/5 transition-all flex flex-col h-full group">
+                                <!-- Header Image Area -->
+                                <div class="w-full aspect-video relative overflow-hidden bg-muted flex items-center justify-center text-muted-foreground/30">
+                                     <div class="flex flex-col items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+                                        <span class="mt-2 text-sm font-medium">Exam Preview</span>
+                                     </div>
+                                     <div class="absolute top-2 right-2">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-primary text-primary-foreground shadow-sm">Free</span>
+                                     </div>
+                                     <div class="absolute bottom-2 left-2">
+                                         <span class="inline-flex items-center rounded px-2 py-0.5 text-[10px] font-medium bg-foreground/80 text-background backdrop-blur-md">${exam.subject}</span>
+                                     </div>
+                                </div>
+
+                                <div class="flex-1 p-5 flex flex-col justify-between gap-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold mb-2 leading-tight group-hover:text-primary transition-colors line-clamp-2">${exam.title}</h3>
+                                        <div class="flex items-center gap-2 text-xs text-muted-foreground mb-4">
+                                             <span class="flex items-center gap-1">${icons.users} ${exam.students} students</span>
+                                             <span class="text-muted-foreground/30">•</span>
+                                             <span class="text-primary font-medium flex items-center gap-1"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span> Live Now</span>
+                                        </div>
+                                        
+                                        <!-- Features Grid -->
+                                        <div class="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground bg-muted/40 p-3 rounded-lg border border-border/50">
+                                            <div class="flex items-center gap-1.5"><span class="text-primary">${icons.clock}</span> ${exam.time}</div>
+                                            <div class="flex items-center gap-1.5"><span class="text-primary">${icons.fileText}</span> ${exam.questions} Ques.</div>
+                                            <div class="flex items-center gap-1.5"><span class="text-primary">${icons.check}</span> ${exam.questions} Marks</div>
+                                            <div class="flex items-center gap-1.5"><span class="text-destructive">-</span> 0.25 Neg.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-auto pt-4 border-t border-dashed border-border flex gap-2">
+                                         <button onclick="startExam('${exam.id}')" class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-transparent font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-[25px] h-10 px-3 text-sm transition-all shadow-sm active:scale-95 group-hover:shadow-primary/20">
+                                            ${icons.play} এখন শুরু করুন
+                                        </button>
+                                        <button onclick="navigate(event, 'leaderboard')" class="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-input font-medium bg-background text-foreground hover:bg-accent rounded-[25px] h-10 px-3 text-sm transition-all active:scale-95">
+                                            ${icons.trophy.replace('width="24"', 'width="16"').replace('height="24"', 'height="16"')} লিডারবোর্ড
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Question Bank Section -->
+                <section id="question-bank" class="space-y-6 w-full pt-4">
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">প্রশ্নব্যাংক</h2>
+                                <p class="text-sm text-muted-foreground">বিগত বছরের প্রশ্ন ও মডেল টেস্ট অনুশীলন করুন।</p>
+                            </div>
+                        </div>
+
+                        <!-- Filters & Search -->
+                        <div class="bg-muted/10 border border-border/50 rounded-xl p-4 w-full sticky top-[70px] md:top-20 z-30 backdrop-blur-sm">
+                            <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                                <div class="flex flex-wrap gap-2">
+                                    ${tabs.map(tab => `
+                                        <button onclick="state.activeQbTab='${tab.id}'; renderView()" 
+                                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 
+                                            ${state.activeQbTab === tab.id 
+                                                ? 'bg-primary text-primary-foreground shadow-md' 
+                                                : 'bg-background text-muted-foreground hover:bg-muted border border-border'}">
+                                            ${tab.label}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                                <div class="relative w-full md:w-64">
+                                    <div class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground scale-75">
+                                        ${icons.search}
+                                    </div>
+                                    <input type="text" placeholder="প্রশ্ন খুঁজুন..." 
+                                        class="w-full h-9 pl-9 pr-4 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QB Content Grid -->
+                        <div class="min-h-[40vh]">
+                            ${isModelTestTab && filteredQbItems.length > 0 ? `
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                ${filteredQbItems.map(item => `
+                                <a href="#" onclick="navigate(event, 'qb-details', null, '${item.id}')" class="group relative block h-full">
+                                    <div class="relative aspect-square w-full overflow-hidden rounded-2xl bg-card border border-border shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1 group-active:scale-[0.98]">
+                                        <!-- SVG Placeholder Image Style -->
+                                        <div class="h-full w-full bg-muted flex flex-col items-center justify-center text-muted-foreground/30 group-hover:scale-105 transition-transform duration-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                                            <span class="mt-2 text-xs font-bold uppercase tracking-wider">Question Bank</span>
+                                        </div>
+                                        
+                                        <!-- Overlay Gradient -->
+                                        <div class="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-80"></div>
+                                        
+                                        <!-- Live Badge -->
+                                        ${item.isLive ? `
+                                        <div class="absolute top-2 right-2">
+                                            <span class="flex items-center gap-1 bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-1 rounded-full animate-pulse shadow-sm backdrop-blur-md bg-opacity-90">
+                                                ${icons.live} Live
+                                            </span>
+                                        </div>` : ''}
+
+                                        <!-- Title Overlay -->
+                                        <div class="absolute bottom-0 left-0 right-0 p-4">
+                                            <h3 class="text-background text-xs sm:text-sm font-bold leading-tight line-clamp-3 drop-shadow-md group-hover:text-primary-foreground transition-colors">
+                                                ${item.title}
+                                            </h3>
+                                            <p class="text-background/70 text-[10px] mt-1 flex items-center gap-1">
+                                                Tap to practice ${icons.arrowRight}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                                `).join('')}
+                            </div>
+                            ` : `
+                            <div class="text-center py-12 border-2 border-dashed border-border rounded-xl">
+                                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted text-muted-foreground mb-3">
+                                    ${icons.fileText}
+                                </div>
+                                <p class="text-muted-foreground text-sm">এই ক্যাটাগরিতে কোনো প্রশ্ন পাওয়া যায়নি।</p>
+                            </div>
+                            `}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="space-y-6">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-2xl font-semibold tracking-tight">আমাদের বিশেষত্ব</h2>
+                        <p class="text-sm text-muted-foreground">কেন বাছবেন Examify?</p>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        ${features.map(f => `
+                        <div class="rounded-lg bg-card text-card-foreground shadow-sm border-2 border-primary/10 hover:border-primary/30 transition-colors group">
+                            <div class="flex flex-col items-center text-center p-4 gap-2">
+                                <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">${f.icon}</div>
+                                <div><h3 class="font-semibold text-sm group-hover:text-primary transition-colors">${f.title}</h3><p class="text-xs text-muted-foreground line-clamp-2">${f.desc}</p></div>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                </section>
+
+                <section id="reviews" class="space-y-8 w-full overflow-hidden">
+                    <h2 class="text-2xl font-semibold tracking-tight text-center">শিক্ষার্থীদের মতামত</h2>
+                    <div class="relative md:px-12">
+                        <div class="relative w-full overflow-hidden">
+                            <div id="review-slider" class="flex -ml-4 transition-transform duration-300 ease-out">
+                                ${Array(5).fill(0).map((_, i) => `
+                                <div class="min-w-0 shrink-0 grow-0 basis-full pl-4 md:basis-1/2 lg:basis-1/3">
+                                    <div class="h-full p-1">
+                                        <div class="border border-none text-card-foreground h-full shadow-md bg-card rounded-xl overflow-hidden ring-1 ring-border">
+                                            <div class="p-6 flex flex-col gap-4 h-full bg-gradient-to-br from-card to-secondary/30">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="flex-shrink-0"><div class="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div></div>
+                                                    <div class="flex-1 min-w-0"><h3 class="font-bold text-base truncate text-primary">Student ${i+1}</h3><p class="text-xs text-muted-foreground uppercase tracking-wide truncate">College Name</p><div class="flex items-center gap-0.5 mt-1">${icons.star.repeat(5)}</div></div>
+                                                </div>
+                                                <p class="text-sm text-muted-foreground italic leading-relaxed line-clamp-4">"Examify-এর মাধ্যমে টোকেন কিনে এনরোল করা খুব সহজ। তাদের সার্ভিস অসাধারণ!"</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`).join('')}
+                            </div>
+                        </div>
+                        <button onclick="prevSlide()" class="items-center justify-center gap-2 border-[3px] border-input text-sm font-medium bg-background hover:bg-accent hover:text-accent-foreground absolute h-8 w-8 rounded-full top-1/2 -translate-y-1/2 hidden md:flex -left-4 lg:-left-12 text-primary shadow-sm">${icons.arrowLeft}</button>
+                        <button onclick="nextSlide()" class="items-center justify-center gap-2 border-[3px] border-input text-sm font-medium bg-background hover:bg-accent hover:text-accent-foreground absolute h-8 w-8 rounded-full top-1/2 -translate-y-1/2 hidden md:flex -right-4 lg:-right-12 text-primary shadow-sm">${icons.arrowRight}</button>
+                    </div>
+                    <div id="slider-indicators" class="flex justify-center gap-2 mt-6">
+                        ${Array(5).fill(0).map((_, i) => `<button onclick="setSlide(${i})" class="h-2 w-2 rounded-full transition-all duration-300 bg-primary/20 hover:bg-primary/40"></button>`).join('')}
+                    </div>
+                </section>
+            </main>`;
+        }
+
+        function getDetailsHtml() {
+            const course = db.courses.find(c => c.id === state.selectedCourse) || db.courses[0];
+            return `
+            <div class="flex-1 min-h-screen bg-background text-foreground pb-24 md:pb-16 w-full">
+                <main class="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="space-y-4">
+                            <div class="w-full rounded-xl overflow-hidden border border-border bg-muted shadow-sm relative aspect-video group flex items-center justify-center">
+                                <div class="flex flex-col items-center text-muted-foreground/40">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                    <span class="mt-2 text-lg font-bold">Course Cover Image</span>
+                                </div>
+                            </div>
+                            <div><h1 class="text-2xl md:text-4xl font-bold tracking-tight text-primary">${course.title}</h1><p class="text-muted-foreground mt-2 text-sm md:text-base leading-relaxed">${course.batch} – মেডিকেল ভর্তি পরীক্ষা প্রস্তুতি</p></div>
+                        </div>
+                        <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+                            <div class="flex flex-col space-y-1.5 p-6 border-b border-border/50"><h3 class="font-semibold tracking-tight text-xl text-primary">Course Description</h3></div>
+                            <div class="p-6 text-sm md:text-base space-y-4 text-muted-foreground leading-relaxed">
+                                ${course.description}
+                                <blockquote class="border-l-4 border-destructive pl-4 my-4 italic text-foreground bg-destructive/5 p-2 rounded-r">
+                                    <p>✅ <strong>বিশেষ অফার:</strong> কোর্স ফি মাত্র <strong class="text-primary">৳${course.price}</strong> (মূল ফি ৳${course.oldPrice} থেকে <strong class="text-destructive">ছাড়!</strong>)</p>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden lg:block">
+                        <div class="sticky top-24 space-y-4">
+                            <div class="rounded-lg border border-primary/20 bg-card text-card-foreground shadow-lg shadow-primary/5 overflow-hidden">
+                                <div class="bg-primary/5 p-4 border-b border-primary/10 text-center"><p class="text-sm text-muted-foreground font-medium">Enrolling in</p><h3 class="font-bold text-primary line-clamp-1">${course.title}</h3></div>
+                                <div class="p-6 space-y-6">
+                                    <div class="text-center"><p class="text-sm text-destructive line-through font-medium">৳${course.oldPrice}</p><div class="text-4xl font-extrabold text-primary">৳${course.price}</div></div>
+                                    <button onclick="navigate(event, 'checkout')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-transparent ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-[25px] px-8 w-full text-lg font-bold shadow-md hover:shadow-lg transition-all active:scale-95">Enroll Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <div class="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-lg border-t border-border z-50 lg:hidden flex items-center justify-between gap-4 shadow-[0_-5px_10px_rgba(0,0,0,0.05)] pb-6 sm:pb-4">
+                    <div class="flex flex-col"><span class="text-[10px] text-destructive line-through font-medium">৳${course.oldPrice}</span><span class="text-2xl font-bold text-primary">৳${course.price}</span></div>
+                    <button onclick="navigate(event, 'checkout')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap border-[3px] border-transparent text-base font-bold ring-offset-background transition-colors bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-full px-8 flex-1 shadow-md active:scale-95">Enroll Now</button>
+                </div>
+            </div>`;
+        }
+
+        function getCheckoutHtml() {
+            const course = db.courses.find(c => c.id === state.selectedCourse) || db.courses[0];
+            return `
+            <main class="mx-auto max-w-2xl px-4 pb-16 pt-6 sm:pt-14 flex-1 w-full">
+                <button onclick="navigate(event, 'details')" class="text-sm text-muted-foreground hover:text-primary mb-4 flex items-center gap-1">${icons.arrowLeft} Back</button>
+                <div class="rounded-lg bg-card text-card-foreground shadow-sm border-[3px] border-primary/20">
+                    <div class="flex flex-col p-6 space-y-1 pb-3 border-b border-border/50">
+                        <p class="text-xs font-medium uppercase tracking-[0.25em] text-primary">Payment instructions</p>
+                        <h3 class="font-semibold tracking-tight text-xl">Buy ${course.title}</h3>
+                        <p class="text-muted-foreground text-xs">Complete payment & get token.</p>
+                    </div>
+                    <div class="p-6 space-y-6 text-sm">
+                        <div class="text-center py-6 bg-primary/5 rounded-lg border border-primary/10">
+                            <p class="text-muted-foreground text-xs uppercase tracking-widest mb-1">Total Payable Amount</p>
+                            <div class="flex items-center justify-center gap-2"><span class="text-4xl font-bold text-primary">৳${course.price}</span></div>
+                        </div>
+                        
+                        <div class="bg-card p-4 rounded-lg space-y-4 border border-border">
+                            <div class="flex items-center gap-2 text-sm font-semibold text-primary">
+                                <span class="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span> 
+                                Send Money
+                            </div>
+                            
+                            <!-- Payment Cards Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+                                <!-- bKash Card -->
+                                <div class="relative bg-[#e2136e]/5 dark:bg-[#e2136e]/20 border border-[#e2136e]/30 rounded-xl p-4 flex flex-col items-center gap-3 transition-all hover:shadow-md group">
+                                    <div class="w-full flex justify-between items-center">
+                                        <span class="text-xs font-bold text-[#e2136e]">bKash Personal</span>
+                                        <button onclick="copyToClipboard('01973577899')" class="text-[#e2136e]/70 hover:text-[#e2136e] p-1 rounded-md hover:bg-[#e2136e]/10 transition-colors" title="Copy Number">${icons.copy}</button>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg shadow-sm">
+                                        <svg viewBox="0 0 100 100" class="w-20 h-20 text-gray-800">
+                                            <path fill="currentColor" d="M0 0h100v100H0z" fill-opacity="0"/>
+                                            <path fill="currentColor" d="M10 10h30v30H10zm10 10h10v10H20zM60 10h30v30H60zm10 10h10v10H70zM10 60h30v30H10zm10 10h10v10H20zM50 10h10v10H50zM50 50h10v10H50zM90 50h10v10H90zM50 90h10v10H50z" />
+                                            <rect x="15" y="15" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="65" y="15" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="15" y="65" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="50" y="50" width="10" height="10" fill="currentColor"/>
+                                            <rect x="65" y="65" width="10" height="10" fill="currentColor"/>
+                                            <path d="M50 20h10v10H50zm30 0h10v10H80z" fill="currentColor"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center w-full">
+                                        <span class="font-mono text-base font-bold tracking-wide text-foreground select-all block break-all sm:break-normal">01973577899</span>
+                                    </div>
+                                </div>
+
+                                <!-- Nagad Card -->
+                                <div class="relative bg-[#f6921e]/5 dark:bg-[#f6921e]/20 border border-[#f6921e]/30 rounded-xl p-4 flex flex-col items-center gap-3 transition-all hover:shadow-md group">
+                                    <div class="w-full flex justify-between items-center">
+                                        <span class="text-xs font-bold text-[#f6921e]">Nagad Personal</span>
+                                        <button onclick="copyToClipboard('01754365403')" class="text-[#f6921e]/70 hover:text-[#f6921e] p-1 rounded-md hover:bg-[#f6921e]/10 transition-colors" title="Copy Number">${icons.copy}</button>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg shadow-sm">
+                                        <svg viewBox="0 0 100 100" class="w-20 h-20 text-gray-800">
+                                             <rect x="15" y="15" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="65" y="15" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="15" y="65" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="55" y="55" width="10" height="10" fill="currentColor"/>
+                                            <path d="M50 20h10v10H50zm30 20h10v10H80z" fill="currentColor"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center w-full">
+                                        <span class="font-mono text-base font-bold tracking-wide text-foreground select-all block break-all sm:break-normal">01754365403</span>
+                                    </div>
+                                </div>
+
+                                 <!-- Rocket Card -->
+                                <div class="relative bg-[#8c3494]/5 dark:bg-[#8c3494]/20 border border-[#8c3494]/30 rounded-xl p-4 flex flex-col items-center gap-3 transition-all hover:shadow-md group">
+                                    <div class="w-full flex justify-between items-center">
+                                        <span class="text-xs font-bold text-[#8c3494]">Rocket Personal</span>
+                                        <button onclick="copyToClipboard('019735778997')" class="text-[#8c3494]/70 hover:text-[#8c3494] p-1 rounded-md hover:bg-[#8c3494]/10 transition-colors" title="Copy Number">${icons.copy}</button>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg shadow-sm">
+                                        <svg viewBox="0 0 100 100" class="w-20 h-20 text-gray-800">
+                                             <rect x="15" y="15" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="65" y="15" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="15" y="65" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5"/>
+                                            <rect x="45" y="45" width="15" height="15" fill="currentColor"/>
+                                            <path d="M60 10h10v10H60zm-30 40h10v10H30z" fill="currentColor"/>
+                                        </svg>
+                                    </div>
+                                    <div class="text-center w-full">
+                                        <span class="font-mono text-base font-bold tracking-wide text-foreground select-all block break-all sm:break-normal">019735778997</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 text-sm font-semibold text-primary"><span class="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span> Submit Details</div>
+                            ${state.currentUser ? `
+                            <form onsubmit="submitOrder(event, '${course.id}')" class="ml-4 sm:ml-8 space-y-4">
+                                <div class="space-y-2"><label class="text-xs font-medium">যে নাম্বার থেকে টাকা পাঠিয়েছেন</label><input type="tel" placeholder="01XXXXXXXXX" class="flex h-12 sm:h-10 w-full rounded-md border border-input bg-background px-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono" required></div>
+                                <div class="space-y-2"><label class="text-xs font-medium">TrxID</label><input type="text" placeholder="Transaction ID" class="flex h-12 sm:h-10 w-full rounded-md border border-input bg-background px-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono" required></div>
+                                <button type="submit" class="w-full bg-primary text-primary-foreground h-12 sm:h-10 rounded-md font-medium hover:bg-primary/90 active:scale-95 transition-transform text-base sm:text-sm">অর্ডার কনফার্ম করুন</button>
+                            </form>
+                            ` : `
+                            <div class="ml-4 sm:ml-8 text-center py-8 border-2 border-dashed border-border rounded-lg bg-muted/20">
+                                <p class="mb-4 font-medium text-foreground">অর্ডার করার জন্য লগইন প্রয়োজন।</p>
+                                <div class="flex gap-2 justify-center"><button onclick="navigate(null, 'login')" class="bg-primary text-white px-6 py-2 rounded-full font-bold shadow active:scale-95">Login Now</button></div>
+                            </div>`}
+                        </div>
+                    </div>
+                </div>
+            </main>`;
+        }
+
+        function getDashboardHtml() {
+            if (!state.currentUser) { setTimeout(() => navigate(null, 'login'), 0); return ''; }
+
+            // Helper to check enrollment
+            const isEnrolled = (courseId) => state.currentUser.enrolledCourses.find(c => c.id === courseId);
+
+            const ordersList = state.currentUser.orders.map(o => {
+                const enrolled = isEnrolled(o.courseId);
+                let actionHtml = '';
+                let statusHtml = '';
+
+                if (o.status === 'Pending') {
+                    statusHtml = `<span class="px-2 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Pending</span>`;
+                    // Demo feature to approve
+                    actionHtml = `
+                        <div class="mt-3 p-3 bg-yellow-50 rounded border border-yellow-100 text-xs text-yellow-800">
+                            <p class="mb-2">Admin verification pending...</p>
+                            <button onclick="approveOrder('${o.id}')" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Simulate Admin Approve</button>
+                        </div>
+                    `;
+                } else if (o.status === 'Approved') {
+                    statusHtml = `<span class="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">Approved</span>`;
+                    
+                    if (enrolled) {
+                        actionHtml = `
+                            <div class="mt-3">
+                                <button onclick="state.selectedCourse='${o.courseId}'; navigate(event, 'classroom')" class="w-full h-10 rounded-md bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 flex items-center justify-center gap-2">
+                                    ${icons.play} ক্লাস করুন
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        actionHtml = `
+                            <div class="mt-3 space-y-2">
+                                <div class="flex items-center justify-between p-2 bg-muted rounded border border-border text-xs">
+                                    <span class="text-muted-foreground">Token:</span>
+                                    <code class="font-mono font-bold select-all">${o.token}</code>
+                                    <button onclick="copyToClipboard('${o.token}')" class="text-primary hover:underline" title="Copy">${icons.copy}</button>
+                                </div>
+                                <button onclick="autoRedeem('${o.token}')" class="w-full h-10 rounded-md bg-green-600 text-white font-bold text-sm hover:bg-green-700 shadow-sm flex items-center justify-center gap-2 animate-pulse">
+                                    ${icons.key} এনরোল করুন
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+
+                return `
+                    <div class="bg-card border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="font-bold text-base text-foreground line-clamp-1">${o.courseName}</h3>
+                                <p class="text-xs text-muted-foreground mt-1">${o.date} • ৳${o.amount}</p>
+                            </div>
+                            ${statusHtml}
+                        </div>
+                        ${actionHtml}
+                    </div>
+                `;
+            }).join('');
+
+            // If no orders
+            const emptyState = `
+                <div class="col-span-full text-center py-12 border-2 border-dashed border-border rounded-xl bg-muted/20">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted text-muted-foreground mb-3">
+                        ${icons.fileText}
+                    </div>
+                    <p class="text-muted-foreground text-sm mb-4">আপনার কোনো অর্ডার বা কোর্স নেই।</p>
+                    <button onclick="navigate(event, 'home', 'courses')" class="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-bold hover:bg-primary/90 transition-colors">কোর্স খুঁজুন</button>
+                </div>
+            `;
+
+            return `
+            <main class="mx-auto max-w-5xl px-4 py-8 w-full space-y-8">
+                <!-- Profile Header -->
+                <div class="flex items-center gap-4 bg-card p-6 rounded-xl border border-border shadow-sm">
+                    <div class="h-16 w-16 bg-gradient-to-br from-primary to-secondary-foreground rounded-full flex items-center justify-center text-white text-2xl font-bold shrink-0 shadow-inner border-2 border-background">
+                        ${state.currentUser.name.charAt(0)}
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-foreground">${state.currentUser.name}</h1>
+                        <p class="text-muted-foreground text-sm font-mono flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            ${state.currentUser.phone}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Unified Course & Order List -->
+                <div>
+                    <h2 class="text-xl font-bold mb-6 text-foreground border-l-4 border-primary pl-3 flex items-center gap-2">
+                        আমার কোর্স ও অর্ডার তালিকা
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${state.currentUser.orders.length > 0 ? ordersList : emptyState}
+                    </div>
+                </div>
+            </main>`;
+        }
+
+        function getClassroomHtml() {
+            const course = db.courses.find(c => c.id === state.selectedCourse);
+            if (!course) return getDashboardHtml();
+
+            return `
+            <main class="mx-auto max-w-7xl px-4 py-6 w-full">
+                <button onclick="navigate(event, 'dashboard')" class="text-sm text-muted-foreground hover:text-primary mb-4 flex items-center gap-1">${icons.arrowLeft} Back to Dashboard</button>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Main Content (Video & Classes) - Order 1 on Mobile -->
+                    <div class="lg:col-span-3 space-y-6 order-1 lg:order-2">
+                        <!-- Live Class Card -->
+                        <div class="bg-gradient-to-r from-primary to-green-600 rounded-xl p-6 text-white shadow-lg relative overflow-hidden group cursor-pointer hover:scale-[1.01] transition-transform">
+                             <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity"><svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+                            <div class="flex items-start justify-between relative z-10">
+                                <div>
+                                    <span class="bg-white/20 px-2 py-1 rounded text-xs font-bold mb-2 inline-block backdrop-blur-sm animate-pulse">LIVE NOW</span>
+                                    <h2 class="text-2xl font-bold mb-1">Biology: Digestive System</h2>
+                                    <p class="text-white/80 text-sm">Mentor: Dr. Sadman Sakib</p>
+                                </div>
+                            </div>
+                            <button class="mt-6 bg-white text-green-700 px-6 py-2.5 rounded-full font-bold text-sm hover:bg-green-50 transition-colors shadow-sm">Join Class Now</button>
+                        </div>
+
+                        <!-- Content List -->
+                        <div class="space-y-4">
+                            <h3 class="font-bold text-lg px-1">Recent Classes</h3>
+                            ${[1,2,3].map(i => `
+                            <div class="bg-card border border-border rounded-xl p-4 flex items-center gap-4 hover:border-primary/50 transition-colors cursor-pointer group active:bg-muted/50">
+                                <div class="h-12 w-12 bg-muted rounded-lg flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors shrink-0">${icons.play}</div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-sm sm:text-base truncate group-hover:text-primary transition-colors">Lecture ${i}: Introduction to Cell Biology</h4>
+                                    <p class="text-xs text-muted-foreground">1h 20m • Uploaded yesterday</p>
+                                </div>
+                                <button class="hidden sm:block text-xs border border-border px-3 py-1.5 rounded-full hover:bg-primary hover:text-white transition-colors">Watch</button>
+                            </div>`).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Sidebar (Navigation & Stats) - Order 2 on Mobile -->
+                    <div class="lg:col-span-1 space-y-4 order-2 lg:order-1">
+                         <div class="bg-card border border-border rounded-xl p-5 shadow-sm">
+                            <h2 class="font-bold text-lg mb-2 line-clamp-1">${course.title}</h2>
+                            <div class="flex justify-between text-xs text-muted-foreground mb-1"><span>Progress</span><span>35%</span></div>
+                            <div class="h-2 w-full bg-muted rounded-full overflow-hidden mb-2"><div class="h-full bg-primary w-[35%] rounded-full"></div></div>
+                         </div>
+                         <nav class="space-y-1 bg-card border border-border rounded-xl p-2">
+                            <button class="w-full text-left px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium text-sm flex items-center gap-3">${icons.play} Classroom</button>
+                            <button class="w-full text-left px-4 py-3 rounded-lg hover:bg-muted text-foreground/80 text-sm flex items-center gap-3">${icons.fileText} Exams</button>
+                            <button class="w-full text-left px-4 py-3 rounded-lg hover:bg-muted text-foreground/80 text-sm flex items-center gap-3">${icons.star} Leaderboard</button>
+                         </nav>
+                    </div>
+                </div>
+            </main>
+            `;
+        }
+
+        // --- EXAM INTERFACE GENERATORS ---
+        function getExamPaperHtml() {
+            if (!state.activeExam) return getHomeHtml();
+            const { title, subject, time, questions } = state.activeExam;
+            
+            return `
+            <main class="mx-auto max-w-4xl px-4 py-8 w-full flex-1">
+                <div class="sticky top-20 z-40 bg-background/95 backdrop-blur-md border-b border-border pb-4 mb-6 shadow-sm">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-primary line-clamp-1">${title}</h2>
+                            <p class="text-xs text-muted-foreground">${subject} • ${time} • ${questions.length} Questions</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-mono font-bold text-destructive">10:00</div>
+                            <p class="text-[10px] text-muted-foreground uppercase tracking-widest">Time Left</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Question Palette (Scrollable) -->
+                    <div class="flex gap-2 overflow-x-auto pb-2 mt-4 scrollbar-hide">
+                         ${questions.map((_, idx) => `
+                            <button onclick="document.getElementById('q-${idx+1}').scrollIntoView({behavior: 'smooth', block: 'center'})" 
+                                class="w-8 h-8 rounded-full text-xs font-bold flex items-center justify-center shrink-0 transition-colors 
+                                ${state.examAnswers[questions[idx].id] !== undefined 
+                                    ? 'bg-primary text-primary-foreground' 
+                                    : 'bg-muted text-muted-foreground hover:bg-muted/80'}">
+                                ${idx + 1}
+                            </button>
+                         `).join('')}
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    ${questions.map((q, idx) => `
+                    <div id="q-${idx+1}" class="bg-card border border-border rounded-xl p-6 shadow-sm transition-all duration-300 hover:shadow-md">
+                        <h3 class="font-semibold text-lg mb-4 flex gap-3 text-foreground">
+                            <span class="bg-primary/10 text-primary w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold">${idx + 1}</span>
+                            ${q.q}
+                        </h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${q.options.map((opt, optIdx) => `
+                            <label class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all active:scale-[0.99]
+                                ${state.examAnswers[q.id] === optIdx 
+                                    ? 'border-primary bg-primary/5 ring-1 ring-primary' 
+                                    : 'border-border hover:bg-muted/50'}">
+                                <input type="radio" name="q-${q.id}" value="${optIdx}" class="w-4 h-4 text-primary accent-primary" 
+                                    ${state.examAnswers[q.id] === optIdx ? 'checked' : ''} 
+                                    onchange="selectAnswer(${q.id}, ${optIdx})">
+                                <span class="text-sm text-foreground/90">${opt}</span>
+                            </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+
+                <div class="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex justify-between items-center z-50 shadow-lg md:static md:shadow-none md:border-0 md:bg-transparent md:mt-8">
+                    <div class="text-sm text-muted-foreground hidden md:block">${Object.keys(state.examAnswers).length} of ${questions.length} answered</div>
+                    <button onclick="submitExam()" class="w-full md:w-auto bg-primary text-primary-foreground h-12 md:h-10 px-8 rounded-full font-bold shadow-lg hover:bg-primary/90 transition-all active:scale-95">Submit Exam</button>
+                </div>
+                <div class="h-20 md:h-0"></div> <!-- Spacer for fixed footer -->
+            </main>
+            `;
+        }
+
+        function getExamResultHtml() {
+            if (!state.examResult) return getHomeHtml();
+            const { score, correct, wrong, total } = state.examResult;
+            const percentage = (score / total) * 100;
+            const questions = state.activeExam.questions;
+            
+            return `
+            <main class="mx-auto max-w-4xl px-4 py-12 flex-1 w-full">
+                <!-- Summary Card -->
+                <div class="w-full bg-card border border-border rounded-2xl shadow-xl overflow-hidden mb-8">
+                    <div class="bg-primary/10 p-8 border-b border-border text-center">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-background border-4 ${percentage >= 80 ? 'border-primary' : 'border-primary/50'} mb-4 shadow-inner">
+                            <span class="text-3xl font-bold text-foreground">${score}</span>
+                            <span class="text-xs text-muted-foreground ml-1">/${total}</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-foreground mb-1">${percentage >= 80 ? 'চমৎকার!' : (percentage >= 50 ? 'ভালো হয়েছে!' : 'আরও চেষ্টা করতে হবে!')}</h2>
+                        <p class="text-muted-foreground text-sm">You scored ${Math.round(percentage)}% marks</p>
+                    </div>
+                    
+                    <div class="p-6 grid grid-cols-3 gap-4 text-center divide-x divide-border">
+                        <div>
+                            <div class="text-2xl font-bold text-green-600">${correct}</div>
+                            <div class="text-xs text-muted-foreground uppercase tracking-wider">Correct</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-red-500">${wrong}</div>
+                            <div class="text-xs text-muted-foreground uppercase tracking-wider">Wrong</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-foreground">${total - (correct + wrong)}</div>
+                            <div class="text-xs text-muted-foreground uppercase tracking-wider">Skipped</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Solve Sheet -->
+                <div class="space-y-6">
+                    <h2 class="text-xl font-bold text-foreground border-l-4 border-primary pl-3">Solve Sheet</h2>
+                    
+                    ${questions.map((q, idx) => {
+                        const selected = state.examAnswers[q.id];
+                        const isCorrect = selected === q.ans;
+                        const isSkipped = selected === undefined;
+                        
+                        let statusColor = isSkipped ? 'border-gray-200 bg-gray-50' : (isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50');
+                        let icon = isSkipped ? '<span class="text-gray-500">Skipped</span>' : (isCorrect ? icons.check : `<span class="text-red-500 font-bold">X</span>`);
+                        
+                        return `
+                        <div class="border rounded-xl p-5 shadow-sm ${statusColor} dark:bg-opacity-10">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="font-semibold text-base flex-1">
+                                    <span class="mr-2">${idx + 1}.</span> ${q.q}
+                                </h3>
+                                <div class="ml-2 shrink-0">${icon}</div>
+                            </div>
+                            
+                            <div class="space-y-2 text-sm">
+                                ${q.options.map((opt, optIdx) => {
+                                    let optionClass = 'p-2 rounded border border-transparent';
+                                    if (optIdx === q.ans) optionClass = 'bg-green-100 dark:bg-green-900/30 border-green-200 text-green-800 dark:text-green-200 font-medium';
+                                    else if (optIdx === selected && !isCorrect) optionClass = 'bg-red-100 dark:bg-red-900/30 border-red-200 text-red-800 dark:text-red-200';
+                                    else optionClass = 'text-muted-foreground';
+                                    
+                                    return `<div class="${optionClass} flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded-full border flex items-center justify-center text-[10px] ${optIdx === q.ans ? 'border-green-600 bg-green-600 text-white' : 'border-gray-400'}">
+                                            ${String.fromCharCode(65 + optIdx)}
+                                        </div>
+                                        ${opt}
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                            
+                            ${q.explain ? `
+                            <div class="mt-4 pt-3 border-t border-black/5 dark:border-white/5">
+                                <p class="text-xs font-bold text-primary mb-1">ব্যাখ্যা:</p>
+                                <p class="text-sm text-muted-foreground leading-relaxed">${q.explain}</p>
+                            </div>` : ''}
+                        </div>
+                        `;
+                    }).join('')}
+                </div>
+
+                <div class="mt-8 flex justify-center pb-8">
+                    <button onclick="navigate(event, 'home', 'free-exams')" class="bg-primary text-primary-foreground px-8 py-3 rounded-full font-bold shadow-lg hover:bg-primary/90 transition-all active:scale-95">অন্য এক্সাম দিন</button>
+                </div>
+            </main>
+            `;
+        }
+
+        function getLeaderboardHtml() {
+            return `
+            <main class="mx-auto max-w-4xl px-4 py-8 w-full flex-1">
+                <button onclick="navigate(event, 'home')" class="text-sm text-muted-foreground hover:text-primary mb-4 flex items-center gap-1">${icons.arrowLeft} Back to Home</button>
+                
+                <div class="text-center mb-8">
+                    <h1 class="text-2xl font-bold text-primary flex items-center justify-center gap-2">
+                        ${icons.trophy} লিডারবোর্ড
+                    </h1>
+                    <p class="text-sm text-muted-foreground">সেরা পারফর্মারদের তালিকা</p>
+                </div>
+
+                <div class="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-muted/50 text-xs text-muted-foreground uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-4 text-center w-16">Rank</th>
+                                    <th class="p-4">Student</th>
+                                    <th class="p-4 text-center">Score</th>
+                                    <th class="p-4 text-right">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border">
+                                ${[
+                                    { name: 'Tanvir Hasan', score: '20/20', time: '08:45', rank: 1 },
+                                    { name: 'Sadia Afrin', score: '19.5/20', time: '09:12', rank: 2 },
+                                    { name: 'Rahim Uddin', score: '19/20', time: '09:30', rank: 3 },
+                                    { name: 'Karim Mia', score: '18/20', time: '09:50', rank: 4 },
+                                    { name: 'Fatema Begum', score: '17.5/20', time: '10:00', rank: 5 },
+                                ].map((s, i) => `
+                                <tr class="hover:bg-muted/30 transition-colors">
+                                    <td class="p-4 text-center font-bold ${i < 3 ? 'text-primary text-lg' : 'text-muted-foreground'}">
+                                        ${i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${s.rank}`))}
+                                    </td>
+                                    <td class="p-4 font-medium text-foreground">${s.name}</td>
+                                    <td class="p-4 text-center font-bold text-primary bg-primary/5 rounded-lg">${s.score}</td>
+                                    <td class="p-4 text-right font-mono text-muted-foreground">${s.time}</td>
+                                </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+            `;
+        }
+
+        function getQuestionBankDetailsHtml() {
+             const item = state.selectedQbItem;
+             if (!item) return getHomeHtml();
+             
+             // Check if it's a CQ item
+             const isCQ = item.type === 'cq';
+             const questions = isCQ ? db.cqQuestions[item.id] || [] : db.qbQuestions;
+
+             return `
+             <div class="container mx-auto max-w-5xl px-4 py-6">
+                 <!-- Header -->
+                 <div class="mb-6 space-y-2">
+                     <div class="flex justify-between items-center">
+                         <button onclick="navigate(event, 'home', 'question-bank')" class="text-muted-foreground hover:text-primary">
+                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                         </button>
+                         <h1 class="text-xl font-bold text-center flex-1 mx-4 line-clamp-1">${item.title}</h1>
+                         <div class="w-6"></div> <!-- Spacer for alignment -->
+                     </div>
+                 </div>
+
+                 <!-- Filters Mock -->
+                 <div class="flex flex-wrap gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+                     <button class="flex items-center px-4 py-1.5 border border-primary/20 bg-primary/5 text-primary rounded-full text-xs font-medium transition-colors">
+                        <span class="w-2 h-2 rounded-full bg-primary mr-2"></span>${isCQ ? 'CQ 4 Step' : 'MCQ'}
+                     </button>
+                     <button class="flex items-center px-4 py-1.5 border border-border rounded-full text-xs font-medium text-muted-foreground transition-colors">
+                        <span class="w-2 h-2 rounded-full border border-current mr-2"></span>কলেজ
+                     </button>
+                     <button class="flex items-center px-4 py-1.5 border border-border rounded-full text-xs font-medium text-muted-foreground transition-colors">
+                        <span class="w-2 h-2 rounded-full border border-current mr-2"></span>বোর্ড
+                     </button>
+                 </div>
+
+                 <!-- Questions List -->
+                 <div class="space-y-6 pb-24">
+                     ${isCQ 
+                        ? questions.map((q, idx) => `
+                        <div class="border border-border rounded-xl p-5 bg-card shadow-sm relative group">
+                             <!-- Stem -->
+                             <div class="mb-3">
+                                 <div class="px-1 leading-relaxed overflow-x-auto overflow-y-hidden">
+                                    <p style="line-height: 1.7" class="text-lg tracking-wide font-normal leading-relaxed">
+                                        <span class="font-bold mr-2">${q.id}.</span>${q.stem}
+                                    </p>
+                                 </div>
+                             </div>
+                             
+                             <!-- Tag -->
+                             <div class="flex justify-end items-center space-x-2 my-3">
+                                <span class="cursor-pointer tag tag-cyan max-w-[200px] whitespace-nowrap block overflow-hidden truncate px-2 py-0.5 rounded text-xs bg-cyan-100 text-cyan-800 border border-cyan-200">${q.tag}</span>
+                                <div class="flex justify-end space-x-2 text-muted-foreground">
+                                    <button class="icon-button hover:text-primary">${icons.flag}</button>
+                                    <button class="icon-button hover:text-primary">${icons.bookmark}</button>
+                                </div>
+                             </div>
+                             
+                             <!-- Sub Questions (Accordion) -->
+                             <div class="space-y-2 mt-4">
+                                ${q.questions.map((sq, sIdx) => `
+                                <div class="border border-border rounded-lg overflow-hidden">
+                                    <div class="p-3 cursor-pointer hover:bg-muted/50 transition-colors flex items-start gap-3" onclick="toggleAccordion('q-${q.id}-${sIdx}')">
+                                        <span class="font-bold shrink-0 text-primary">${sq.label}.</span>
+                                        <div class="flex-1 text-sm font-medium leading-relaxed">${sq.text}</div>
+                                        ${icons.chevronDown}
+                                    </div>
+                                    <div id="q-${q.id}-${sIdx}" class="hidden p-3 bg-muted/30 border-t border-border text-sm text-muted-foreground animate-in slide-in-from-top-2">
+                                        ${sq.answer}
+                                    </div>
+                                </div>
+                                `).join('')}
+                             </div>
+                        </div>
+                        `).join('')
+                        
+                        : questions.map((q, idx) => `
+                         <div class="border border-border rounded-xl p-5 bg-card shadow-sm relative group">
+                             <!-- Question Header -->
+                             <div class="flex justify-between items-start mb-4">
+                                 <div class="flex-1 pr-4">
+                                     <div class="text-lg text-foreground font-medium leading-relaxed">
+                                         <span class="text-muted-foreground mr-1">${q.id}.</span> ${q.q}
+                                         ${q.img ? `<img src="${q.img}" class="mt-3 rounded-lg max-h-60 border border-border" alt="Question Image" onerror="this.style.display='none'">` : ''}
+                                     </div>
+                                 </div>
+                                 <div class="flex flex-col items-end gap-2 shrink-0">
+                                     <span class="px-2 py-1 rounded text-[10px] font-bold bg-secondary text-secondary-foreground uppercase tracking-wide border border-secondary-foreground/10 whitespace-nowrap">${q.tag}</span>
+                                     <div class="flex gap-1 text-muted-foreground">
+                                         <button class="p-1 hover:text-destructive transition-colors">${icons.flag}</button>
+                                         <button class="p-1 hover:text-primary transition-colors">${icons.bookmark}</button>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <!-- Options Grid -->
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                 ${q.options.map((opt, i) => `
+                                 <div class="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:bg-muted/60 transition-colors cursor-pointer group/opt">
+                                     <div class="w-6 h-6 rounded-full border border-muted-foreground/50 flex items-center justify-center text-xs font-bold text-muted-foreground group-hover/opt:border-primary group-hover/opt:text-primary">
+                                         ${['ক', 'খ', 'গ', 'ঘ'][i]}
+                                     </div>
+                                     <div class="text-sm text-foreground/90">${opt}</div>
+                                 </div>
+                                 `).join('')}
+                             </div>
+
+                             <!-- Locked Explanation -->
+                             ${q.locked ? `
+                             <div class="mt-4 pt-4 border-t border-dashed border-border">
+                                 <button onclick="navigate(event, 'checkout')" class="w-full p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center gap-2 text-emerald-700 dark:text-emerald-400 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors group/lock">
+                                     ${icons.lock.replace('w-4 h-4', 'w-4 h-4 group-hover/lock:scale-110 transition-transform')}
+                                     <span>ব্যাখ্যা আনলক করতে Examify প্রিমিয়াম এ আপগ্রেড করো</span>
+                                 </button>
+                             </div>` : ''}
+                         </div>
+                     `).join('')}
+                 </div>
+
+                 <!-- Floating Action Button -->
+                 <div class="fixed bottom-20 right-6 z-50">
+                     <button class="p-4 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-transform hover:scale-105 active:scale-95">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                     </button>
+                 </div>
+
+                 <!-- Bottom Upgrade Bar -->
+                 <div class="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border z-40 md:hidden">
+                     <button onclick="navigate(event, 'checkout')" class="w-full bg-primary text-primary-foreground h-12 rounded-full font-bold shadow-lg hover:bg-primary/90 flex items-center justify-center gap-2">
+                         ${icons.lock} আরো প্রশ্ন দেখতে প্রিমিয়ামে আপগ্রেড করো
+                     </button>
+                 </div>
+             </div>
+             `;
+        }
+
+        function getLoginHtml() {
+            return `
+            <main class="flex-1 flex items-center justify-center p-4 bg-muted/10 relative overflow-hidden min-h-[80vh]">
+                <div class="absolute inset-0 bg-grid-slate-200/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
+                <div class="w-full max-w-sm bg-card border border-border rounded-xl p-8 shadow-xl space-y-8 relative z-10">
+                    <div class="text-center space-y-2">
+                        <div class="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
+                        </div>
+                        <h1 class="text-2xl font-bold text-primary">লগইন</h1>
+                        <p class="text-xs text-muted-foreground">ফোন নাম্বার ও পাসওয়ার্ড দিয়ে একাউন্টে প্রবেশ করুন</p>
+                    </div>
+                    
+                    <form onsubmit="loginWithPassword(event)" class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-medium text-foreground/70">ফোন নাম্বার</label>
+                                <div class="flex h-12">
+                                    <span class="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-input bg-muted text-muted-foreground text-sm font-mono font-medium">+88</span>
+                                    <input type="tel" id="login-phone" class="flex-1 h-full rounded-r-lg border border-input bg-background px-4 text-base focus:ring-2 focus:ring-primary focus:outline-none font-mono" placeholder="01XXXXXXXXX" required>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <label class="text-xs font-medium text-foreground/70">পাসওয়ার্ড</label>
+                                    <a href="#" class="text-xs text-primary hover:underline">ভুলে গেছেন?</a>
+                                </div>
+                                <input type="password" id="login-password" class="flex h-12 w-full rounded-lg border border-input bg-background px-4 text-base focus:ring-2 focus:ring-primary focus:outline-none" placeholder="••••••••" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-primary-foreground h-12 rounded-lg font-bold hover:bg-primary/90 flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">লগইন করুন</button>
+                    </form>
+                    
+                    <div class="text-center text-xs text-muted-foreground">
+                        একাউন্ট নেই? <a href="#" class="text-primary font-bold hover:underline">রেজিস্ট্রেশন করুন</a>
+                    </div>
+                </div>
+            </main>`;
+        }
+
+        init();
+    </script>
+</body>
+</html>
