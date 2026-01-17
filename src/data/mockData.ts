@@ -61,7 +61,7 @@ export interface Order {
   courseId: string;
   courseName: string;
   amount: number;
-  status: "Pending" | "Approved";
+  status: "Pending" | "Approved" | "Rejected";
   token: string | null;
   date: string;
 }

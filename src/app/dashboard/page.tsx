@@ -11,9 +11,10 @@ import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function Dashboard() {
-  const { user, approveOrder, redeemToken, isLoading } = useAuth();
+  const { user, approveOrder, redeemToken, isLoading, refreshUser } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
   const [tokenInput, setTokenInput] = useState("");
@@ -30,17 +31,58 @@ export default function Dashboard() {
 
   const handleRedeem = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tokenInput.trim()) return;
+
     try {
-      const success = await redeemToken(tokenInput);
-      if (success) {
-        showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
-        setTokenInput("");
-      } else {
-        showToast("ভুল টোকেন বা টোকেনটি একটিভ নয়!", "error");
+      // Real Token Verification
+      const { data: tokenData, error } = await supabase
+        .from("enrollment_tokens")
+        .select("*")
+        .eq("token", tokenInput.trim())
+        .eq("is_used", false)
+        .single();
+
+      if (error || !tokenData) {
+        showToast("ভুল টোকেন বা টোকেনটি ইতিমধ্যে ব্যবহৃত!", "error");
+        return;
       }
+
+      // Check expiry if exists
+      if (tokenData.expires_at && new Date(tokenData.expires_at) < new Date()) {
+        showToast("টোকেনটির মেয়াদ শেষ হয়ে গেছে!", "error");
+        return;
+      }
+
+      // Enroll student
+      const currentBatches = user.enrolledBatches || [];
+      if (!currentBatches.includes(tokenData.batch_id)) {
+        const { error: enrollError } = await supabase
+          .from("users")
+          .update({
+            enrolled_batches: [...currentBatches, tokenData.batch_id]
+          })
+          .eq("uid", user.id);
+        
+        if (enrollError) throw enrollError;
+
+        // Mark token as used
+        await supabase
+          .from("enrollment_tokens")
+          .update({
+            is_used: true,
+            used_by: user.id,
+            used_at: new Date().toISOString(),
+            current_uses: (tokenData.current_uses || 0) + 1
+          })
+          .eq("id", tokenData.id);
+      }
+
+      showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
+      setTokenInput("");
+      refreshUser();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "একটি সমস্যা হয়েছে";
-      showToast(message, "error");
+      console.error("Redeem error:", error);
+      showToast("টোকেন রিডিম করতে সমস্যা হয়েছে", "error");
     }
   };
 
@@ -51,7 +93,7 @@ export default function Dashboard() {
   };
 
   const isEnrolled = (courseId: string) =>
-    user.enrolledCourses.some((c) => c.id === courseId);
+    user.enrolledBatches.includes(courseId);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -66,8 +108,7 @@ export default function Dashboard() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">{user.name}</h1>
             <p className="text-muted-foreground text-sm font-mono flex items-center gap-1">
-              <Phone className="h-3.5 w-3.5" />
-              {user.phone}
+              রোল: {user.roll}
             </p>
           </div>
         </div>
@@ -83,7 +124,7 @@ export default function Dashboard() {
               type="text"
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
-              placeholder="EXM-XXXXXX"
+              placeholder="টোকেন দিন (যেমন: EXM-XXXXXX)"
               className="flex-1 h-11 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary font-mono text-sm"
             />
             <Button type="submit">রিডিম</Button>
@@ -104,104 +145,91 @@ export default function Dashboard() {
                 return (
                   <div
                     key={order.id}
-                    className="bg-card border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all"
+                    className="bg-card border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-bold text-base text-foreground line-clamp-1">
-                          {order.courseName}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {order.date} • ৳{order.amount}
-                        </p>
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-bold text-base text-foreground line-clamp-1">
+                            {order.courseName}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {order.date} • ৳{order.amount}
+                          </p>
+                        </div>
+                        <Badge
+                          variant={
+                            order.status === "Approved" ? "success" : 
+                            order.status === "Rejected" ? "destructive" : "warning"
+                          }
+                          className="uppercase tracking-wider text-[10px]"
+                        >
+                          {order.status}
+                        </Badge>
                       </div>
-                      <Badge
-                        variant={
-                          order.status === "Approved" ? "success" : "warning"
-                        }
-                        className="uppercase tracking-wider text-[10px]"
-                      >
-                        {order.status}
-                      </Badge>
+
+                      {order.status === "Pending" && (
+                        <div className="mt-4 p-3 bg-secondary/30 rounded-lg border border-border text-xs text-secondary-foreground">
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>পেমেন্ট ভেরিফিকেশনের জন্য অপেক্ষা করুন...</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {order.status === "Rejected" && (
+                        <div className="mt-4 p-3 bg-destructive/10 rounded-lg border border-destructive/20 text-xs text-destructive">
+                           পেমেন্টটি গ্রহণ করা হয়নি। দয়া করে সাপোর্টে যোগাযোগ করুন।
+                        </div>
+                      )}
                     </div>
 
-                    {order.status === "Pending" ? (
-                      <div className="mt-4 p-3 bg-secondary/30 rounded-lg border border-border text-xs text-secondary-foreground space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>অ্যাডমিন ভেরিফিকেশনের জন্য অপেক্ষা করুন...</span>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          fullWidth
-                          className="h-8 text-[10px] border-border hover:bg-background"
-                          onClick={async () => {
-                            try {
-                              await approveOrder(order.id);
-                              showToast("অর্ডার অ্যাপ্রুভ করা হয়েছে (সিমুলেশন)");
-                            } catch (e) {
-                              const msg = e instanceof Error ? e.message : "Error";
-                              showToast(msg, "error");
+                    <div className="mt-4 space-y-3">
+                      {/* Show Token if available */}
+                      {order.token && (
+                        <div className="flex items-center justify-between p-2.5 bg-muted rounded-lg border border-border text-xs group">
+                          <span className="text-muted-foreground font-medium">
+                            টোকেন:
+                          </span>
+                          <code className="font-mono font-bold text-primary select-all">
+                            {order.token}
+                          </code>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              copyToClipboard(order.token || "")
                             }
+                            className="text-primary hover:text-primary/80 transition-colors"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      {enrolled ? (
+                        <Button
+                          fullWidth
+                          className="gap-2"
+                          onClick={() =>
+                            router.push(`/classroom/${order.courseId}`)
+                          }
+                        >
+                          <Play className="h-4 w-4 fill-current" /> ক্লাসরুমে যান
+                        </Button>
+                      ) : order.status === "Approved" && order.token ? (
+                        <Button
+                          fullWidth
+                          className="gap-2 animate-pulse"
+                          onClick={async () => {
+                             setTokenInput(order.token || "");
+                             showToast("টোকেনটি উপরের রিডিম বক্সে সেট করা হয়েছে।", "info");
                           }}
                         >
-                          Simulate Admin Approve
+                          <Key className="h-4 w-4" /> রিডিম করুন
                         </Button>
-                      </div>
-                    ) : (
-                      <div className="mt-4 space-y-3">
-                        {enrolled ? (
-                          <Button
-                            fullWidth
-                            className="gap-2"
-                            onClick={() =>
-                              router.push(`/classroom/${order.courseId}`)
-                            }
-                          >
-                            <Play className="h-4 w-4 fill-current" /> ক্লাস করুন
-                          </Button>
-                        ) : (
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between p-2.5 bg-muted rounded-lg border border-border text-xs group">
-                              <span className="text-muted-foreground font-medium">
-                                টোকেন:
-                              </span>
-                              <code className="font-mono font-bold text-primary select-all">
-                                {order.token}
-                              </code>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  copyToClipboard(order.token || "")
-                                }
-                                className="text-primary hover:text-primary/80 transition-colors"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                            <Button
-                              fullWidth
-                              className="gap-2 animate-pulse"
-                              onClick={async () => {
-                                if (order.token) {
-                                  try {
-                                    const ok = await redeemToken(order.token);
-                                    if (ok) showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
-                                    else showToast("টোকেনটি কার্যকর নয়", "error");
-                                  } catch (e) { 
-                                    const msg = e instanceof Error ? e.message : "Error";
-                                    showToast(msg, "error"); 
-                                  }
-                                }
-                              }}
-                            >
-                              <Key className="h-4 w-4" /> এনরোল করুন
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      ) : null}
+                    </div>
                   </div>
                 );
               })

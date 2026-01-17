@@ -67,33 +67,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const enrolledBatches: string[] = userData.enrolled_batches || [];
 
-      // Map enrolled batches to courses using batchId
-      const enrolledCourses = db.courses.filter((c) =>
-        enrolledBatches.includes(c.batchId)
-      );
+      // Fetch batch details for enrolled courses from Supabase
+      let enrolledCourses: any[] = [];
+      if (enrolledBatches.length > 0) {
+        const { data: batchesData } = await supabase
+          .from("batches")
+          .select("*")
+          .in("id", enrolledBatches);
+        
+        enrolledCourses = (batchesData || []).map(b => ({
+          id: b.id,
+          title: b.name,
+          category: b.category,
+          price: b.price,
+          batch: b.name.split(" ")[0],
+          description: b.description,
+          features: b.features,
+          batchId: b.id
+        }));
+      }
 
       // Fetch pending or rejected orders to show in Dashboard
-      // (Approved orders will be handled via enrollment)
       const { data: orderData } = await supabase
         .from("orders")
-        .select("*")
+        .select("*, batch:batches(name)")
         .eq("student_id", uid)
         .order("created_at", { ascending: false });
 
       // Transform DB orders to frontend Order objects
       const dbOrders: Order[] = (orderData || []).map(o => {
-        // Find course details for this order
-        const course = db.courses.find(c => c.batchId === o.batch_id);
-        
         return {
           id: o.id,
           student: userData.name || "Student",
           phone: o.payment_number || "N/A",
-          courseId: course?.id || "UNKNOWN",
-          courseName: course?.title || "Unknown Batch",
+          courseId: o.batch_id,
+          courseName: (o as any).batch?.name || "Unknown Batch",
           amount: o.amount,
-          status: o.status === "approved" ? "Approved" : "Pending",
-          token: o.assigned_token || null, // Use the real token from DB
+          status: o.status === "approved" ? "Approved" : o.status === "rejected" ? "Rejected" : "Pending",
+          token: o.assigned_token || null,
           date: new Date(o.created_at).toLocaleDateString("en-GB"),
         };
       });

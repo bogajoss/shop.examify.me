@@ -232,26 +232,24 @@ export default function AdminOrders() {
                         <div className="flex items-center justify-end gap-2">
                           <Button 
                             size="sm" 
-                            className="h-8 w-8 p-0 rounded-full bg-green-600 hover:bg-green-700 text-white"
+                            className="bg-green-600 hover:bg-green-700 text-white gap-1 px-3"
                             onClick={() => handleStatusChange(order.id, "approved")}
-                            title="Approve"
                           >
-                            <Check className="h-4 w-4" />
+                            <Check className="h-3 w-3" /> Approve
                           </Button>
                           <Button 
                             size="sm" 
                             variant="destructive"
-                            className="h-8 w-8 p-0 rounded-full"
+                            className="gap-1 px-3"
                             onClick={() => handleStatusChange(order.id, "rejected")}
-                            title="Reject"
                           >
-                            <X className="h-4 w-4" />
+                            <X className="h-3 w-3" /> Reject
                           </Button>
                         </div>
                       )}
                       {order.status !== "pending" && (
-                         <span className="text-xs text-muted-foreground italic">
-                            {order.status === "approved" ? "Verified" : "Declined"}
+                         <span className={`text-xs font-medium px-2 py-1 rounded-full ${order.status === "approved" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                            {order.status === "approved" ? "Approved" : "Rejected"}
                          </span>
                       )}
                     </td>

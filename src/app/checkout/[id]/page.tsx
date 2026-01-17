@@ -45,6 +45,7 @@ export default function Checkout() {
           title: data.name,
           price: data.price,
           oldPrice: data.old_price,
+          batchId: data.id, // Ensure batchId is present for submitOrder
         });
       } catch (err) {
         console.error("Error fetching course:", err);
