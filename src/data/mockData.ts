@@ -10,6 +10,7 @@ export interface Course {
   batchId: string; // UUID of the batch
   description: string;
   features: string[];
+  icon_url?: string;
 }
 
 export interface FreeExam {
