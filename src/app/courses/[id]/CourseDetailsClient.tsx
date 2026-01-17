@@ -33,12 +33,20 @@ export default function CourseDetailsClient({
               </button>
 
               <div className="w-full rounded-xl overflow-hidden border border-border bg-muted shadow-sm relative aspect-video group flex items-center justify-center">
-                <div className="flex flex-col items-center text-muted-foreground/40">
-                  <ImageIcon className="h-16 w-16" />
-                  <span className="mt-2 text-lg font-bold">
-                    Course Cover Image
-                  </span>
-                </div>
+                {course.icon_url ? (
+                  <img 
+                    src={course.icon_url} 
+                    alt={course.title} 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center text-muted-foreground/40">
+                    <ImageIcon className="h-16 w-16" />
+                    <span className="mt-2 text-lg font-bold">
+                      Course Cover Image
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -72,8 +80,8 @@ export default function CourseDetailsClient({
                   {(course.features && course.features.length > 0
                     ? course.features
                     : [
-                        "লাইভ ক্লাস ও রেকর্ড সেশন",
-                        "পিডিএফ লেকচার নোট",
+                        "লাইভ এক্সাম ও সলভ সেশন",
+                        "পিডিএফ সলভ শিট",
                         "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
                         "২৪/৭ সলভ গ্রুপ সাপোর্ট",
                       ]

@@ -59,6 +59,7 @@ export default function Home() {
           batch: b.name.split(" ")[0], // Extract batch name like "HSC"
           description: b.description || "",
           features: b.features || [],
+          icon_url: b.icon_url || "",
         }));
 
         setCourses(mappedCourses);
@@ -90,7 +91,7 @@ export default function Home() {
     },
     {
       icon: <Lightbulb className="h-5 w-5" />,
-      title: "কনসেপ্ট ভিত্তিক ক্লাস",
+      title: "কনসেপ্ট ভিত্তিক এক্সাম",
       desc: "বেসিক হোক শক্তিশালী।",
     },
     {
@@ -139,11 +140,11 @@ export default function Home() {
               মেডিকেল ভর্তি প্রস্তুতি ২০২৬
             </div>
             <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground leading-tight animate-in fade-in slide-in-from-top-4 duration-1000">
-              স্বপ্ন যখন{" "}
+              সাফল্যের পথে{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary-foreground">
-                ডাক্তার
+                এক ধাপ
               </span>{" "}
-              হওয়ার
+              এগিয়ে
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 animate-in fade-in slide-in-from-top-2 duration-1000 delay-200 fill-mode-both">
               Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে পছন্দমতো কোর্স
@@ -168,7 +169,7 @@ export default function Home() {
               {[
                 { label: "শিক্ষার্থী", value: "৫,০০০+" },
                 { label: "মেন্টর", value: "২০+" },
-                { label: "লেকচার", value: "৫০০+" },
+                { label: "এক্সাম", value: "৫০০+" },
                 { label: "সফলতার হার", value: "৯৮%" },
               ].map((stat) => (
                 <div

@@ -17,6 +17,7 @@ const batchSchema = z.object({
   old_price: z.coerce.number().min(0, "Old price must be positive").optional(),
   status: z.enum(["live", "ended"]),
   is_public: z.boolean(),
+  icon_url: z.string().optional(),
 });
 
 type BatchFormValues = z.infer<typeof batchSchema>;
@@ -39,6 +40,7 @@ export default function CreateBatch() {
       old_price: 0,
       status: "live",
       is_public: false,
+      icon_url: "",
     },
   });
 
@@ -53,6 +55,7 @@ export default function CreateBatch() {
           old_price: data.old_price,
           status: data.status,
           is_public: data.is_public,
+          icon_url: data.icon_url,
         },
       ]);
 
@@ -104,6 +107,16 @@ export default function CreateBatch() {
             {errors.category && (
               <p className="text-xs text-destructive">{errors.category.message}</p>
             )}
+          </div>
+
+          {/* Image URL */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Image URL (Batch Cover)</label>
+            <input
+              {...register("icon_url")}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              placeholder="https://example.com/image.jpg"
+            />
           </div>
 
           {/* Description */}
