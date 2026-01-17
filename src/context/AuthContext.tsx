@@ -1,6 +1,6 @@
 "use client";
 
-import { ID, Query } from "appwrite";
+import { createClient } from "@supabase/supabase-js";
 import type React from "react";
 import {
   createContext,
@@ -10,17 +10,9 @@ import {
   useState,
 } from "react";
 import { type Course, db, type Order } from "@/data/mockData";
-import {
-  APPWRITE_DB_ID,
-  account,
-  databases,
-  USERS_COLLECTION_ID,
-} from "@/lib/appwrite";
+import { supabase } from "@/lib/supabase";
 
-const ORDERS_COLLECTION_ID =
-  process.env.NEXT_PUBLIC_APPWRITE_ORDERS_COLLECTION_ID || "orders";
-
-// Extended Appwrite User Type
+// Extended User Type
 export interface User {
   id: string;
   name: string;
@@ -31,13 +23,19 @@ export interface User {
   orders: Order[];
 }
 
+interface PaymentDetails {
+  paymentMethod: string;
+  paymentNumber: string;
+  trxId: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (roll: string, pass: string) => Promise<void>;
   register: (name: string, roll: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
-  submitOrder: (course: Course) => Promise<void>;
+  submitOrder: (course: Course, paymentDetails: PaymentDetails) => Promise<void>;
   approveOrder: (orderId: string) => Promise<void>;
   redeemToken: (token: string) => Promise<boolean>;
   theme: "light" | "dark";
@@ -54,71 +52,91 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
-  const fetchUserData = useCallback(
-    async (userId: string, accountName: string) => {
-      try {
-        const userDocs = await databases.listDocuments(
-          APPWRITE_DB_ID,
-          USERS_COLLECTION_ID,
-          [Query.equal("userId", userId)],
-        );
+  const fetchUserData = useCallback(async (uid: string) => {
+    try {
+      const { data: userData, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("uid", uid)
+        .single();
 
-        if (userDocs.total > 0) {
-          const uDoc = userDocs.documents[0];
-
-          // Fetch Orders
-          let orders: Order[] = [];
-          try {
-            const orderDocs = await databases.listDocuments(
-              APPWRITE_DB_ID,
-              ORDERS_COLLECTION_ID,
-              [Query.equal("userId", userId), Query.orderDesc("$createdAt")],
-            );
-            orders = orderDocs.documents.map((d) => ({
-              id: d.$id,
-              student: d.student,
-              phone: d.phone,
-              courseId: d.courseId,
-              courseName: d.courseName,
-              amount: d.amount,
-              status: d.status,
-              token: d.token,
-              date: d.date,
-            }));
-          } catch (e) {
-            console.error("Orders fetch failed", e);
-          }
-
-          const enrolledBatches = uDoc.enrolled_batches || [];
-          const enrolledCourses = db.courses.filter((c) =>
-            enrolledBatches.includes(c.id),
-          );
-
-          return {
-            id: userId,
-            name: accountName,
-            phone: uDoc.phone || "",
-            roll: uDoc.roll,
-            enrolledBatches,
-            enrolledCourses,
-            orders,
-          };
-        }
-        return null;
-      } catch (error) {
+      if (error || !userData) {
         console.error("Error fetching user data:", error);
         return null;
       }
-    },
-    [],
-  );
+
+      const enrolledBatches: string[] = userData.enrolled_batches || [];
+
+      // Map enrolled batches to courses using batchId
+      const enrolledCourses = db.courses.filter((c) =>
+        enrolledBatches.includes(c.batchId)
+      );
+
+      // Fetch pending or rejected orders to show in Dashboard
+      // (Approved orders will be handled via enrollment)
+      const { data: orderData } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("student_id", uid)
+        .order("created_at", { ascending: false });
+
+      // Transform DB orders to frontend Order objects
+      const dbOrders: Order[] = (orderData || []).map(o => {
+        // Find course details for this order
+        const course = db.courses.find(c => c.batchId === o.batch_id);
+        
+        return {
+          id: o.id,
+          student: userData.name || "Student",
+          phone: o.payment_number || "N/A",
+          courseId: course?.id || "UNKNOWN",
+          courseName: course?.title || "Unknown Batch",
+          amount: o.amount,
+          status: o.status === "approved" ? "Approved" : "Pending",
+          token: o.assigned_token || null, // Use the real token from DB
+          date: new Date(o.created_at).toLocaleDateString("en-GB"),
+        };
+      });
+
+      // Merge enrolled courses as "Approved" orders if not already in dbOrders (for backward compatibility or direct enrollments)
+      // For now, let's just use dbOrders combined with enrolled courses if needed, 
+      // but dbOrders should be the source of truth for "Order History".
+      
+      // If we want to show enrolled courses in the order list even if they didn't go through the new 'orders' table
+      // (e.g. legacy or manual enrollments), we might need to synthesize them.
+      // But let's stick to real orders + mapped enrollments for now.
+
+      return {
+        id: userData.uid,
+        name: userData.name,
+        phone: "N/A",
+        roll: userData.roll,
+        enrolledBatches,
+        enrolledCourses,
+        orders: dbOrders,
+      };
+    } catch (error) {
+      console.error("Error in fetchUserData:", error);
+      return null;
+    }
+  }, []);
 
   const refreshUser = useCallback(async () => {
     try {
-      const session = await account.get();
-      const userData = await fetchUserData(session.$id, session.name);
-      setUser(userData);
-      document.cookie = "auth-token=true; path=/; max-age=86400; samesite=lax";
+      const storedUid = localStorage.getItem("user_uid");
+      if (storedUid) {
+        const userData = await fetchUserData(storedUid);
+        if (userData) {
+          setUser(userData);
+          document.cookie =
+            "auth-token=true; path=/; max-age=86400; samesite=lax";
+        } else {
+            localStorage.removeItem("user_uid");
+            setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
     } catch (_error) {
       setUser(null);
       document.cookie =
@@ -140,125 +158,106 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = useCallback(
     async (roll: string, pass: string) => {
-      const email = `${roll}@examify.me`;
-      await account.createEmailPasswordSession(email, pass);
+      const { data, error } = await supabase
+        .from("users")
+        .select("uid")
+        .eq("roll", roll)
+        .eq("pass", pass)
+        .single();
+
+      if (error || !data) {
+        throw new Error("Invalid roll or password");
+      }
+
+      localStorage.setItem("user_uid", data.uid);
       await refreshUser();
     },
-    [refreshUser],
+    [refreshUser]
   );
 
   const register = useCallback(
     async (name: string, roll: string, pass: string) => {
-      const email = `${roll}@examify.me`;
-      const newUser = await account.create(ID.unique(), email, pass, name);
-      await databases.createDocument(
-        APPWRITE_DB_ID,
-        USERS_COLLECTION_ID,
-        ID.unique(),
-        {
-          userId: newUser.$id,
+      const { data: existing } = await supabase
+        .from("users")
+        .select("uid")
+        .eq("roll", roll)
+        .single();
+
+      if (existing) {
+        throw new Error("User with this roll already exists");
+      }
+
+      const { data, error } = await supabase
+        .from("users")
+        .insert({
           name,
           roll,
+          pass,
           enrolled_batches: [],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      );
-      await login(roll, pass);
+        })
+        .select("uid")
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        localStorage.setItem("user_uid", data.uid);
+        await refreshUser();
+      }
     },
-    [login],
+    [refreshUser]
   );
 
   const logout = useCallback(async () => {
-    await account.deleteSession("current");
+    localStorage.removeItem("user_uid");
     setUser(null);
     document.cookie =
       "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }, []);
 
   const submitOrder = useCallback(
-    async (course: Course) => {
+    async (course: Course, paymentDetails: PaymentDetails) => {
       if (!user) return;
-      await databases.createDocument(
-        APPWRITE_DB_ID,
-        ORDERS_COLLECTION_ID,
-        ID.unique(),
-        {
-          userId: user.id,
-          student: user.name,
-          phone: user.phone || "N/A",
-          courseId: course.id,
-          courseName: course.title,
+
+      const { error } = await supabase
+        .from("orders")
+        .insert({
+          student_id: user.id,
+          batch_id: course.batchId,
           amount: course.price,
-          status: "Pending",
-          date: new Date().toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          }),
-        },
-      );
+          payment_method: paymentDetails.paymentMethod,
+          payment_number: paymentDetails.paymentNumber,
+          trx_id: paymentDetails.trxId,
+          status: "pending",
+        });
+
+      if (error) {
+        throw error;
+      }
+
       await refreshUser();
     },
-    [user, refreshUser],
+    [user, refreshUser]
   );
 
   const approveOrder = useCallback(
     async (orderId: string) => {
-      if (!user) return;
-      const token = `EXM-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      await databases.updateDocument(
-        APPWRITE_DB_ID,
-        ORDERS_COLLECTION_ID,
-        orderId,
-        {
-          status: "Approved",
-          token,
-        },
-      );
+      console.log("Approve order mock", orderId);
       await refreshUser();
     },
-    [user, refreshUser],
+    [refreshUser]
   );
 
   const redeemToken = useCallback(
     async (token: string): Promise<boolean> => {
-      if (!user) return false;
-
-      // Find order with this token
-      const orderDocs = await databases.listDocuments(
-        APPWRITE_DB_ID,
-        ORDERS_COLLECTION_ID,
-        [Query.equal("token", token), Query.equal("status", "Approved")],
-      );
-
-      if (orderDocs.total === 0) return false;
-      const order = orderDocs.documents[0];
-
-      // Add course to user's enrolled_batches
-      if (!user.enrolledBatches.includes(order.courseId)) {
-        const userDocs = await databases.listDocuments(
-          APPWRITE_DB_ID,
-          USERS_COLLECTION_ID,
-          [Query.equal("userId", user.id)],
-        );
-        if (userDocs.total > 0) {
-          await databases.updateDocument(
-            APPWRITE_DB_ID,
-            USERS_COLLECTION_ID,
-            userDocs.documents[0].$id,
-            {
-              enrolled_batches: [...user.enrolledBatches, order.courseId],
-              updated_at: new Date().toISOString(),
-            },
-          );
-        }
+      if (token === "FREE-ACCESS") {
+          return false;
       }
-
-      await refreshUser();
-      return true;
+      return false;
     },
-    [user, refreshUser],
+    []
   );
 
   const toggleTheme = useCallback(() => {

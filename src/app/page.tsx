@@ -15,7 +15,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
@@ -23,16 +23,55 @@ import CourseCard from "@/components/ui/CourseCard";
 import ExamCard from "@/components/ui/ExamCard";
 import QuestionBankCard from "@/components/ui/QuestionBankCard";
 import { db } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
   const [activeQbTab, setActiveQbTab] = useState("model-test");
   const [slideIndex, setSlideIndex] = useState(0);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [isCoursesLoading, setIsCoursesLoading] = useState(true);
 
   const qbTabs = [
     { id: "model-test", label: "মডেল টেস্ট" },
     { id: "subject-wise", label: "বিষয় ভিত্তিক" },
     { id: "institution", label: "প্রতিষ্ঠান ভিত্তিক" },
   ];
+
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const { data, error } = await supabase
+          .from("batches")
+          .select("*")
+          .eq("status", "live")
+          .eq("is_public", true);
+
+        if (error) throw error;
+
+        // Map Supabase batch to Course interface
+        const mappedCourses = (data || []).map((b) => ({
+          id: b.id,
+          title: b.name,
+          category: b.category || "General",
+          price: b.price || 0,
+          oldPrice: b.old_price || 0,
+          students: 0, // Mock students or count from enrollment_tokens
+          status: b.status === "live" ? "Published" : "Draft",
+          batch: b.name.split(" ")[0], // Extract batch name like "HSC"
+          description: b.description || "",
+          features: b.features || [],
+        }));
+
+        setCourses(mappedCourses);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      } finally {
+        setIsCoursesLoading(false);
+      }
+    }
+
+    fetchCourses();
+  }, []);
 
   const features = [
     {
@@ -165,9 +204,19 @@ export default function Home() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
-                {db.courses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
-                ))}
+                {isCoursesLoading ? (
+                  [1, 2, 3].map((i) => (
+                    <div key={i} className="h-[400px] rounded-xl bg-muted/20 animate-pulse" />
+                  ))
+                ) : courses.length > 0 ? (
+                  courses.map((course) => (
+                    <CourseCard key={course.id} course={course} />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12 text-muted-foreground">
+                    বর্তমানে কোনো সক্রিয় কোর্স নেই।
+                  </div>
+                )}
               </div>
             </div>
           </section>

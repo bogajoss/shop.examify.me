@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AuthProvider } from "@/context/AuthContext";
+import { AdminProvider } from "@/context/AdminContext";
 
 const hindSiliguri = localFont({
   src: [
@@ -39,7 +40,9 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <AdminProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </AdminProvider>
         </AuthProvider>
       </body>
     </html>

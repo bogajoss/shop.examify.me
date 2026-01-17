@@ -35,7 +35,10 @@ export default function CourseCard({ course }: CourseCardProps) {
             {course.description}
           </p>
           <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-            {["লাইভ ক্লাস", "লেকচার নোট", "স্ট্যান্ডার্ড এক্সাম", "সলভ শিট"].map((f) => (
+            {(course.features && course.features.length > 0
+              ? course.features
+              : ["লাইভ ক্লাস", "লেকচার নোট", "স্ট্যান্ডার্ড এক্সাম", "সলভ শিট"]
+            ).map((f: string) => (
               <div key={f} className="flex items-center gap-1 text-primary">
                 <Check className="h-3 w-3" />{" "}
                 <span className="text-muted-foreground">{f}</span>

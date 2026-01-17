@@ -7,7 +7,9 @@ export interface Course {
   students: number;
   status: "Published" | "Draft";
   batch: string;
+  batchId: string; // UUID of the batch
   description: string;
+  features: string[];
 }
 
 export interface FreeExam {
@@ -90,6 +92,7 @@ export const db = {
       students: 450,
       status: "Published",
       batch: "HSC 25",
+      batchId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
       description:
         "মেডিকেল ভর্তি পরীক্ষার পূর্ণাঙ্গ প্রস্তুতি। সেকেন্ড টাইমারদের জন্য বিশেষায়িত কেয়ার এবং এক্সাম সিস্টেম।",
     },
@@ -102,6 +105,7 @@ export const db = {
       students: 120,
       status: "Published",
       batch: "HSC 26",
+      batchId: "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
       description:
         "এইচএসসি ২৬ ব্যাচের জন্য বায়োলজি সাইকেল ১। মানব শরীরতত্ত্ব এবং কোষ ও কোষের গঠন।",
     },
@@ -114,6 +118,7 @@ export const db = {
       students: 800,
       status: "Published",
       batch: "HSC 25",
+      batchId: "c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
       description: "শুধুমাত্র এক্সাম ব্যাচ। ডেইলি এক্সাম, উইকলি টেস্ট এবং সলভ ক্লাস।",
     },
   ] as Course[],

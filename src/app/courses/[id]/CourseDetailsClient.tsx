@@ -69,12 +69,15 @@ export default function CourseDetailsClient({
                 </blockquote>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                  {[
-                    "লাইভ ক্লাস ও রেকর্ড সেশন",
-                    "পিডিএফ লেকচার নোট",
-                    "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
-                    "২৪/৭ সলভ গ্রুপ সাপোর্ট",
-                  ].map((item) => (
+                  {(course.features && course.features.length > 0
+                    ? course.features
+                    : [
+                        "লাইভ ক্লাস ও রেকর্ড সেশন",
+                        "পিডিএফ লেকচার নোট",
+                        "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
+                        "২৪/৭ সলভ গ্রুপ সাপোর্ট",
+                      ]
+                  ).map((item) => (
                     <div
                       key={item}
                       className="flex items-center gap-3 p-3 rounded-lg border border-border bg-secondary/20"

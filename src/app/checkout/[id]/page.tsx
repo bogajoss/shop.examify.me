@@ -10,11 +10,13 @@ import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
 
 const checkoutSchema = z.object({
   senderPhone: z.string().min(11, "সঠিক ফোন নাম্বার দিন (১১ ডিজিট)"),
   trxId: z.string().min(6, "সঠিক TrxID দিন (কমপক্ষে ৬ ডিজিট)"),
+  paymentMethod: z.enum(["bKash", "Nagad", "Rocket"]),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -22,26 +24,59 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 export default function Checkout() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, submitOrder } = useAuth();
+  const { user, submitOrder, isLoading: isAuthLoading } = useAuth();
   const { showToast } = useToast();
+  const [course, setCourse] = useState<any>(null);
+  const [isCourseLoading, setIsCourseLoading] = useState(true);
 
-  const course = db.courses.find((c) => c.id === id);
+  useEffect(() => {
+    async function fetchCourse() {
+      try {
+        const { data, error } = await supabase
+          .from("batches")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error) throw error;
+        
+        setCourse({
+          id: data.id,
+          title: data.name,
+          price: data.price,
+          oldPrice: data.old_price,
+        });
+      } catch (err) {
+        console.error("Error fetching course:", err);
+        showToast("কোর্স খুঁজে পাওয়া যায়নি।", "error");
+      } finally {
+        setIsCourseLoading(false);
+      }
+    }
+    fetchCourse();
+  }, [id, showToast]);
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       senderPhone: "",
       trxId: "",
+      paymentMethod: undefined,
     },
   });
 
+  const selectedMethod = watch("paymentMethod");
+
+  if (isAuthLoading || isCourseLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   if (!course) return null;
 
-  const onSubmit = async (_data: CheckoutFormValues) => {
+  const onSubmit = async (data: CheckoutFormValues) => {
     if (!user) {
       showToast("অর্ডার করার আগে লগইন করুন।", "error");
       router.push("/login");
@@ -49,7 +84,11 @@ export default function Checkout() {
     }
 
     try {
-      await submitOrder(course);
+      await submitOrder(course, {
+        paymentMethod: data.paymentMethod,
+        paymentNumber: data.senderPhone,
+        trxId: data.trxId
+      });
       showToast("অর্ডার জমা হয়েছে! ভেরিফিকেশনের জন্য অপেক্ষা করুন।", "info");
       router.push("/dashboard");
     } catch (error) {
@@ -107,19 +146,22 @@ export default function Checkout() {
                 <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs">
                   1
                 </span>
-                Send Money
+                Select Payment Method & Send Money
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                 {/* bKash */}
-                <div className="relative bg-[#e2136e]/5 border border-[#e2136e]/30 rounded-xl p-4 flex flex-col items-center gap-3">
+                <div 
+                  onClick={() => setValue("paymentMethod", "bKash")}
+                  className={`relative bg-[#e2136e]/5 border rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer transition-all ${selectedMethod === "bKash" ? "border-[#e2136e] ring-2 ring-[#e2136e]/20" : "border-[#e2136e]/30 hover:border-[#e2136e]"}`}
+                >
                   <div className="w-full flex justify-between items-center">
                     <span className="text-[10px] font-bold text-[#e2136e]">
                       bKash Personal
                     </span>
                     <button
                       type="button"
-                      onClick={() => copyToClipboard("01973577899")}
+                      onClick={(e) => { e.stopPropagation(); copyToClipboard("01973577899"); }}
                       className="text-[#e2136e]/70"
                     >
                       <Copy className="h-3 w-3" />
@@ -130,17 +172,21 @@ export default function Checkout() {
                       01973577899
                     </span>
                   </div>
+                  {selectedMethod === "bKash" && <div className="absolute top-2 right-2 w-3 h-3 bg-[#e2136e] rounded-full" />}
                 </div>
 
                 {/* Nagad */}
-                <div className="relative bg-[#f6921e]/5 border border-[#f6921e]/30 rounded-xl p-4 flex flex-col items-center gap-3">
+                <div 
+                   onClick={() => setValue("paymentMethod", "Nagad")}
+                   className={`relative bg-[#f6921e]/5 border rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer transition-all ${selectedMethod === "Nagad" ? "border-[#f6921e] ring-2 ring-[#f6921e]/20" : "border-[#f6921e]/30 hover:border-[#f6921e]"}`}
+                >
                   <div className="w-full flex justify-between items-center">
                     <span className="text-[10px] font-bold text-[#f6921e]">
                       Nagad Personal
                     </span>
                     <button
                       type="button"
-                      onClick={() => copyToClipboard("01754365403")}
+                      onClick={(e) => { e.stopPropagation(); copyToClipboard("01754365403"); }}
                       className="text-[#f6921e]/70"
                     >
                       <Copy className="h-3 w-3" />
@@ -151,17 +197,21 @@ export default function Checkout() {
                       01754365403
                     </span>
                   </div>
+                   {selectedMethod === "Nagad" && <div className="absolute top-2 right-2 w-3 h-3 bg-[#f6921e] rounded-full" />}
                 </div>
 
                 {/* Rocket */}
-                <div className="relative bg-[#8c3494]/5 border border-[#8c3494]/30 rounded-xl p-4 flex flex-col items-center gap-3">
+                <div 
+                   onClick={() => setValue("paymentMethod", "Rocket")}
+                   className={`relative bg-[#8c3494]/5 border rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer transition-all ${selectedMethod === "Rocket" ? "border-[#8c3494] ring-2 ring-[#8c3494]/20" : "border-[#8c3494]/30 hover:border-[#8c3494]"}`}
+                >
                   <div className="w-full flex justify-between items-center">
                     <span className="text-[10px] font-bold text-[#8c3494]">
                       Rocket Personal
                     </span>
                     <button
                       type="button"
-                      onClick={() => copyToClipboard("019735778997")}
+                      onClick={(e) => { e.stopPropagation(); copyToClipboard("019735778997"); }}
                       className="text-[#8c3494]/70"
                     >
                       <Copy className="h-3 w-3" />
@@ -172,8 +222,14 @@ export default function Checkout() {
                       019735778997
                     </span>
                   </div>
+                   {selectedMethod === "Rocket" && <div className="absolute top-2 right-2 w-3 h-3 bg-[#8c3494] rounded-full" />}
                 </div>
               </div>
+              {errors.paymentMethod && (
+                 <p className="text-center text-[10px] text-destructive font-medium mt-2">
+                   {errors.paymentMethod.message}
+                 </p>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -194,7 +250,7 @@ export default function Checkout() {
                       htmlFor="senderPhone"
                       className="text-xs font-medium text-foreground/70"
                     >
-                      যে নাম্বার থেকে টাকা পাঠিয়েছেন
+                      যে নাম্বার থেকে টাকা পাঠিয়েছেন ({selectedMethod || "..."})
                     </label>
                     <div className="flex flex-col gap-1">
                       <input

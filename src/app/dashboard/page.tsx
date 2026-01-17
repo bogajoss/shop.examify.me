@@ -13,18 +13,19 @@ import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Dashboard() {
-  const { user, approveOrder, redeemToken } = useAuth();
+  const { user, approveOrder, redeemToken, isLoading } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
   const [tokenInput, setTokenInput] = useState("");
 
   // Protect route
   useEffect(() => {
-    if (!user) {
+    if (!isLoading && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, isLoading, router]);
 
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   if (!user) return null;
 
   const handleRedeem = async (e: React.FormEvent) => {

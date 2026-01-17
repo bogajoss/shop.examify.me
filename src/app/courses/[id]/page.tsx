@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { db } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
 import CourseDetailsClient from "./CourseDetailsClient";
 
 interface Props {
@@ -9,34 +10,49 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const course = db.courses.find((c) => c.id === id);
+  
+  const { data: batch } = await supabase
+    .from("batches")
+    .select("name, description")
+    .eq("id", id)
+    .single();
 
-  if (!course) {
-    return {
-      title: "Course Not Found | Examify",
-    };
+  if (!batch) {
+    return { title: "Course Not Found" };
   }
 
   return {
-    title: `${course.title} | Examify`,
-    description: course.description,
-    openGraph: {
-      title: course.title,
-      description: course.description,
-      images: [
-        `https://placehold.co/1200x630?text=${encodeURIComponent(course.title)}`,
-      ],
-    },
+    title: `${batch.name} | Examify`,
+    description: batch.description,
   };
 }
 
 export default async function CoursePage({ params }: Props) {
   const { id } = await params;
-  const course = db.courses.find((c) => c.id === id);
+  
+  const { data: batch, error } = await supabase
+    .from("batches")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  if (!course) {
+  if (error || !batch) {
     notFound();
   }
 
-  return <CourseDetailsClient course={course} />;
+  const course = {
+    id: batch.id,
+    title: batch.name,
+    category: batch.category || "General",
+    price: batch.price || 0,
+    oldPrice: batch.old_price || 0,
+    students: 0,
+    status: batch.status === "live" ? "Published" : "Draft",
+    batch: batch.name.split(" ")[0],
+    description: batch.description || "",
+    batchId: batch.id,
+    features: batch.features || [],
+  };
+
+  return <CourseDetailsClient course={course as any} />;
 }
