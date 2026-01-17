@@ -23,11 +23,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect dashboard, classroom, and checkout routes (Student)
+  // Protect dashboard and checkout routes (Student)
   if (
     pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/checkout") ||
-    pathname.startsWith("/classroom")
+    pathname.startsWith("/checkout")
   ) {
     if (!authToken) {
       const loginUrl = new URL("/login", request.url);
@@ -47,5 +46,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/checkout/:path*", "/login", "/classroom/:path*", "/admin/:path*"],
+  matcher: ["/dashboard/:path*", "/checkout/:path*", "/login", "/admin/:path*"],
 };

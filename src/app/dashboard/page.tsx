@@ -109,10 +109,10 @@ export default function Dashboard() {
                           fullWidth
                           className="gap-2"
                           onClick={() =>
-                            router.push(`/classroom/${order.courseId}`)
+                            window.location.href = `https://examify.me/batches/${order.courseId}`
                           }
                         >
-                          <Play className="h-4 w-4 fill-current" /> ক্লাসরুমে যান
+                          <Play className="h-4 w-4 fill-current" /> কোর্সটি দেখুন
                         </Button>
                       ) : null}
                     </div>
