@@ -13,8 +13,8 @@ const batchSchema = z.object({
   name: z.string().min(1, "Batch name is required"),
   category: z.string().min(1, "Category is required"),
   description: z.string().optional(),
-  price: z.coerce.number().min(0, "Price must be positive"),
-  old_price: z.coerce.number().min(0, "Old price must be positive").optional(),
+  price: z.number().min(0, "Price must be positive"),
+  old_price: z.number().min(0, "Old price must be positive").optional(),
   status: z.enum(["live", "ended"]),
   is_public: z.boolean(),
   icon_url: z.string().optional(),
@@ -153,7 +153,7 @@ export default function CreateBatch() {
               <input
                 id="price"
                 type="number"
-                {...register("price")}
+                {...register("price", { valueAsNumber: true })}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
               {errors.price && (
@@ -171,7 +171,7 @@ export default function CreateBatch() {
               <input
                 id="old_price"
                 type="number"
-                {...register("old_price")}
+                {...register("old_price", { valueAsNumber: true })}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>

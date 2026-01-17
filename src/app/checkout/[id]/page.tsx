@@ -26,7 +26,7 @@ const checkoutSchema = z.object({
   senderPhone: z.string().min(11, "সঠিক ফোন নম্বর দিন (১১ ডিজিট)"),
   trxId: z.string().min(6, "সঠিক TrxID দিন (কমপক্ষে ৬ ডিজিট)"),
   paymentMethod: z.enum(["bKash", "Nagad", "Rocket"], {
-    required_error: "পেমেন্ট মেথড সিলেক্ট করুন",
+    message: "পেমেন্ট মেথড সিলেক্ট করুন",
   }),
 });
 
@@ -279,53 +279,87 @@ export default function Checkout() {
 
               {user ? (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div className="space-y-1.5">
                       <label
-                        htmlFor="senderPhone"
+                        htmlFor="paymentMethod"
                         className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1"
                       >
-                        বিকাশ/নগদ নম্বর
+                        পেমেন্ট মেথড সিলেক্ট করুন
                       </label>
                       <div className="relative group">
-                        <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <input
-                          id="senderPhone"
-                          type="tel"
-                          {...register("senderPhone")}
-                          placeholder="01XXXXXXXXX"
-                          className="w-full h-14 bg-muted/30 border border-border rounded-2xl pl-12 pr-4 text-base font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                        />
+                        <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                        <select
+                          id="paymentMethod"
+                          {...register("paymentMethod")}
+                          className="w-full h-14 bg-muted/30 border border-border rounded-2xl pl-12 pr-4 text-base font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none cursor-pointer"
+                        >
+                          <option value="">সিলেক্ট করুন...</option>
+                          <option value="bKash">bKash (বিকাশ)</option>
+                          <option value="Nagad">Nagad (নগদ)</option>
+                          <option value="Rocket">Rocket (রকেট)</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg className="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
                       </div>
-                      {errors.senderPhone && (
+                      {errors.paymentMethod && (
                         <p className="text-[10px] text-destructive font-bold ml-1">
-                          {errors.senderPhone.message}
+                          {errors.paymentMethod.message}
                         </p>
                       )}
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label
-                        htmlFor="trxId"
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1"
-                      >
-                        Transaction ID (TrxID)
-                      </label>
-                      <div className="relative group">
-                        <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                        <input
-                          id="trxId"
-                          type="text"
-                          {...register("trxId")}
-                          placeholder="TrxID"
-                          className="w-full h-14 bg-muted/30 border border-border rounded-2xl pl-12 pr-4 text-base font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                        />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="senderPhone"
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1"
+                        >
+                          বিকাশ/নগদ নম্বর
+                        </label>
+                        <div className="relative group">
+                          <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <input
+                            id="senderPhone"
+                            type="tel"
+                            {...register("senderPhone")}
+                            placeholder="01XXXXXXXXX"
+                            className="w-full h-14 bg-muted/30 border border-border rounded-2xl pl-12 pr-4 text-base font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                          />
+                        </div>
+                        {errors.senderPhone && (
+                          <p className="text-[10px] text-destructive font-bold ml-1">
+                            {errors.senderPhone.message}
+                          </p>
+                        )}
                       </div>
-                      {errors.trxId && (
-                        <p className="text-[10px] text-destructive font-bold ml-1">
-                          {errors.trxId.message}
-                        </p>
-                      )}
+
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="trxId"
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1"
+                        >
+                          Transaction ID (TrxID)
+                        </label>
+                        <div className="relative group">
+                          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <input
+                            id="trxId"
+                            type="text"
+                            {...register("trxId")}
+                            placeholder="TrxID"
+                            className="w-full h-14 bg-muted/30 border border-border rounded-2xl pl-12 pr-4 text-base font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                          />
+                        </div>
+                        {errors.trxId && (
+                          <p className="text-[10px] text-destructive font-bold ml-1">
+                            {errors.trxId.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
