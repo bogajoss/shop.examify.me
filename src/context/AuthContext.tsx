@@ -37,7 +37,6 @@ interface AuthContextType {
   logout: () => Promise<void>;
   submitOrder: (course: Course, paymentDetails: PaymentDetails) => Promise<void>;
   approveOrder: (orderId: string) => Promise<void>;
-  redeemToken: (token: string) => Promise<boolean>;
   theme: "light" | "dark";
   toggleTheme: () => void;
   refreshUser: () => Promise<void>;
@@ -109,13 +108,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       });
 
-      // Merge enrolled courses as "Approved" orders if not already in dbOrders (for backward compatibility or direct enrollments)
-      // For now, let's just use dbOrders combined with enrolled courses if needed, 
-      // but dbOrders should be the source of truth for "Order History".
-      
-      // If we want to show enrolled courses in the order list even if they didn't go through the new 'orders' table
-      // (e.g. legacy or manual enrollments), we might need to synthesize them.
-      // But let's stick to real orders + mapped enrollments for now.
+      // Merge enrolled courses as "Approved" orders if not already in dbOrders
+      enrolledCourses.forEach(course => {
+        const hasOrder = dbOrders.some(o => o.courseId === course.batchId);
+        if (!hasOrder) {
+          dbOrders.push({
+            id: `virtual-${course.batchId}`,
+            student: userData.name || "Student",
+            phone: "N/A",
+            courseId: course.batchId,
+            courseName: course.title,
+            amount: course.price,
+            status: "Approved",
+            token: null,
+            date: "Joined", // or generic date
+          });
+        }
+      });
 
       return {
         id: userData.uid,
@@ -261,16 +270,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     [refreshUser]
   );
 
-  const redeemToken = useCallback(
-    async (token: string): Promise<boolean> => {
-      if (token === "FREE-ACCESS") {
-          return false;
-      }
-      return false;
-    },
-    []
-  );
-
   const toggleTheme = useCallback(() => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -288,7 +287,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         submitOrder,
         approveOrder,
-        redeemToken,
         theme,
         toggleTheme,
         refreshUser,

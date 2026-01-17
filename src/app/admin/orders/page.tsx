@@ -76,7 +76,7 @@ export default function AdminOrders() {
         return;
       }
 
-      // 2. If approving: Generate Token -> Save Token -> Update Order -> Enroll User
+      // 2. If approving: Update Order -> Enroll User (Direct Enrollment, No Token)
       if (newStatus === "approved") {
         const order = orders.find(o => o.id === orderId);
         // We need the full order details (student_id, batch_id) which might not be in the lightweight state
@@ -88,37 +88,17 @@ export default function AdminOrders() {
 
         if (!fullOrder) throw new Error("অর্ডার খুঁজে পাওয়া যায়নি");
 
-        // Generate a random token
-        const tokenString = `EXM-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-        // A. Insert into enrollment_tokens
-        const { error: tokenError } = await supabase
-          .from("enrollment_tokens")
-          .insert({
-            token: tokenString,
-            batch_id: fullOrder.batch_id,
-            created_by: admin.uid,
-            is_used: true, // Auto-used since we auto-enroll
-            used_by: fullOrder.student_id,
-            used_at: new Date().toISOString(),
-            max_uses: 1,
-            current_uses: 1
-          });
-
-        if (tokenError) throw tokenError;
-
-        // B. Update Order with Status and Token
+        // A. Update Order Status
         const { error: orderError } = await supabase
           .from("orders")
           .update({ 
-            status: "approved",
-            assigned_token: tokenString
+            status: "approved"
           })
           .eq("id", orderId);
 
         if (orderError) throw orderError;
 
-        // C. Auto-Enroll User (Update users table)
+        // B. Auto-Enroll User (Update users table)
         const { data: uData } = await supabase
           .from("users")
           .select("enrolled_batches")
@@ -135,7 +115,7 @@ export default function AdminOrders() {
               .eq("uid", fullOrder.student_id);
         }
 
-        showToast("অর্ডার অ্যাপ্রুভ এবং টোকেন জেনারেট করা হয়েছে!", "success");
+        showToast("অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!", "success");
         fetchOrders();
       }
     } catch (error) {

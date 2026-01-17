@@ -14,10 +14,9 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
 
 export default function Dashboard() {
-  const { user, approveOrder, redeemToken, isLoading, refreshUser } = useAuth();
+  const { user, approveOrder, isLoading, refreshUser } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
-  const [tokenInput, setTokenInput] = useState("");
 
   // Protect route
   useEffect(() => {
@@ -28,69 +27,6 @@ export default function Dashboard() {
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   if (!user) return null;
-
-  const handleRedeem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!tokenInput.trim()) return;
-
-    try {
-      // Real Token Verification
-      const { data: tokenData, error } = await supabase
-        .from("enrollment_tokens")
-        .select("*")
-        .eq("token", tokenInput.trim())
-        .eq("is_used", false)
-        .single();
-
-      if (error || !tokenData) {
-        showToast("ভুল টোকেন বা টোকেনটি ইতিমধ্যে ব্যবহৃত!", "error");
-        return;
-      }
-
-      // Check expiry if exists
-      if (tokenData.expires_at && new Date(tokenData.expires_at) < new Date()) {
-        showToast("টোকেনটির মেয়াদ শেষ হয়ে গেছে!", "error");
-        return;
-      }
-
-      // Enroll student
-      const currentBatches = user.enrolledBatches || [];
-      if (!currentBatches.includes(tokenData.batch_id)) {
-        const { error: enrollError } = await supabase
-          .from("users")
-          .update({
-            enrolled_batches: [...currentBatches, tokenData.batch_id]
-          })
-          .eq("uid", user.id);
-        
-        if (enrollError) throw enrollError;
-
-        // Mark token as used
-        await supabase
-          .from("enrollment_tokens")
-          .update({
-            is_used: true,
-            used_by: user.id,
-            used_at: new Date().toISOString(),
-            current_uses: (tokenData.current_uses || 0) + 1
-          })
-          .eq("id", tokenData.id);
-      }
-
-      showToast("সফলভাবে এনরোল করা হয়েছে!", "success");
-      setTokenInput("");
-      refreshUser();
-    } catch (error) {
-      console.error("Redeem error:", error);
-      showToast("টোকেন রিডিম করতে সমস্যা হয়েছে", "error");
-    }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast("টোকেন কপি করা হয়েছে!");
-    });
-  };
 
   const isEnrolled = (courseId: string) =>
     user.enrolledBatches.includes(courseId);
@@ -111,24 +47,6 @@ export default function Dashboard() {
               রোল: {user.roll}
             </p>
           </div>
-        </div>
-
-        {/* Token Redemption Area */}
-        <div className="bg-primary/5 border border-primary/20 p-6 rounded-xl space-y-4">
-          <div className="flex items-center gap-2 text-primary font-bold">
-            <Key className="h-5 w-5" />
-            টোকেন রিডিম করুন
-          </div>
-          <form onSubmit={handleRedeem} className="flex gap-2">
-            <input
-              type="text"
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-              placeholder="টোকেন দিন (যেমন: EXM-XXXXXX)"
-              className="flex-1 h-11 px-4 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary font-mono text-sm"
-            />
-            <Button type="submit">রিডিম</Button>
-          </form>
         </div>
 
         {/* Course & Order List */}
@@ -185,27 +103,6 @@ export default function Dashboard() {
                     </div>
 
                     <div className="mt-4 space-y-3">
-                      {/* Show Token if available */}
-                      {order.token && (
-                        <div className="flex items-center justify-between p-2.5 bg-muted rounded-lg border border-border text-xs group">
-                          <span className="text-muted-foreground font-medium">
-                            টোকেন:
-                          </span>
-                          <code className="font-mono font-bold text-primary select-all">
-                            {order.token}
-                          </code>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              copyToClipboard(order.token || "")
-                            }
-                            className="text-primary hover:text-primary/80 transition-colors"
-                          >
-                            <Copy className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      )}
-
                       {/* Actions */}
                       {enrolled ? (
                         <Button
@@ -216,17 +113,6 @@ export default function Dashboard() {
                           }
                         >
                           <Play className="h-4 w-4 fill-current" /> ক্লাসরুমে যান
-                        </Button>
-                      ) : order.status === "Approved" && order.token ? (
-                        <Button
-                          fullWidth
-                          className="gap-2 animate-pulse"
-                          onClick={async () => {
-                             setTokenInput(order.token || "");
-                             showToast("টোকেনটি উপরের রিডিম বক্সে সেট করা হয়েছে।", "info");
-                          }}
-                        >
-                          <Key className="h-4 w-4" /> রিডিম করুন
                         </Button>
                       ) : null}
                     </div>
