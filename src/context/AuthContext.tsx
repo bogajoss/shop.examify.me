@@ -32,7 +32,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (roll: string, pass: string) => Promise<void>;
-  register: (name: string, roll: string, pass: string) => Promise<void>;
+  register: (name: string, roll: string, pass: string) => Promise<string>;
   logout: () => Promise<void>;
   submitOrder: (
     course: Course,
@@ -203,36 +203,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const register = useCallback(
-    async (name: string, roll: string, pass: string) => {
-      const { data: existing } = await supabase
-        .from("users")
-        .select("uid")
-        .eq("roll", roll)
-        .single();
+    async (name: string, _roll: string, pass: string) => {
+      let attempts = 0;
+      const maxAttempts = 5;
+      
+      while (attempts < maxAttempts) {
+        // 1. Fetch the latest roll to generate the next one
+        const { data: latestUser } = await supabase
+          .from("users")
+          .select("roll")
+          .order("roll", { ascending: false }) // Sort by roll to get highest number
+          .limit(1);
 
-      if (existing) {
-        throw new Error("User with this roll already exists");
-      }
+        const latestRoll = latestUser?.[0]?.roll;
+        let nextRoll = "xmfy-100000";
+        
+        if (latestRoll && latestRoll.startsWith("xmfy-")) {
+          const lastNum = parseInt(latestRoll.split("-")[1]);
+          if (!isNaN(lastNum)) {
+            nextRoll = `xmfy-${lastNum + 1}`;
+          }
+        }
 
-      const { data, error } = await supabase
-        .from("users")
-        .insert({
-          name,
-          roll,
-          pass,
-          enrolled_batches: [],
-        })
-        .select("uid")
-        .single();
+        // 2. Try to insert
+        const { data, error } = await supabase
+          .from("users")
+          .insert({
+            name,
+            roll: nextRoll,
+            pass,
+            enrolled_batches: [],
+          })
+          .select("uid")
+          .single();
 
-      if (error) {
+        if (!error && data) {
+          localStorage.setItem("user_uid", data.uid);
+          await refreshUser();
+          return nextRoll; // Return the generated roll
+        }
+
+        // 3. If it's a duplicate roll error (code 23505), loop and try again
+        if (error?.code === '23505') {
+          attempts++;
+          continue;
+        }
+
+        // For other errors, throw immediately
         throw error;
       }
 
-      if (data) {
-        localStorage.setItem("user_uid", data.uid);
-        await refreshUser();
-      }
+      throw new Error("Could not generate a unique roll number after several attempts. Please try again.");
     },
     [refreshUser],
   );

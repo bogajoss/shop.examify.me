@@ -22,10 +22,12 @@ import Button from "@/components/ui/Button";
 import CourseCard from "@/components/ui/CourseCard";
 import ExamCard from "@/components/ui/ExamCard";
 import QuestionBankCard from "@/components/ui/QuestionBankCard";
+import { useAuth } from "@/context/AuthContext";
 import { db } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
+  const { user } = useAuth();
   const [activeQbTab, setActiveQbTab] = useState("model-test");
   const [slideIndex, setSlideIndex] = useState(0);
   const [courses, setCourses] = useState<any[]>([]);
@@ -132,6 +134,11 @@ export default function Home() {
   );
 
   const filteredCourses = courses.filter((course) => {
+    // Hide enrolled batches
+    if (user && user.enrolledBatches.includes(course.id)) {
+      return false;
+    }
+
     const matchesCategory =
       activeCourseTab === "all" || course.category === activeCourseTab;
     const matchesSearch = course.title
