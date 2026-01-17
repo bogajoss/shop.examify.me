@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -15,10 +16,12 @@ export default function CourseCard({ course }: CourseCardProps) {
     <div className="rounded-lg bg-card text-card-foreground overflow-hidden border border-border shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
       <div className="w-full aspect-video relative overflow-hidden bg-muted">
         {course.icon_url ? (
-          <img 
-            src={course.icon_url} 
-            alt={course.title} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          <Image
+            src={course.icon_url}
+            alt={course.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 font-bold text-lg">

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { db } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
 import CourseDetailsClient from "./CourseDetailsClient";
 
@@ -10,7 +9,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  
+
   const { data: batch } = await supabase
     .from("batches")
     .select("name, description")
@@ -29,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CoursePage({ params }: Props) {
   const { id } = await params;
-  
+
   const { data: batch, error } = await supabase
     .from("batches")
     .select("*")

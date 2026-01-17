@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ExamPage({ params }: Props) {
   const { id } = await params;
-  
+
   // Try fetching from Supabase
   const { data: dbExam } = await supabase
     .from("exams")
@@ -69,10 +69,10 @@ export default async function ExamPage({ params }: Props) {
       questions: 0, // Will be updated with actual question count
       students: 0,
     };
-    
+
     // Fallback questions since we don't have questions table
     // Using FE-001 questions as a placeholder
-    questions = db.examQuestions["FE-001"]; 
+    questions = db.examQuestions["FE-001"];
     examInfo.questions = questions.length;
   } else {
     // Fallback to mock data

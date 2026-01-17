@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Loader2, GraduationCap, AlertCircle } from "lucide-react";
+import {
+  AlertCircle,
+  GraduationCap,
+  Loader2,
+  Lock,
+  User as UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const [rollNumber, setRollNumber] = useState("");
@@ -44,83 +50,111 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <div className="w-full max-w-sm rounded-xl border bg-card text-card-foreground shadow-sm">
-        <div className="flex flex-col space-y-1.5 p-6 text-center">
-          <div className="flex justify-center items-center mb-4">
-            <GraduationCap className="h-10 w-10 text-primary" />
-          </div>
-          <h3 className="font-semibold tracking-tight text-2xl">লগইন</h3>
-          <p className="text-sm text-muted-foreground">
-            লগইন করতে আপনার রোল বা ফোন নম্বর ও পাসওয়ার্ড দিন
-          </p>
-        </div>
-        
-        <form onSubmit={handleLogin}>
-          <div className="p-6 pt-0 space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="roll-number" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                রোল নম্বর / ফোন নম্বর (অফিসিয়ালি রোল না পেলে তোমার ফোন নম্বর দাও)
-              </label>
-              <input
-                id="roll-number"
-                type="text"
-                placeholder="আপনার রোল বা ফোন নম্বর"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={rollNumber}
-                onChange={(e) => setRollNumber(e.target.value)}
-                required
-                disabled={loading}
-              />
+    <div className="flex items-center justify-center min-h-screen bg-background p-4 sm:p-6">
+      <div className="w-full max-w-md bg-card border border-border rounded-3xl shadow-xl overflow-hidden">
+        <div className="p-8 sm:p-10 text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary transform rotate-6">
+              <GraduationCap className="h-10 w-10" />
             </div>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-black tracking-tight text-foreground">
+              স্বাগতম
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-[240px] mx-auto">
+              আপনার অ্যাকাউন্টে লগইন করতে নিচের তথ্যগুলো দিন
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleLogin} className="px-8 sm:px-10 pb-10 space-y-6">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="roll-number"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1"
+              >
+                রোল / ফোন নম্বর
+              </label>
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <UserIcon className="h-5 w-5" />
+                </div>
+                <input
+                  id="roll-number"
+                  type="text"
+                  placeholder="আপনার রোল বা ফোন নম্বর"
+                  className="flex h-14 w-full rounded-2xl border border-border bg-muted/30 pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  value={rollNumber}
+                  onChange={(e) => setRollNumber(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1"
+              >
                 পাসওয়ার্ড
               </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="আপনার পাসওয়ার্ড"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <Lock className="h-5 w-5" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  className="flex h-14 w-full rounded-2xl border border-border bg-muted/30 pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
             </div>
-            
+
             {error && (
-              <div className="rounded-lg border border-destructive/50 px-4 py-3 text-destructive bg-destructive/10 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4" />
-                <p className="text-sm font-medium">{error}</p>
+              <div className="rounded-2xl border border-destructive/20 px-4 py-3 text-destructive bg-destructive/5 flex items-center gap-3 animate-in fade-in zoom-in-95 duration-200">
+                <AlertCircle className="h-5 w-5 shrink-0" />
+                <p className="text-xs font-bold leading-tight">{error}</p>
               </div>
             )}
           </div>
-          
-          <div className="flex items-center p-6 pt-0 flex-col gap-4">
+
+          <div className="space-y-6">
             <Button
               type="submit"
-              className="w-full hover:scale-105 transition-transform"
+              size="lg"
+              fullWidth
+              className="h-14 rounded-2xl text-base font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
               disabled={loading}
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   লগইন হচ্ছে...
                 </>
               ) : (
                 "লগইন করুন"
               )}
             </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              অ্যাকাউন্ট নেই?{" "}
+
+            <div className="text-center text-sm">
+              <span className="text-muted-foreground font-medium">
+                অ্যাকাউন্ট নেই?{" "}
+              </span>
               <Link
                 href={`/register${searchParams.get("redirect") ? `?redirect=${searchParams.get("redirect")}` : ""}`}
-                className="underline hover:text-primary"
+                className="text-primary font-black hover:underline underline-offset-4"
               >
                 নিবন্ধন করুন
               </Link>
-            </p>
+            </div>
           </div>
         </form>
       </div>

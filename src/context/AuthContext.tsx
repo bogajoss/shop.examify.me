@@ -1,6 +1,5 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
 import type React from "react";
 import {
   createContext,
@@ -9,7 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { type Course, db, type Order } from "@/data/mockData";
+import type { Course, Order } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
 
 // Extended User Type
@@ -35,7 +34,10 @@ interface AuthContextType {
   login: (roll: string, pass: string) => Promise<void>;
   register: (name: string, roll: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
-  submitOrder: (course: Course, paymentDetails: PaymentDetails) => Promise<void>;
+  submitOrder: (
+    course: Course,
+    paymentDetails: PaymentDetails,
+  ) => Promise<void>;
   approveOrder: (orderId: string) => Promise<void>;
   theme: "light" | "dark";
   toggleTheme: () => void;
@@ -73,8 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           .from("batches")
           .select("*")
           .in("id", enrolledBatches);
-        
-        enrolledCourses = (batchesData || []).map(b => ({
+
+        enrolledCourses = (batchesData || []).map((b) => ({
           id: b.id,
           title: b.name,
           category: b.category,
@@ -82,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           batch: b.name.split(" ")[0],
           description: b.description,
           features: b.features,
-          batchId: b.id
+          batchId: b.id,
         }));
       }
 
@@ -94,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         .order("created_at", { ascending: false });
 
       // Transform DB orders to frontend Order objects
-      const dbOrders: Order[] = (orderData || []).map(o => {
+      const dbOrders: Order[] = (orderData || []).map((o) => {
         return {
           id: o.id,
           student: userData.name || "Student",
@@ -102,15 +104,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           courseId: o.batch_id,
           courseName: (o as any).batch?.name || "Unknown Batch",
           amount: o.amount,
-          status: o.status === "approved" ? "Approved" : o.status === "rejected" ? "Rejected" : "Pending",
+          status:
+            o.status === "approved"
+              ? "Approved"
+              : o.status === "rejected"
+                ? "Rejected"
+                : "Pending",
           token: o.assigned_token || null,
           date: new Date(o.created_at).toLocaleDateString("en-GB"),
         };
       });
 
       // Merge enrolled courses as "Approved" orders if not already in dbOrders
-      enrolledCourses.forEach(course => {
-        const hasOrder = dbOrders.some(o => o.courseId === course.batchId);
+      enrolledCourses.forEach((course) => {
+        const hasOrder = dbOrders.some((o) => o.courseId === course.batchId);
         if (!hasOrder) {
           dbOrders.push({
             id: `virtual-${course.batchId}`,
@@ -151,8 +158,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           document.cookie =
             "auth-token=true; path=/; max-age=86400; samesite=lax";
         } else {
-            localStorage.removeItem("user_uid");
-            setUser(null);
+          localStorage.removeItem("user_uid");
+          setUser(null);
         }
       } else {
         setUser(null);
@@ -192,7 +199,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem("user_uid", data.uid);
       await refreshUser();
     },
-    [refreshUser]
+    [refreshUser],
   );
 
   const register = useCallback(
@@ -227,7 +234,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await refreshUser();
       }
     },
-    [refreshUser]
+    [refreshUser],
   );
 
   const logout = useCallback(async () => {
@@ -241,17 +248,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     async (course: Course, paymentDetails: PaymentDetails) => {
       if (!user) return;
 
-      const { error } = await supabase
-        .from("orders")
-        .insert({
-          student_id: user.id,
-          batch_id: course.batchId,
-          amount: course.price,
-          payment_method: paymentDetails.paymentMethod,
-          payment_number: paymentDetails.paymentNumber,
-          trx_id: paymentDetails.trxId,
-          status: "pending",
-        });
+      const { error } = await supabase.from("orders").insert({
+        student_id: user.id,
+        batch_id: course.batchId,
+        amount: course.price,
+        payment_method: paymentDetails.paymentMethod,
+        payment_number: paymentDetails.paymentNumber,
+        trx_id: paymentDetails.trxId,
+        status: "pending",
+      });
 
       if (error) {
         throw error;
@@ -259,7 +264,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await refreshUser();
     },
-    [user, refreshUser]
+    [user, refreshUser],
   );
 
   const approveOrder = useCallback(
@@ -267,7 +272,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log("Approve order mock", orderId);
       await refreshUser();
     },
-    [refreshUser]
+    [refreshUser],
   );
 
   const toggleTheme = useCallback(() => {

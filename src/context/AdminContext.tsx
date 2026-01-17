@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import {
   createContext,
@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 
 export interface Admin {
   uid: string;
@@ -67,11 +66,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
         if (adminData) {
           setAdmin(adminData);
           // Set a cookie for middleware to detect admin session
-          document.cookie = "admin-token=true; path=/; max-age=86400; samesite=lax";
+          document.cookie =
+            "admin-token=true; path=/; max-age=86400; samesite=lax";
         } else {
           localStorage.removeItem("admin_uid");
           setAdmin(null);
-          document.cookie = "admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          document.cookie =
+            "admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
       } else {
         setAdmin(null);
@@ -103,13 +104,14 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem("admin_uid", data.uid);
       await refreshAdmin();
     },
-    [refreshAdmin]
+    [refreshAdmin],
   );
 
   const logout = useCallback(async () => {
     localStorage.removeItem("admin_uid");
     setAdmin(null);
-    document.cookie = "admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie =
+      "admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     router.push("/admin/login");
   }, [router]);
 

@@ -48,7 +48,8 @@ export default function AdminLogin() {
       showToast("এডমিন লগইন সফল হয়েছে!", "success");
       router.push("/admin/dashboard");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "লগইন ব্যর্থ হয়েছে";
+      const message =
+        error instanceof Error ? error.message : "লগইন ব্যর্থ হয়েছে";
       showToast(message, "error");
     }
   };
@@ -65,9 +66,7 @@ export default function AdminLogin() {
             <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-4">
               <ShieldCheck className="h-6 w-6" />
             </div>
-            <h1 className="text-2xl font-bold text-primary">
-              এডমিন লগইন
-            </h1>
+            <h1 className="text-2xl font-bold text-primary">এডমিন লগইন</h1>
             <p className="text-xs text-muted-foreground">
               এডমিন প্যানেলে প্রবেশ করতে আপনার ক্রেডেনশিয়াল দিন
             </p>

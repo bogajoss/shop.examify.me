@@ -19,15 +19,12 @@ export function middleware(request: NextRequest) {
     if (!adminToken) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
-    
+
     return NextResponse.next();
   }
 
   // Protect dashboard and checkout routes (Student)
-  if (
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/checkout")
-  ) {
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/checkout")) {
     if (!authToken) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("from", pathname);

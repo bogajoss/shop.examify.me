@@ -31,7 +31,7 @@ export default function CreateBatch() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<BatchFormValues>({
-    resolver: zodResolver(batchSchema) as any,
+    resolver: zodResolver(batchSchema),
     defaultValues: {
       name: "",
       category: "",
@@ -73,6 +73,7 @@ export default function CreateBatch() {
     <div className="space-y-6 max-w-2xl mx-auto py-8">
       <div className="flex items-center gap-4">
         <button
+          type="button"
           onClick={() => router.back()}
           className="p-2 hover:bg-muted rounded-full transition-colors"
         >
@@ -85,8 +86,11 @@ export default function CreateBatch() {
         <div className="space-y-4 bg-card p-6 rounded-xl border border-border shadow-sm">
           {/* Name */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Batch Name</label>
+            <label htmlFor="name" className="text-sm font-medium">
+              Batch Name
+            </label>
             <input
+              id="name"
               {...register("name")}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="e.g. Medical Admission 2026"
@@ -98,21 +102,29 @@ export default function CreateBatch() {
 
           {/* Category */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Category</label>
+            <label htmlFor="category" className="text-sm font-medium">
+              Category
+            </label>
             <input
+              id="category"
               {...register("category")}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               placeholder="e.g. Medical, Engineering"
             />
             {errors.category && (
-              <p className="text-xs text-destructive">{errors.category.message}</p>
+              <p className="text-xs text-destructive">
+                {errors.category.message}
+              </p>
             )}
           </div>
 
           {/* Image URL */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Image URL (Batch Cover)</label>
+            <label htmlFor="icon_url" className="text-sm font-medium">
+              Image URL (Batch Cover)
+            </label>
             <input
+              id="icon_url"
               {...register("icon_url")}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               placeholder="https://example.com/image.jpg"
@@ -121,8 +133,11 @@ export default function CreateBatch() {
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
+            <label htmlFor="description" className="text-sm font-medium">
+              Description
+            </label>
             <textarea
+              id="description"
               {...register("description")}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               placeholder="Batch details..."
@@ -132,21 +147,29 @@ export default function CreateBatch() {
           <div className="grid grid-cols-2 gap-4">
             {/* Price */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Price (৳)</label>
+              <label htmlFor="price" className="text-sm font-medium">
+                Price (৳)
+              </label>
               <input
+                id="price"
                 type="number"
                 {...register("price")}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
               {errors.price && (
-                <p className="text-xs text-destructive">{errors.price.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.price.message}
+                </p>
               )}
             </div>
 
             {/* Old Price */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Old Price (৳)</label>
+              <label htmlFor="old_price" className="text-sm font-medium">
+                Old Price (৳)
+              </label>
               <input
+                id="old_price"
                 type="number"
                 {...register("old_price")}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -157,8 +180,11 @@ export default function CreateBatch() {
           <div className="grid grid-cols-2 gap-4">
             {/* Status */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Status</label>
+              <label htmlFor="status" className="text-sm font-medium">
+                Status
+              </label>
               <select
+                id="status"
                 {...register("status")}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
@@ -175,7 +201,10 @@ export default function CreateBatch() {
                 {...register("is_public")}
                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
-              <label htmlFor="is_public" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="is_public"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 Make Public?
               </label>
             </div>
@@ -183,11 +212,7 @@ export default function CreateBatch() {
         </div>
 
         <div className="flex justify-end gap-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>

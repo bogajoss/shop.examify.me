@@ -30,11 +30,19 @@ export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [courses, setCourses] = useState<any[]>([]);
   const [isCoursesLoading, setIsCoursesLoading] = useState(true);
+  const [activeCourseTab, setActiveCourseTab] = useState("all");
+  const [courseSearch, setCourseSearch] = useState("");
 
   const qbTabs = [
     { id: "model-test", label: "মডেল টেস্ট" },
     { id: "subject-wise", label: "বিষয় ভিত্তিক" },
     { id: "institution", label: "প্রতিষ্ঠান ভিত্তিক" },
+  ];
+
+  const courseTabs = [
+    { id: "all", label: "সব কোর্স" },
+    { id: "Admission", label: "এডমিশন" },
+    { id: "HSC Academic", label: "একাডেমিক" },
   ];
 
   useEffect(() => {
@@ -123,6 +131,15 @@ export default function Home() {
     (item) => item.category === activeQbTab,
   );
 
+  const filteredCourses = courses.filter((course) => {
+    const matchesCategory =
+      activeCourseTab === "all" || course.category === activeCourseTab;
+    const matchesSearch = course.title
+      .toLowerCase()
+      .includes(courseSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -147,8 +164,8 @@ export default function Home() {
               এগিয়ে
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 animate-in fade-in slide-in-from-top-2 duration-1000 delay-200 fill-mode-both">
-              Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে পছন্দমতো কোর্স
-              কিনুন এবং নিজের সুবিধামতো এনরোল করুন।
+              Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে
+              পছন্দমতো কোর্স কিনুন এবং নিজের সুবিধামতো এনরোল করুন।
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 px-4 w-full sm:w-auto animate-in fade-in zoom-in-95 duration-1000 delay-500 fill-mode-both">
               <Link href="/#courses" className="w-full sm:w-auto">
@@ -192,7 +209,7 @@ export default function Home() {
           {/* Courses Section */}
           <section id="courses" className="space-y-6 w-full scroll-mt-24">
             <div className="flex flex-col gap-6">
-              <div className="flex items-end justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                   <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
                     চলমান কোর্সসমূহ
@@ -201,20 +218,82 @@ export default function Home() {
                     আপনার সফলতার জন্য বিশেষভাবে ডিজাইন করা প্রিমিয়াম প্রোগ্রাম।
                   </p>
                 </div>
+
+                {/* Course Search & Filter */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex p-1 bg-muted/50 rounded-lg border border-border">
+                    {courseTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveCourseTab(tab.id)}
+                        className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${
+                          activeCourseTab === tab.id
+                            ? "bg-background text-primary shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="কোর্স খুঁজুন..."
+                      value={courseSearch}
+                      onChange={(e) => setCourseSearch(e.target.value)}
+                      className="pl-9 pr-4 py-2 w-full sm:w-64 bg-background border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
                 {isCoursesLoading ? (
                   [1, 2, 3].map((i) => (
-                    <div key={i} className="h-[400px] rounded-xl bg-muted/20 animate-pulse" />
+                    <div
+                      key={i}
+                      className="rounded-lg border border-border p-5 space-y-4"
+                    >
+                      <div className="aspect-video w-full bg-muted animate-pulse rounded-md" />
+                      <div className="h-6 w-3/4 bg-muted animate-pulse rounded" />
+                      <div className="space-y-2">
+                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                        <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+                      </div>
+                      <div className="flex justify-between items-center pt-4 border-t border-dashed border-border">
+                        <div className="h-8 w-16 bg-muted animate-pulse rounded" />
+                        <div className="flex gap-2">
+                          <div className="h-8 w-20 bg-muted animate-pulse rounded" />
+                          <div className="h-8 w-20 bg-muted animate-pulse rounded" />
+                        </div>
+                      </div>
+                    </div>
                   ))
-                ) : courses.length > 0 ? (
-                  courses.map((course) => (
+                ) : filteredCourses.length > 0 ? (
+                  filteredCourses.map((course) => (
                     <CourseCard key={course.id} course={course} />
                   ))
                 ) : (
-                  <div className="col-span-full text-center py-12 text-muted-foreground">
-                    বর্তমানে কোনো সক্রিয় কোর্স নেই।
+                  <div className="col-span-full text-center py-20 border-2 border-dashed border-border rounded-2xl bg-muted/10">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted text-muted-foreground mb-4">
+                      <Search className="h-6 w-6" />
+                    </div>
+                    <p className="text-muted-foreground">
+                      এই ক্যাটাগরিতে কোনো কোর্স পাওয়া যায়নি।
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveCourseTab("all");
+                        setCourseSearch("");
+                      }}
+                      className="text-primary text-sm font-medium mt-2 hover:underline"
+                    >
+                      সব কোর্স দেখুন
+                    </button>
                   </div>
                 )}
               </div>
