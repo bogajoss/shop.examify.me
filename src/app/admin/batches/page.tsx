@@ -136,15 +136,15 @@ export default function AdminBatches() {
               </div>
 
               {/* Actions Overlay */}
-              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-4 right-4 flex gap-2">
                 <Link href={`/admin/batches/edit/${batch.id}`}>
-                  <button className="p-1.5 bg-background border border-border rounded-md hover:text-primary transition-colors shadow-sm">
+                  <button className="p-1.5 bg-background border border-border rounded-md hover:text-primary transition-colors shadow-sm text-muted-foreground">
                     <Edit className="h-3.5 w-3.5" />
                   </button>
                 </Link>
                 <button 
                   onClick={() => handleDelete(batch.id)}
-                  className="p-1.5 bg-background border border-border rounded-md hover:text-destructive transition-colors shadow-sm"
+                  className="p-1.5 bg-background border border-border rounded-md hover:text-destructive transition-colors shadow-sm text-muted-foreground"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

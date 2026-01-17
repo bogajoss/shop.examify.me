@@ -147,8 +147,8 @@ export default function Home() {
               হওয়ার
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 animate-in fade-in slide-in-from-top-2 duration-1000 delay-200 fill-mode-both">
-              Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে টোকেন
-              সংগ্রহ করুন এবং নিজের সুবিধামতো এনরোল করুন।
+              Examify-এর সাথে আপনার মেডিকেল ভর্তি প্রস্তুতির যাত্রা শুরু হোক। শপ থেকে পছন্দমতো কোর্স
+              কিনুন এবং নিজের সুবিধামতো এনরোল করুন।
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 px-4 w-full sm:w-auto animate-in fade-in zoom-in-95 duration-1000 delay-500 fill-mode-both">
               <Link href="/#courses" className="w-full sm:w-auto">
@@ -393,7 +393,7 @@ export default function Home() {
                             </div>
                           </div>
                           <p className="text-sm text-muted-foreground italic leading-relaxed line-clamp-4">
-                            "Examify-এর মাধ্যমে টোকেন কিনে এনরোল করা খুব সহজ। তাদের
+                            "Examify-এর মাধ্যমে কোর্স কিনে এনরোল করা খুব সহজ। তাদের
                             সার্ভিস অসাধারণ!"
                           </p>
                         </div>
