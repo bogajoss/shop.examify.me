@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { login } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -30,7 +30,8 @@ export default function LoginPage() {
     setError("");
     try {
       const redirectTo = searchParams.get("redirect");
-      await signIn(rollNumber, password, redirectTo || undefined);
+      await login(rollNumber, password);
+      router.push(redirectTo || "/dashboard");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
