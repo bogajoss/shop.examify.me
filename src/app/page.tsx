@@ -43,8 +43,7 @@ export default function Home() {
         const { data, error } = await supabase
           .from("batches")
           .select("*")
-          .eq("status", "live")
-          .eq("is_public", true);
+          .eq("status", "live");
 
         if (error) throw error;
 
