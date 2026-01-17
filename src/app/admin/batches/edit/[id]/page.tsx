@@ -34,7 +34,7 @@ export default function EditBatch() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<BatchFormValues>({
-    resolver: zodResolver(batchSchema),
+    resolver: zodResolver(batchSchema) as any,
     defaultValues: {
       name: "",
       category: "",
