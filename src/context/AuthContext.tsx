@@ -216,12 +216,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           .limit(1);
 
         const latestRoll = latestUser?.[0]?.roll;
-        let nextRoll = "xmfy-100000";
+        let nextRoll = "ReadingZone-001";
         
-        if (latestRoll && latestRoll.startsWith("xmfy-")) {
+        if (latestRoll && latestRoll.startsWith("ReadingZone-")) {
           const lastNum = parseInt(latestRoll.split("-")[1]);
           if (!isNaN(lastNum)) {
-            nextRoll = `xmfy-${lastNum + 1}`;
+            // Pad with leading zeros to maintain 3-digit format
+            const nextNum = lastNum + 1;
+            nextRoll = `ReadingZone-${nextNum.toString().padStart(3, '0')}`;
           }
         }
 
