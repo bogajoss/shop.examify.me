@@ -6,6 +6,7 @@ import {
   Copy,
   Loader2,
   Lock,
+  Phone,
   User as UserIcon,
   UserPlus,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
@@ -64,7 +66,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const generatedRoll = await signUp(formData.name, "", formData.password);
+      const generatedRoll = await signUp(formData.name, formData.phone, formData.password);
       setRegistrationSuccess({
         roll: generatedRoll,
         pass: formData.password,
@@ -177,6 +179,30 @@ export default function RegisterPage() {
                   placeholder="আপনার পূর্ণ নাম"
                   className="flex h-13 w-full rounded-2xl border border-border bg-muted/30 pl-12 pr-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                   value={formData.name}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="phone"
+                className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1"
+              >
+                ফোন নম্বর
+              </label>
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <Phone className="h-5 w-5" />
+                </div>
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder="01XXXXXXXXX"
+                  className="flex h-13 w-full rounded-2xl border border-border bg-muted/30 pl-12 pr-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  value={formData.phone}
                   onChange={handleChange}
                   required
                   disabled={loading}

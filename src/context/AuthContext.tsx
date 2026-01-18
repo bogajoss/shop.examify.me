@@ -32,7 +32,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (roll: string, pass: string) => Promise<void>;
-  register: (name: string, roll: string, pass: string) => Promise<string>;
+  register: (name: string, phone: string, pass: string) => Promise<string>;
   logout: () => Promise<void>;
   submitOrder: (
     course: Course,
@@ -136,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return {
         id: userData.uid,
         name: userData.name,
-        phone: "N/A",
+        phone: userData.phone || "N/A",
         roll: userData.roll,
         enrolledBatches,
         enrolledCourses,
@@ -185,12 +185,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = useCallback(
     async (roll: string, pass: string) => {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("users")
         .select("uid")
         .eq("roll", roll)
         .eq("pass", pass)
-        .single();
+        .maybeSingle();
+
+      if (!data) {
+        const { data: phoneData, error: phoneError } = await supabase
+          .from("users")
+          .select("uid")
+          .eq("phone", roll)
+          .eq("pass", pass)
+          .maybeSingle();
+
+        if (phoneData) {
+          data = phoneData;
+          error = phoneError;
+        }
+      }
 
       if (error || !data) {
         throw new Error("Invalid roll or password");
@@ -203,7 +217,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const register = useCallback(
-    async (name: string, _roll: string, pass: string) => {
+    async (name: string, phone: string, pass: string) => {
       let attempts = 0;
       const maxAttempts = 5;
       
@@ -232,6 +246,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           .from("users")
           .insert({
             name,
+            phone,
             roll: nextRoll,
             pass,
             enrolled_batches: [],
