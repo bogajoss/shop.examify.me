@@ -72,6 +72,9 @@ export async function approveOrderAction(orderId: string) {
     }
 
     revalidatePath("/admin/orders");
+    if (order?.batch_id) {
+        revalidatePath(`/admin/orders/${order.batch_id}`);
+    }
     return { success: true, message: "Order approved and user enrolled successfully" };
   } catch (error: any) {
     console.error("Server action exception:", error);
@@ -81,6 +84,13 @@ export async function approveOrderAction(orderId: string) {
 
 export async function rejectOrderAction(orderId: string) {
   try {
+    // 1. Get batch_id for revalidation
+    const { data: order } = await supabaseAdmin
+        .from("orders")
+        .select("batch_id")
+        .eq("id", orderId)
+        .single();
+
     const { error } = await supabaseAdmin
       .from("orders")
       .update({ status: "rejected" })
@@ -91,6 +101,9 @@ export async function rejectOrderAction(orderId: string) {
     }
 
     revalidatePath("/admin/orders");
+    if (order?.batch_id) {
+        revalidatePath(`/admin/orders/${order.batch_id}`);
+    }
     return { success: true, message: "Order rejected successfully" };
   } catch (error: any) {
     return { success: false, message: error.message };
