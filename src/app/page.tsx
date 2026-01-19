@@ -161,7 +161,7 @@ export default function Home() {
           <div className="mx-auto max-w-5xl text-center space-y-8">
             <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs sm:text-sm font-medium text-primary mb-4 animate-in fade-in zoom-in duration-500">
               <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
-              মেডিকেল ভর্তি প্রস্তুতি ২০২৬
+              একাডেমিক ও এডমিশন ভর্তি প্রস্তুতি ২০২৬
             </div>
             <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground leading-tight animate-in fade-in slide-in-from-top-4 duration-1000">
               সাফল্যের পথে{" "}

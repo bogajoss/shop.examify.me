@@ -23,9 +23,9 @@ const hindSiliguri = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Examify - Medical Admission Preparation",
+  title: "Examify - Admission & Academic Preparation",
   description:
-    "Advanced learning platform for medical admission preparation in Bangladesh.",
+    "Advanced learning platform for admission & academic preparation in Bangladesh.",
 };
 
 export default function RootLayout({

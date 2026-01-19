@@ -226,7 +226,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const { data: latestUser } = await supabase
           .from("users")
           .select("roll")
-          .order("roll", { ascending: false }) // Sort by roll to get highest number
+          .order("created_at", { ascending: false }) // Sort by created_at to get the truly latest user
           .limit(1);
 
         const latestRoll = latestUser?.[0]?.roll;
@@ -263,6 +263,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         // 3. If it's a duplicate roll error (code 23505), loop and try again
         if (error?.code === '23505') {
           attempts++;
+          // Add a small random delay to reduce race conditions
+          await new Promise(resolve => setTimeout(resolve, Math.random() * 500));
           continue;
         }
 
