@@ -226,7 +226,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const { data: latestUser } = await supabase
           .from("users")
           .select("roll")
-          .order("created_at", { ascending: false }) // Sort by created_at to get the truly latest user
+          .ilike("roll", "ReadingZone-%") // Only filter for relevant rolls
+          .order("created_at", { ascending: false }) // Sort by created_at to get the truly latest user in this series
           .limit(1);
 
         const latestRoll = latestUser?.[0]?.roll;
