@@ -16,6 +16,7 @@ import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAdmin } from "@/context/AdminContext";
 import { supabase } from "@/lib/supabase";
+import { approveOrderAction, rejectOrderAction } from "@/app/actions/order-actions";
 
 interface Order {
   id: string;
@@ -77,50 +78,24 @@ export default function AdminOrders() {
 
     try {
       if (newStatus === "rejected") {
-        await supabase
-          .from("orders")
-          .update({ status: newStatus })
-          .eq("id", orderId);
-
-        showToast("অর্ডার রিজেক্ট করা হয়েছে", "success");
-        fetchOrders();
+        const result = await rejectOrderAction(orderId);
+        if (result.success) {
+          showToast(result.message || "অর্ডার রিজেক্ট করা হয়েছে", "success");
+          fetchOrders();
+        } else {
+          showToast(result.message || "অর্ডার রিজেক্ট ব্যর্থ হয়েছে", "error");
+        }
         return;
       }
 
       if (newStatus === "approved") {
-        const { data: fullOrder } = await supabase
-          .from("orders")
-          .select("student_id, batch_id")
-          .eq("id", orderId)
-          .single();
-
-        if (!fullOrder) throw new Error("অর্ডার খুঁজে পাওয়া যায়নি");
-
-        const { error: orderError } = await supabase
-          .from("orders")
-          .update({ status: "approved" })
-          .eq("id", orderId);
-
-        if (orderError) throw orderError;
-
-        const { data: uData } = await supabase
-          .from("users")
-          .select("enrolled_batches")
-          .eq("uid", fullOrder.student_id)
-          .single();
-
-        const currentBatches = uData?.enrolled_batches || [];
-        if (!currentBatches.includes(fullOrder.batch_id)) {
-          await supabase
-            .from("users")
-            .update({
-              enrolled_batches: [...currentBatches, fullOrder.batch_id],
-            })
-            .eq("uid", fullOrder.student_id);
+        const result = await approveOrderAction(orderId);
+        if (result.success) {
+          showToast(result.message || "অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!", "success");
+          fetchOrders();
+        } else {
+          showToast(result.message || "অর্ডার অ্যাপ্রুভ ব্যর্থ হয়েছে", "error");
         }
-
-        showToast("অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!", "success");
-        fetchOrders();
       }
     } catch (error) {
       console.error("Error updating status:", error);
