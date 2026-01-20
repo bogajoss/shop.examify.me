@@ -10,6 +10,32 @@ import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 
+function Linkify({ text }: { text: string }) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return (
+    <span>
+      {parts.map((part, i) => {
+        if (part.match(urlRegex)) {
+          return (
+            <a
+              key={i}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-bold break-all"
+            >
+              {part}
+            </a>
+          );
+        }
+        return part;
+      })}
+    </span>
+  );
+}
+
 export default function Dashboard() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
@@ -140,6 +166,15 @@ export default function Dashboard() {
                       {order.status === "Rejected" && (
                         <div className="p-3 bg-destructive/5 rounded-xl border border-destructive/20 text-xs text-destructive font-medium">
                           পেমেন্টটি গ্রহণ করা হয়নি। দয়া করে সাপোর্টে যোগাযোগ করুন।
+                        </div>
+                      )}
+
+                      {order.adminComment && (
+                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 text-xs text-foreground space-y-1">
+                          <p className="font-black text-primary uppercase tracking-wider text-[10px]">অ্যাডমিন নোট:</p>
+                          <p className="font-medium leading-relaxed">
+                            <Linkify text={order.adminComment} />
+                          </p>
                         </div>
                       )}
                     </div>

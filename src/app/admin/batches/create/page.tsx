@@ -18,6 +18,7 @@ const batchSchema = z.object({
   status: z.enum(["live", "ended"]),
   is_public: z.boolean(),
   icon_url: z.string().optional(),
+  default_approval_message: z.string().optional(),
 });
 
 type BatchFormValues = z.infer<typeof batchSchema>;
@@ -41,6 +42,7 @@ export default function CreateBatch() {
       status: "live",
       is_public: false,
       icon_url: "",
+      default_approval_message: "",
     },
   });
 
@@ -56,6 +58,7 @@ export default function CreateBatch() {
           status: data.status,
           is_public: data.is_public,
           icon_url: data.icon_url,
+          default_approval_message: data.default_approval_message,
         },
       ]);
 
@@ -141,6 +144,19 @@ export default function CreateBatch() {
               {...register("description")}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               placeholder="Batch details..."
+            />
+          </div>
+
+          {/* Default Approval Message */}
+          <div className="space-y-2">
+            <label htmlFor="default_approval_message" className="text-sm font-medium text-primary">
+              Auto-Approve Message (অ্যাপ্রুভ হওয়ার পর এই কমেন্টটি অটোমেটিক যাবে)
+            </label>
+            <textarea
+              id="default_approval_message"
+              {...register("default_approval_message")}
+              placeholder="e.g. আপনাদের কোর্সটি সফলভাবে এনরোল হয়েছে। ক্লাস লিংক: https://examify.me/..."
+              className="flex min-h-[80px] w-full rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-sm focus:border-primary transition-colors"
             />
           </div>
 

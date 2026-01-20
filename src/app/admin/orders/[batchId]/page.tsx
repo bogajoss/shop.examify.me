@@ -29,6 +29,7 @@ interface Order {
   trx_id: string;
   status: "pending" | "approved" | "rejected";
   assigned_token?: string;
+  admin_comment?: string;
   student: {
     name: string;
     roll: string;
@@ -43,6 +44,7 @@ export default function BatchOrders() {
   const [batchName, setBatchName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [comments, setComments] = useState<{ [key: string]: string }>({});
   const { showToast } = useToast();
   const { admin } = useAdmin();
   const params = useParams();
@@ -81,6 +83,15 @@ export default function BatchOrders() {
 
       if (error) throw error;
       setOrders(data || []);
+      
+      // Initialize comments state with existing comments
+      const initialComments: { [key: string]: string } = {};
+      data?.forEach(o => {
+        if (o.admin_comment) {
+          initialComments[o.id] = o.admin_comment;
+        }
+      });
+      setComments(initialComments);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -103,8 +114,9 @@ export default function BatchOrders() {
     }
 
     try {
+      const comment = comments[orderId];
       if (newStatus === "rejected") {
-        const result = await rejectOrderAction(orderId);
+        const result = await rejectOrderAction(orderId, comment);
         if (result.success) {
           showToast(result.message || "অর্ডার রিজেক্ট করা হয়েছে", "success");
           fetchOrders();
@@ -115,7 +127,7 @@ export default function BatchOrders() {
       }
 
       if (newStatus === "approved") {
-        const result = await approveOrderAction(orderId);
+        const result = await approveOrderAction(orderId, comment);
         if (result.success) {
           showToast(result.message || "অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!", "success");
           fetchOrders();
@@ -174,6 +186,7 @@ export default function BatchOrders() {
                 <th className="px-6 py-4">কোর্স/ব্যাচ</th>
                 <th className="px-6 py-4">পেমেন্ট ডিটেইলস</th>
                 <th className="px-6 py-4">TrxID</th>
+                <th className="px-6 py-4">অ্যাডমিন নোট</th>
                 <th className="px-6 py-4">স্ট্যাটাস</th>
                 <th className="px-6 py-4 text-right">অ্যাকশন</th>
               </tr>
@@ -182,7 +195,7 @@ export default function BatchOrders() {
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-12 text-center text-muted-foreground"
                   >
                     <div className="flex flex-col items-center gap-3">
@@ -236,6 +249,16 @@ export default function BatchOrders() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
+                      <input
+                        type="text"
+                        placeholder="নোট লিখুন..."
+                        className="w-32 md:w-48 h-9 px-3 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                        value={comments[order.id] || ""}
+                        onChange={(e) => setComments(prev => ({ ...prev, [order.id]: e.target.value }))}
+                        disabled={order.status !== "pending"}
+                      />
+                    </td>
+                    <td className="px-6 py-4">
                       <Badge
                         variant={
                           order.status === "approved"
@@ -285,7 +308,7 @@ export default function BatchOrders() {
               ) : (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-20 text-center text-muted-foreground"
                   >
                     <div className="flex flex-col items-center justify-center gap-3">
@@ -388,6 +411,20 @@ export default function BatchOrders() {
                 <div className="bg-muted rounded-lg p-3 font-mono text-sm font-bold text-center border border-border/50 select-all">
                   {order.trx_id}
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                  অ্যাডমিন নোট
+                </p>
+                <input
+                  type="text"
+                  placeholder="নোট লিখুন..."
+                  className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  value={comments[order.id] || ""}
+                  onChange={(e) => setComments(prev => ({ ...prev, [order.id]: e.target.value }))}
+                  disabled={order.status !== "pending"}
+                />
               </div>
 
               {order.status === "pending" && (

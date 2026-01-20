@@ -64,6 +64,7 @@ export interface Order {
   amount: number;
   status: "Pending" | "Approved" | "Rejected";
   token: string | null;
+  adminComment?: string | null;
   date: string;
 }
 

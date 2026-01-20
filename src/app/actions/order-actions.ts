@@ -3,14 +3,14 @@
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { revalidatePath } from "next/cache";
 
-export async function approveOrderAction(orderId: string) {
+export async function approveOrderAction(orderId: string, adminComment?: string) {
   try {
     console.log("Approving order:", orderId);
 
     // 1. Get the order details
     const { data: order, error: orderFetchError } = await supabaseAdmin
       .from("orders")
-      .select("student_id, batch_id")
+      .select("student_id, batch_id, batches(default_approval_message)")
       .eq("id", orderId)
       .single();
 
@@ -19,12 +19,17 @@ export async function approveOrderAction(orderId: string) {
       return { success: false, message: "Order not found or fetch error" };
     }
 
+    const finalComment = adminComment || (order as any).batches?.default_approval_message;
+
     console.log("Order found:", order);
 
     // 2. Update order status
     const { error: updateError } = await supabaseAdmin
       .from("orders")
-      .update({ status: "approved" })
+      .update({ 
+        status: "approved",
+        admin_comment: finalComment 
+      })
       .eq("id", orderId);
 
     if (updateError) {
@@ -82,7 +87,7 @@ export async function approveOrderAction(orderId: string) {
   }
 }
 
-export async function rejectOrderAction(orderId: string) {
+export async function rejectOrderAction(orderId: string, adminComment?: string) {
   try {
     // 1. Get batch_id for revalidation
     const { data: order } = await supabaseAdmin
@@ -91,9 +96,14 @@ export async function rejectOrderAction(orderId: string) {
         .eq("id", orderId)
         .single();
 
+    const finalComment = adminComment || "আপনার পেমেন্টটি ভেরিফাই করা সম্ভব হয়নি। দয়া করে পেমেন্ট প্রুফ সহ https://t.me/Examify_Course_Access এ যোগাযোগ করুন।";
+
     const { error } = await supabaseAdmin
       .from("orders")
-      .update({ status: "rejected" })
+      .update({ 
+        status: "rejected",
+        admin_comment: finalComment 
+      })
       .eq("id", orderId);
 
     if (error) {

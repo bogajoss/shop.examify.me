@@ -19,6 +19,7 @@ const batchSchema = z.object({
   status: z.enum(["live", "ended"]),
   is_public: z.boolean(),
   icon_url: z.string().optional(),
+  default_approval_message: z.string().optional(),
 });
 
 type BatchFormValues = z.infer<typeof batchSchema>;
@@ -36,39 +37,40 @@ export default function EditBatch() {
     formState: { errors, isSubmitting },
   } = useForm<BatchFormValues>({
     resolver: zodResolver(batchSchema),
-    defaultValues: {
-      name: "",
-      category: "",
-      description: "",
-      price: 0,
-      old_price: 0,
-      status: "live",
-      is_public: false,
-      icon_url: "",
-    },
-  });
-
-  useEffect(() => {
-    async function fetchBatch() {
-      try {
-        const { data, error } = await supabase
-          .from("batches")
-          .select("*")
-          .eq("id", id)
-          .single();
-
-        if (error) throw error;
-
-        setValue("name", data.name);
-        setValue("category", data.category || "");
-        setValue("description", data.description || "");
-        setValue("price", data.price || 0);
-        setValue("old_price", data.old_price || 0);
-        setValue("status", data.status);
-        setValue("is_public", data.is_public);
-        setValue("icon_url", data.icon_url || "");
-      } catch (err) {
-        console.error("Error fetching batch:", err);
+          defaultValues: {
+          name: "",
+          category: "",
+          description: "",
+          price: 0,
+          old_price: 0,
+          status: "live",
+          is_public: false,
+          icon_url: "",
+          default_approval_message: "",
+        },
+      });
+    
+      useEffect(() => {
+        async function fetchBatch() {
+          try {
+            const { data, error } = await supabase
+              .from("batches")
+              .select("*")
+              .eq("id", id)
+              .single();
+    
+            if (error) throw error;
+    
+            setValue("name", data.name);
+            setValue("category", data.category || "");
+            setValue("description", data.description || "");
+            setValue("price", data.price || 0);
+            setValue("old_price", data.old_price || 0);
+            setValue("status", data.status);
+            setValue("is_public", data.is_public);
+            setValue("icon_url", data.icon_url || "");
+            setValue("default_approval_message", data.default_approval_message || "");
+          } catch (err) {        console.error("Error fetching batch:", err);
         showToast("Failed to fetch batch details", "error");
         router.push("/admin/batches");
       } finally {
@@ -91,6 +93,7 @@ export default function EditBatch() {
           status: data.status,
           is_public: data.is_public,
           icon_url: data.icon_url,
+          default_approval_message: data.default_approval_message,
         })
         .eq("id", id);
 
@@ -181,6 +184,19 @@ export default function EditBatch() {
               id="description"
               {...register("description")}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            />
+          </div>
+
+          {/* Default Approval Message */}
+          <div className="space-y-2">
+            <label htmlFor="default_approval_message" className="text-sm font-medium text-primary">
+              Auto-Approve Message (অ্যাপ্রুভ হওয়ার পর এই কমেন্টটি অটোমেটিক যাবে)
+            </label>
+            <textarea
+              id="default_approval_message"
+              {...register("default_approval_message")}
+              placeholder="e.g. আপনাদের কোর্সটি সফলভাবে এনরোল হয়েছে। ক্লাস লিংক: https://examify.me/..."
+              className="flex min-h-[80px] w-full rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-sm focus:border-primary transition-colors"
             />
           </div>
 
