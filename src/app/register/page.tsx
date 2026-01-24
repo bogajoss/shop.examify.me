@@ -66,7 +66,11 @@ export default function RegisterPage() {
     }
 
     try {
-      const generatedRoll = await signUp(formData.name, formData.phone, formData.password);
+      const generatedRoll = await signUp(
+        formData.name,
+        formData.phone,
+        formData.password,
+      );
       setRegistrationSuccess({
         roll: generatedRoll,
         pass: formData.password,
@@ -88,7 +92,9 @@ export default function RegisterPage() {
               </div>
             </div>
             <div className="space-y-1">
-              <h1 className="text-2xl font-black text-foreground">নিবন্ধন সফল!</h1>
+              <h1 className="text-2xl font-black text-foreground">
+                নিবন্ধন সফল!
+              </h1>
               <p className="text-sm text-muted-foreground font-medium">
                 আপনার অ্যাকাউন্ট তৈরি হয়েছে। লগইন তথ্য সেভ করে রাখুন।
               </p>
@@ -98,10 +104,16 @@ export default function RegisterPage() {
           <div className="p-8 space-y-6">
             <div className="space-y-4">
               <div className="p-4 bg-muted/50 rounded-2xl border border-border space-y-1 relative group">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">আপনার রোল নম্বর</p>
-                <p className="text-xl font-black text-primary font-mono">{registrationSuccess.roll}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  আপনার রোল নম্বর
+                </p>
+                <p className="text-xl font-black text-primary font-mono">
+                  {registrationSuccess.roll}
+                </p>
                 <button
-                  onClick={() => copyToClipboard(registrationSuccess.roll, "রোল নম্বর")}
+                  onClick={() =>
+                    copyToClipboard(registrationSuccess.roll, "রোল নম্বর")
+                  }
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-primary/10 rounded-xl transition-colors text-primary"
                 >
                   <Copy className="h-5 w-5" />
@@ -109,10 +121,16 @@ export default function RegisterPage() {
               </div>
 
               <div className="p-4 bg-muted/50 rounded-2xl border border-border space-y-1 relative group">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">আপনার পাসওয়ার্ড</p>
-                <p className="text-xl font-black text-foreground font-mono">{registrationSuccess.pass}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  আপনার পাসওয়ার্ড
+                </p>
+                <p className="text-xl font-black text-foreground font-mono">
+                  {registrationSuccess.pass}
+                </p>
                 <button
-                  onClick={() => copyToClipboard(registrationSuccess.pass, "পাসওয়ার্ড")}
+                  onClick={() =>
+                    copyToClipboard(registrationSuccess.pass, "পাসওয়ার্ড")
+                  }
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-primary/10 rounded-xl transition-colors text-primary"
                 >
                   <Copy className="h-5 w-5" />
@@ -123,12 +141,15 @@ export default function RegisterPage() {
             <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/30 p-4 rounded-2xl">
               <p className="text-xs text-amber-700 dark:text-amber-400 font-bold leading-relaxed flex gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />
-                সতর্কতা: এই তথ্যগুলো কোথাও লিখে রাখুন। পরবর্তীতে লগইন করার জন্য এই রোল নম্বরটি প্রয়োজন হবে।
+                সতর্কতা: এই তথ্যগুলো কোথাও লিখে রাখুন। পরবর্তীতে লগইন করার জন্য এই রোল
+                নম্বরটি প্রয়োজন হবে।
               </p>
             </div>
 
             <Button
-              onClick={() => router.push(searchParams.get("redirect") || "/dashboard")}
+              onClick={() =>
+                router.push(searchParams.get("redirect") || "/dashboard")
+              }
               fullWidth
               size="lg"
               className="h-14 rounded-2xl text-base font-black shadow-xl shadow-primary/20"

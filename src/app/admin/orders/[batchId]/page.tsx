@@ -2,6 +2,7 @@
 
 import {
   AlertCircle,
+  ArrowLeft,
   BookOpen,
   Calendar,
   Check,
@@ -9,16 +10,18 @@ import {
   Hash,
   Search,
   X,
-  ArrowLeft,
 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import {
+  approveOrderAction,
+  rejectOrderAction,
+} from "@/app/actions/order-actions";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAdmin } from "@/context/AdminContext";
 import { supabase } from "@/lib/supabase";
-import { approveOrderAction, rejectOrderAction } from "@/app/actions/order-actions";
-import { useParams, useRouter } from "next/navigation";
 
 interface Order {
   id: string;
@@ -59,7 +62,7 @@ export default function BatchOrders() {
         .select("name")
         .eq("id", batchId)
         .single();
-      
+
       if (data) {
         setBatchName(data.name);
       }
@@ -83,10 +86,10 @@ export default function BatchOrders() {
 
       if (error) throw error;
       setOrders(data || []);
-      
+
       // Initialize comments state with existing comments
       const initialComments: { [key: string]: string } = {};
-      data?.forEach(o => {
+      data?.forEach((o) => {
         if (o.admin_comment) {
           initialComments[o.id] = o.admin_comment;
         }
@@ -129,7 +132,10 @@ export default function BatchOrders() {
       if (newStatus === "approved") {
         const result = await approveOrderAction(orderId, comment);
         if (result.success) {
-          showToast(result.message || "অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!", "success");
+          showToast(
+            result.message || "অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!",
+            "success",
+          );
           fetchOrders();
         } else {
           showToast(result.message || "অর্ডার অ্যাপ্রুভ ব্যর্থ হয়েছে", "error");
@@ -153,12 +159,17 @@ export default function BatchOrders() {
       <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center px-4 md:px-0">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-             <Button variant="ghost" size="sm" onClick={() => router.push('/admin/orders')} className="p-0 hover:bg-transparent -ml-2">
-                <ArrowLeft className="h-5 w-5" />
-             </Button>
-             <h2 className="text-2xl font-bold text-foreground">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/admin/orders")}
+              className="p-0 hover:bg-transparent -ml-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h2 className="text-2xl font-bold text-foreground">
               {batchName ? `${batchName} - অর্ডার` : "অর্ডার ম্যানেজমেন্ট"}
-             </h2>
+            </h2>
           </div>
           <p className="text-sm text-muted-foreground ml-7">
             এই ব্যাচের সকল পেমেন্ট রিকোয়েস্ট ভেরিফাই করুন
@@ -254,7 +265,12 @@ export default function BatchOrders() {
                         placeholder="নোট লিখুন..."
                         className="w-32 md:w-48 h-9 px-3 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                         value={comments[order.id] || ""}
-                        onChange={(e) => setComments(prev => ({ ...prev, [order.id]: e.target.value }))}
+                        onChange={(e) =>
+                          setComments((prev) => ({
+                            ...prev,
+                            [order.id]: e.target.value,
+                          }))
+                        }
                         disabled={order.status !== "pending"}
                       />
                     </td>
@@ -422,7 +438,12 @@ export default function BatchOrders() {
                   placeholder="নোট লিখুন..."
                   className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   value={comments[order.id] || ""}
-                  onChange={(e) => setComments(prev => ({ ...prev, [order.id]: e.target.value }))}
+                  onChange={(e) =>
+                    setComments((prev) => ({
+                      ...prev,
+                      [order.id]: e.target.value,
+                    }))
+                  }
                   disabled={order.status !== "pending"}
                 />
               </div>

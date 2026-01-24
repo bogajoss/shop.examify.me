@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Button from "@/components/ui/Button";
@@ -19,6 +20,7 @@ const batchSchema = z.object({
   is_public: z.boolean(),
   icon_url: z.string().optional(),
   default_approval_message: z.string().optional(),
+  linked_batch_ids: z.array(z.string()).optional(),
 });
 
 type BatchFormValues = z.infer<typeof batchSchema>;
@@ -26,6 +28,18 @@ type BatchFormValues = z.infer<typeof batchSchema>;
 export default function CreateBatch() {
   const router = useRouter();
   const { showToast } = useToast();
+  const [allBatches, setAllBatches] = useState<{ id: string; name: string }[]>(
+    [],
+  );
+
+  useEffect(() => {
+    supabase
+      .from("batches")
+      .select("id, name")
+      .then(({ data }) => {
+        if (data) setAllBatches(data);
+      });
+  }, []);
 
   const {
     register,
@@ -43,6 +57,7 @@ export default function CreateBatch() {
       is_public: false,
       icon_url: "",
       default_approval_message: "",
+      linked_batch_ids: [],
     },
   });
 
@@ -59,6 +74,7 @@ export default function CreateBatch() {
           is_public: data.is_public,
           icon_url: data.icon_url,
           default_approval_message: data.default_approval_message,
+          linked_batch_ids: data.linked_batch_ids,
         },
       ]);
 
@@ -149,7 +165,10 @@ export default function CreateBatch() {
 
           {/* Default Approval Message */}
           <div className="space-y-2">
-            <label htmlFor="default_approval_message" className="text-sm font-medium text-primary">
+            <label
+              htmlFor="default_approval_message"
+              className="text-sm font-medium text-primary"
+            >
               Auto-Approve Message (অ্যাপ্রুভ হওয়ার পর এই কমেন্টটি অটোমেটিক যাবে)
             </label>
             <textarea
@@ -191,6 +210,40 @@ export default function CreateBatch() {
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="linked_batches" className="text-sm font-medium">
+              Linked Batches (Sync Exams)
+            </label>
+            <div
+              id="linked_batches"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-input p-4 rounded-md h-40 overflow-y-auto bg-background"
+            >
+              {allBatches.length > 0 ? (
+                allBatches.map((b) => (
+                  <label
+                    key={b.id}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 p-1 rounded"
+                  >
+                    <input
+                      type="checkbox"
+                      value={b.id}
+                      {...register("linked_batch_ids")}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm">{b.name}</span>
+                  </label>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground col-span-2 text-center py-4">
+                  No other batches available
+                </p>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Select batches to show their exams in this batch automatically.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

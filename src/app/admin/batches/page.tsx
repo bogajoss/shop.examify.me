@@ -76,7 +76,7 @@ export default function AdminBatches() {
       type === "checkout"
         ? "এনরোল লিংক কপি করা হয়েছে"
         : "কোর্স লিংক কপি করা হয়েছে",
-      "success"
+      "success",
     );
   };
 

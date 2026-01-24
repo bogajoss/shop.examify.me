@@ -1,9 +1,12 @@
 "use server";
 
-import { supabaseAdmin } from "@/lib/supabase-admin";
 import { revalidatePath } from "next/cache";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
-export async function approveOrderAction(orderId: string, adminComment?: string) {
+export async function approveOrderAction(
+  orderId: string,
+  adminComment?: string,
+) {
   try {
     console.log("Approving order:", orderId);
 
@@ -19,22 +22,26 @@ export async function approveOrderAction(orderId: string, adminComment?: string)
       return { success: false, message: "Order not found or fetch error" };
     }
 
-    const finalComment = adminComment || (order as any).batches?.default_approval_message;
+    const finalComment =
+      adminComment || (order as any).batches?.default_approval_message;
 
     console.log("Order found:", order);
 
     // 2. Update order status
     const { error: updateError } = await supabaseAdmin
       .from("orders")
-      .update({ 
+      .update({
         status: "approved",
-        admin_comment: finalComment 
+        admin_comment: finalComment,
       })
       .eq("id", orderId);
 
     if (updateError) {
       console.error("Error updating order status:", updateError);
-      return { success: false, message: "Failed to update order status: " + updateError.message };
+      return {
+        success: false,
+        message: "Failed to update order status: " + updateError.message,
+      };
     }
 
     console.log("Order status approved.");
@@ -49,12 +56,16 @@ export async function approveOrderAction(orderId: string, adminComment?: string)
     if (userError) {
       console.error("Error fetching user:", userError);
       // Attempt to rollback? No, manually handle.
-      return { success: false, message: "Order approved but failed to fetch user: " + userError.message };
+      return {
+        success: false,
+        message:
+          "Order approved but failed to fetch user: " + userError.message,
+      };
     }
 
     const currentBatches = user.enrolled_batches || [];
     console.log("Current batches:", currentBatches);
-    
+
     // 4. Update user's enrolled_batches if not already enrolled
     if (!currentBatches.includes(order.batch_id)) {
       const newBatches = [...currentBatches, order.batch_id];
@@ -69,7 +80,11 @@ export async function approveOrderAction(orderId: string, adminComment?: string)
 
       if (enrollError) {
         console.error("Enrollment error:", enrollError);
-        return { success: false, message: "Order approved but failed to enroll user: " + enrollError.message };
+        return {
+          success: false,
+          message:
+            "Order approved but failed to enroll user: " + enrollError.message,
+        };
       }
       console.log("User enrolled successfully.");
     } else {
@@ -78,41 +93,52 @@ export async function approveOrderAction(orderId: string, adminComment?: string)
 
     revalidatePath("/admin/orders");
     if (order?.batch_id) {
-        revalidatePath(`/admin/orders/${order.batch_id}`);
+      revalidatePath(`/admin/orders/${order.batch_id}`);
     }
-    return { success: true, message: "Order approved and user enrolled successfully" };
+    return {
+      success: true,
+      message: "Order approved and user enrolled successfully",
+    };
   } catch (error: any) {
     console.error("Server action exception:", error);
     return { success: false, message: error.message };
   }
 }
 
-export async function rejectOrderAction(orderId: string, adminComment?: string) {
+export async function rejectOrderAction(
+  orderId: string,
+  adminComment?: string,
+) {
   try {
     // 1. Get batch_id for revalidation
     const { data: order } = await supabaseAdmin
-        .from("orders")
-        .select("batch_id")
-        .eq("id", orderId)
-        .single();
+      .from("orders")
+      .select("batch_id")
+      .eq("id", orderId)
+      .single();
 
-    const finalComment = adminComment || "আপনার পেমেন্টটি ভেরিফাই করা সম্ভব হয়নি। দয়া করে পেমেন্ট প্রুফ সহ https://t.me/Examify_Course_Access এ যোগাযোগ করুন।";
+    const finalComment =
+      adminComment ||
+      "আপনার পেমেন্টটি ভেরিফাই করা সম্ভব হয়নি। দয়া করে পেমেন্ট প্রুফ সহ https://t.me/Examify_Course_Access এ যোগাযোগ করুন।";
 
     const { error } = await supabaseAdmin
       .from("orders")
-      .update({ 
+      .update({
         status: "rejected",
-        admin_comment: finalComment 
+        admin_comment: finalComment,
       })
       .eq("id", orderId);
 
     if (error) {
-      return { success: false, message: "Failed to reject order: " + error.message };
+      return {
+        success: false,
+        message: "Failed to reject order: " + error.message,
+      };
     }
 
     revalidatePath("/admin/orders");
     if (order?.batch_id) {
-        revalidatePath(`/admin/orders/${order.batch_id}`);
+      revalidatePath(`/admin/orders/${order.batch_id}`);
     }
     return { success: true, message: "Order rejected successfully" };
   } catch (error: any) {

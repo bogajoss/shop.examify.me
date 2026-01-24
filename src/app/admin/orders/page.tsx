@@ -1,8 +1,8 @@
 "use client";
 
-import { BookOpen, Users, Clock, AlertCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { AlertCircle, BookOpen, Clock, Users } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { supabase } from "@/lib/supabase";
 
@@ -50,7 +50,12 @@ export default function BatchesList() {
       ordersData?.forEach((order) => {
         if (!order.batch_id) return;
         if (!newStats[order.batch_id]) {
-          newStats[order.batch_id] = { pending: 0, approved: 0, rejected: 0, total: 0 };
+          newStats[order.batch_id] = {
+            pending: 0,
+            approved: 0,
+            rejected: 0,
+            total: 0,
+          };
         }
         const s = newStats[order.batch_id];
         s.total++;
@@ -83,13 +88,21 @@ export default function BatchesList() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 bg-muted/20 animate-pulse rounded-xl" />
+            <div
+              key={i}
+              className="h-40 bg-muted/20 animate-pulse rounded-xl"
+            />
           ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {batches.map((batch) => {
-            const batchStats = stats[batch.id] || { pending: 0, approved: 0, rejected: 0, total: 0 };
+            const batchStats = stats[batch.id] || {
+              pending: 0,
+              approved: 0,
+              rejected: 0,
+              total: 0,
+            };
             return (
               <Link
                 key={batch.id}
@@ -120,19 +133,22 @@ export default function BatchesList() {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5" title="Total Orders">
+                  <div
+                    className="flex items-center gap-1.5"
+                    title="Total Orders"
+                  >
                     <Users className="h-3.5 w-3.5" />
                     <span>{batchStats.total} Orders</span>
                   </div>
                   <div className="flex items-center gap-3">
-                     <span className="text-green-600 flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        {batchStats.approved}
-                     </span>
-                     <span className="text-red-500 flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                        {batchStats.rejected}
-                     </span>
+                    <span className="text-green-600 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                      {batchStats.approved}
+                    </span>
+                    <span className="text-red-500 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                      {batchStats.rejected}
+                    </span>
                   </div>
                 </div>
               </Link>

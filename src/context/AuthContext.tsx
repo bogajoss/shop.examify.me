@@ -221,7 +221,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     async (name: string, phone: string, pass: string) => {
       let attempts = 0;
       const maxAttempts = 5;
-      
+
       while (attempts < maxAttempts) {
         // 1. Fetch the latest roll to generate the next one
         const { data: latestUser } = await supabase
@@ -233,13 +233,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const latestRoll = latestUser?.[0]?.roll;
         let nextRoll = "ReadingZone-001";
-        
+
         if (latestRoll && latestRoll.startsWith("ReadingZone-")) {
           const lastNum = parseInt(latestRoll.split("-")[1]);
           if (!isNaN(lastNum)) {
             // Pad with leading zeros to maintain 3-digit format
             const nextNum = lastNum + 1;
-            nextRoll = `ReadingZone-${nextNum.toString().padStart(3, '0')}`;
+            nextRoll = `ReadingZone-${nextNum.toString().padStart(3, "0")}`;
           }
         }
 
@@ -263,10 +263,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         // 3. If it's a duplicate roll error (code 23505), loop and try again
-        if (error?.code === '23505') {
+        if (error?.code === "23505") {
           attempts++;
           // Add a small random delay to reduce race conditions
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 500));
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.random() * 500),
+          );
           continue;
         }
 
@@ -274,7 +276,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         throw error;
       }
 
-      throw new Error("Could not generate a unique roll number after several attempts. Please try again.");
+      throw new Error(
+        "Could not generate a unique roll number after several attempts. Please try again.",
+      );
     },
     [refreshUser],
   );
