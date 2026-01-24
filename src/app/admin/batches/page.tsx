@@ -2,7 +2,9 @@
 
 import {
   Calendar,
+  Copy,
   Edit,
+  Eye,
   Layers,
   Plus,
   ShieldCheck,
@@ -65,6 +67,17 @@ export default function AdminBatches() {
       console.error("Error deleting batch:", error);
       showToast("ডিলিট করতে সমস্যা হয়েছে", "error");
     }
+  };
+
+  const handleCopyLink = (id: string, type: "checkout" | "courses") => {
+    const link = `${window.location.origin}/${type}/${id}`;
+    navigator.clipboard.writeText(link);
+    showToast(
+      type === "checkout"
+        ? "এনরোল লিংক কপি করা হয়েছে"
+        : "কোর্স লিংক কপি করা হয়েছে",
+      "success"
+    );
   };
 
   return (
@@ -175,6 +188,22 @@ export default function AdminBatches() {
 
               {/* Float Actions */}
               <div className="absolute top-4 right-4 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleCopyLink(batch.id, "courses")}
+                  className="p-2 bg-background border border-border rounded-xl hover:text-sky-500 hover:border-sky-500 transition-all shadow-sm text-muted-foreground"
+                  title="কোর্স লিংক কপি করুন"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCopyLink(batch.id, "checkout")}
+                  className="p-2 bg-background border border-border rounded-xl hover:text-emerald-500 hover:border-emerald-500 transition-all shadow-sm text-muted-foreground"
+                  title="এনরোল লিংক কপি করুন"
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
                 <Link href={`/admin/batches/edit/${batch.id}`}>
                   <button
                     type="button"

@@ -283,3 +283,9 @@ create index if not exists idx_orders_status on orders(status);
 
 ALTER TABLE orders 
 ADD COLUMN IF NOT EXISTS assigned_token varchar(50);
+
+-- Migration: Add default_approval_message to batches
+-- Date: 2026-01-20
+
+ALTER TABLE batches 
+ADD COLUMN IF NOT EXISTS default_approval_message text;
