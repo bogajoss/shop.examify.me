@@ -6,15 +6,19 @@ import {
   Calendar,
   Check,
   Clock,
+  FileText,
   ImageIcon,
   Share2,
+  ShieldCheck,
   Star,
   Users,
+  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import type { Course } from "@/data/mockData";
@@ -170,16 +174,24 @@ export default function CourseDetailsClient({
 
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4 text-primary/60" />
                       <span>কোর্স এক্সেস: আজীবন</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span>লেকচার সংখ্যা: ৪০+</span>
+                      <Zap className="h-4 w-4 text-primary/60" />
+                      <span>লাইভ এক্সাম: {course.live_exams}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <BookOpen className="h-4 w-4" />
-                      <span>এক্সাম সংখ্যা: ১০০+</span>
+                      <BookOpen className="h-4 w-4 text-primary/60" />
+                      <span>লেকচার নোট: {course.lecture_notes}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <ShieldCheck className="h-4 w-4 text-primary/60" />
+                      <span>স্ট্যান্ডার্ড এক্সাম: {course.standard_exams}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <FileText className="h-4 w-4 text-primary/60" />
+                      <span>সলভ শিট: {course.solve_sheets}</span>
                     </div>
                   </div>
 
@@ -217,6 +229,7 @@ export default function CourseDetailsClient({
         </div>
       </main>
 
+      <WhatsAppButton />
       <Footer />
     </div>
   );

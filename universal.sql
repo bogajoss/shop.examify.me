@@ -307,3 +307,11 @@ ALTER TABLE student_exams
 ADD COLUMN IF NOT EXISTS batch_id uuid REFERENCES batches(id) ON DELETE SET NULL;
 
 CREATE INDEX IF NOT EXISTS idx_student_exams_batch_id ON student_exams(batch_id);
+-- Migration: Add editable stats to batches
+-- Date: 2026-01-24
+
+ALTER TABLE batches 
+ADD COLUMN IF NOT EXISTS live_exams text DEFAULT '০+',
+ADD COLUMN IF NOT EXISTS lecture_notes text DEFAULT '০+',
+ADD COLUMN IF NOT EXISTS standard_exams text DEFAULT '০+',
+ADD COLUMN IF NOT EXISTS solve_sheets text DEFAULT '০+';

@@ -11,6 +11,10 @@ export interface Course {
   description: string;
   features: string[];
   icon_url?: string;
+  live_exams?: string;
+  lecture_notes?: string;
+  standard_exams?: string;
+  solve_sheets?: string;
 }
 
 export interface FreeExam {

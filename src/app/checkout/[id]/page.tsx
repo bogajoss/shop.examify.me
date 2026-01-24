@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
@@ -210,7 +211,7 @@ export default function Checkout() {
                   {
                     id: "Rocket",
                     label: "Rocket",
-                    num: "017168404298",
+                    num: "01716840429",
                     color: "#8c3494",
                     bg: "bg-[#8c3494]/5",
                   },
@@ -427,6 +428,7 @@ export default function Checkout() {
         </div>
       </main>
 
+      <WhatsAppButton />
       <Footer />
     </div>
   );

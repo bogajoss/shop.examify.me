@@ -21,6 +21,10 @@ const batchSchema = z.object({
   icon_url: z.string().optional(),
   default_approval_message: z.string().optional(),
   linked_batch_ids: z.array(z.string()).optional(),
+  live_exams: z.string().optional(),
+  lecture_notes: z.string().optional(),
+  standard_exams: z.string().optional(),
+  solve_sheets: z.string().optional(),
 });
 
 type BatchFormValues = z.infer<typeof batchSchema>;
@@ -62,6 +66,10 @@ export default function EditBatch() {
       icon_url: "",
       default_approval_message: "",
       linked_batch_ids: [],
+      live_exams: "০+",
+      lecture_notes: "০+",
+      standard_exams: "০+",
+      solve_sheets: "০+",
     },
   });
 
@@ -89,6 +97,10 @@ export default function EditBatch() {
           data.default_approval_message || "",
         );
         setValue("linked_batch_ids", data.linked_batch_ids || []);
+        setValue("live_exams", data.live_exams || "০+");
+        setValue("lecture_notes", data.lecture_notes || "০+");
+        setValue("standard_exams", data.standard_exams || "০+");
+        setValue("solve_sheets", data.solve_sheets || "০+");
       } catch (err) {
         console.error("Error fetching batch:", err);
         showToast("Failed to fetch batch details", "error");
@@ -115,6 +127,10 @@ export default function EditBatch() {
           icon_url: data.icon_url,
           default_approval_message: data.default_approval_message,
           linked_batch_ids: data.linked_batch_ids,
+          live_exams: data.live_exams,
+          lecture_notes: data.lecture_notes,
+          standard_exams: data.standard_exams,
+          solve_sheets: data.solve_sheets,
         })
         .eq("id", id);
 
@@ -151,6 +167,26 @@ export default function EditBatch() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4 bg-card p-6 rounded-xl border border-border shadow-sm">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-2xl border border-border">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">লাইভ এক্সাম</label>
+              <input {...register("live_exams")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">লেকচার নোট</label>
+              <input {...register("lecture_notes")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">স্ট্যান্ডার্ড এক্সাম</label>
+              <input {...register("standard_exams")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">সলভ শিট</label>
+              <input {...register("solve_sheets")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
+            </div>
+          </div>
+
           {/* Name */}
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm font-medium">
