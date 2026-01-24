@@ -91,7 +91,7 @@ export default function CourseDetailsClient({
                   <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground font-medium pt-2">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span>{course.students || 450}+ শিক্ষার্থী</span>
+                      <span>{course.students > 0 ? course.students : 450}+ শিক্ষার্থী</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
@@ -173,38 +173,35 @@ export default function CourseDetailsClient({
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4 text-primary/60" />
-                      <span>কোর্স এক্সেস: আজীবন</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 p-4 rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
+                      <div className="bg-white/20 p-2 rounded-xl">
+                        <Calendar className="h-5 w-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] uppercase tracking-widest opacity-80 font-bold">এক্সেস ভ্যালিডিটি</span>
+                        <span className="text-sm font-black">আজীবন (Lifetime)</span>
+                      </div>
                     </div>
-                    {course.batch_stats && course.batch_stats.length > 0 ? (
-                      course.batch_stats.map((stat: any, idx: number) => (
-                        <div key={idx} className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <CheckCircle2 className="h-4 w-4 text-primary/60" />
-                          <span>{stat.label}: {stat.value}</span>
+                    
+                    <div className="grid grid-cols-1 gap-3">
+                      {[
+                        { icon: Zap, label: "লাইভ এক্সাম", value: course.live_exams || "৯৯+" },
+                        { icon: BookOpen, label: "লেকচার নোট", value: course.lecture_notes || "১০০+" },
+                        { icon: ShieldCheck, label: "স্ট্যান্ডার্ড এক্সাম", value: course.standard_exams || "৯৯+" },
+                        { icon: FileText, label: "সলভ শিট", value: course.solve_sheets || "১৯৯৯+" },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-primary/20 hover:bg-muted/30 transition-all group">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 p-2.5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                              <item.icon className="h-5 w-5" />
+                            </div>
+                            <span className="text-sm font-bold text-foreground/80">{item.label}</span>
+                          </div>
+                          <span className="text-sm font-black text-primary bg-primary/10 px-3 py-1 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">{item.value}</span>
                         </div>
-                      ))
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <Zap className="h-4 w-4 text-primary/60" />
-                          <span>লাইভ এক্সাম: {course.live_exams}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <BookOpen className="h-4 w-4 text-primary/60" />
-                          <span>লেকচার নোট: {course.lecture_notes}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <ShieldCheck className="h-4 w-4 text-primary/60" />
-                          <span>স্ট্যান্ডার্ড এক্সাম: {course.standard_exams}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                          <FileText className="h-4 w-4 text-primary/60" />
-                          <span>সলভ শিট: {course.solve_sheets}</span>
-                        </div>
-                      </>
-                    )}
+                      ))}
+                    </div>
                   </div>
 
                   <Button

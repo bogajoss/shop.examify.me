@@ -39,13 +39,20 @@ export default async function CoursePage({ params }: Props) {
     notFound();
   }
 
+  // Fetch approved student count
+  const { count: studentCount } = await supabase
+    .from("orders")
+    .select("*", { count: 'exact', head: true })
+    .eq("batch_id", id)
+    .eq("status", "approved");
+
   const course = {
     id: batch.id,
     title: batch.name,
     category: batch.category || "General",
     price: batch.price || 0,
     oldPrice: batch.old_price || 0,
-    students: 0,
+    students: studentCount || 0,
     status: batch.status === "live" ? "Published" : "Draft",
     batch: batch.name.split(" ")[0],
     description: batch.description || "",

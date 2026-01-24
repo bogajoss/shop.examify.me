@@ -58,6 +58,17 @@ export default function Home() {
 
         if (error) throw error;
 
+        // Fetch approved order counts for all batches
+        const { data: orderCounts } = await supabase
+          .from("orders")
+          .select("batch_id")
+          .eq("status", "approved");
+
+        const countMap: Record<string, number> = {};
+        orderCounts?.forEach((o) => {
+          countMap[o.batch_id] = (countMap[o.batch_id] || 0) + 1;
+        });
+
         // Map Supabase batch to Course interface
         const mappedCourses = (data || []).map((b) => ({
           id: b.id,
@@ -65,12 +76,16 @@ export default function Home() {
           category: b.category || "General",
           price: b.price || 0,
           oldPrice: b.old_price || 0,
-          students: 0, // Mock students or count from enrollment_tokens
+          students: countMap[b.id] || 0,
           status: b.status === "live" ? "Published" : "Draft",
           batch: b.name.split(" ")[0], // Extract batch name like "HSC"
           description: b.description || "",
           features: b.features || [],
           icon_url: b.icon_url || "",
+          live_exams: b.live_exams,
+          lecture_notes: b.lecture_notes,
+          standard_exams: b.standard_exams,
+          solve_sheets: b.solve_sheets,
         }));
 
         setCourses(mappedCourses);
