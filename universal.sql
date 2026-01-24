@@ -289,3 +289,21 @@ ADD COLUMN IF NOT EXISTS assigned_token varchar(50);
 
 ALTER TABLE batches 
 ADD COLUMN IF NOT EXISTS default_approval_message text;
+-- Migration: Add phone column to users table
+-- Date: 2026-01-18
+
+ALTER TABLE users 
+ADD COLUMN IF NOT EXISTS phone text UNIQUE;
+
+CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
+ALTER TABLE exams 
+ADD COLUMN IF NOT EXISTS practice_after_live boolean DEFAULT true;
+ALTER TABLE batches 
+ADD COLUMN IF NOT EXISTS linked_batch_ids uuid[] DEFAULT '{}';
+-- Migration: Add batch_id to student_exams
+-- Date: 2026-01-24
+
+ALTER TABLE student_exams 
+ADD COLUMN IF NOT EXISTS batch_id uuid REFERENCES batches(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_student_exams_batch_id ON student_exams(batch_id);
