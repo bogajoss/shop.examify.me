@@ -56,6 +56,7 @@ export default async function CoursePage({ params }: Props) {
     lecture_notes: batch.lecture_notes || "০+",
     standard_exams: batch.standard_exams || "০+",
     solve_sheets: batch.solve_sheets || "০+",
+    batch_stats: batch.batch_stats || [],
   };
 
   return <CourseDetailsClient course={course as any} />;

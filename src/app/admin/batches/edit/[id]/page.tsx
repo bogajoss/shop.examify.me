@@ -35,8 +35,9 @@ export default function EditBatch() {
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [allBatches, setAllBatches] = useState<{ id: string; name: string }[]>(
-    [],
+    []
   );
+  const [batchStats, setBatchStats] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
     supabase
@@ -101,6 +102,12 @@ export default function EditBatch() {
         setValue("lecture_notes", data.lecture_notes || "০+");
         setValue("standard_exams", data.standard_exams || "০+");
         setValue("solve_sheets", data.solve_sheets || "০+");
+        setBatchStats(data.batch_stats || [
+          { label: "লাইভ এক্সাম", value: "০+" },
+          { label: "লেকচার নোট", value: "০+" },
+          { label: "স্ট্যান্ডার্ড এক্সাম", value: "০+" },
+          { label: "সলভ শিট", value: "০+" },
+        ]);
       } catch (err) {
         console.error("Error fetching batch:", err);
         showToast("Failed to fetch batch details", "error");
@@ -131,6 +138,7 @@ export default function EditBatch() {
           lecture_notes: data.lecture_notes,
           standard_exams: data.standard_exams,
           solve_sheets: data.solve_sheets,
+          batch_stats: batchStats,
         })
         .eq("id", id);
 
@@ -167,24 +175,62 @@ export default function EditBatch() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4 bg-card p-6 rounded-xl border border-border shadow-sm">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-2xl border border-border">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">লাইভ এক্সাম</label>
-              <input {...register("live_exams")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
+          {/* Dynamic Stats Grid */}
+          <div className="space-y-3 p-4 bg-muted/30 rounded-2xl border border-border">
+            <div className="flex justify-between items-center px-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-primary">কোর্স স্ট্যাটাস (Dynamic)</label>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                className="h-6 text-[10px] px-2 font-bold"
+                onClick={() => setBatchStats([...batchStats, { label: "", value: "" }])}
+              >
+                + নতুন যোগ করুন
+              </Button>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">লেকচার নোট</label>
-              <input {...register("lecture_notes")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {batchStats.map((stat, idx) => (
+                <div key={idx} className="flex gap-2 items-center bg-background p-2 rounded-lg border">
+                  <div className="flex-1 space-y-1">
+                    <input 
+                      placeholder="নাম" 
+                      value={stat.label}
+                      onChange={(e) => {
+                        const newStats = [...batchStats];
+                        newStats[idx].label = e.target.value;
+                        setBatchStats(newStats);
+                      }}
+                      className="w-full h-7 bg-transparent border-b border-border focus:border-primary outline-none text-[10px] px-1"
+                    />
+                    <input 
+                      placeholder="মান" 
+                      value={stat.value}
+                      onChange={(e) => {
+                        const newStats = [...batchStats];
+                        newStats[idx].value = e.target.value;
+                        setBatchStats(newStats);
+                      }}
+                      className="w-full h-7 bg-transparent focus:border-primary outline-none text-[10px] px-1 font-bold"
+                    />
+                  </div>
+                  <button 
+                    type="button" 
+                    className="h-7 w-7 flex items-center justify-center text-destructive hover:bg-destructive/10 rounded"
+                    onClick={() => setBatchStats(batchStats.filter((_, i) => i !== idx))}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">স্ট্যান্ডার্ড এক্সাম</label>
-              <input {...register("standard_exams")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">সলভ শিট</label>
-              <input {...register("solve_sheets")} className="w-full h-10 bg-background border border-border rounded-lg px-3 text-sm font-bold" />
-            </div>
+          </div>
+
+          <div className="hidden">
+            <input {...register("live_exams")} />
+            <input {...register("lecture_notes")} />
+            <input {...register("standard_exams")} />
+            <input {...register("solve_sheets")} />
           </div>
 
           {/* Name */}

@@ -198,21 +198,21 @@ export default function Checkout() {
                     id: "bKash",
                     label: "bKash",
                     num: "01716840429",
-                    color: "#e2136e",
+                    logo: "https://wp.logos-download.com/wp-content/uploads/2022/01/BKash_Logo_icon-700x662.png",
                     bg: "bg-[#e2136e]/5",
                   },
                   {
                     id: "Nagad",
                     label: "Nagad",
                     num: "01716840429",
-                    color: "#f6921e",
+                    logo: "https://freelogopng.com/images/1679248342nagad.png",
                     bg: "bg-[#f6921e]/5",
                   },
                   {
                     id: "Rocket",
                     label: "Rocket",
                     num: "01716840429",
-                    color: "#8c3494",
+                    logo: "https://static.vecteezy.com/system/resources/previews/068/706/013/non_2x/rocket-color-logo-mobile-banking-icon-free-png.png",
                     bg: "bg-[#8c3494]/5",
                   },
                 ].map((method) => (
@@ -231,13 +231,12 @@ export default function Checkout() {
                         : "bg-muted/30 border-transparent hover:border-primary/20 hover:bg-muted/50"
                     }`}
                   >
-                    <div className="flex justify-between items-center mb-2">
-                      <span
-                        className="text-[10px] font-black uppercase tracking-widest"
-                        style={{ color: method.color }}
-                      >
-                        {method.label}
-                      </span>
+                    <div className="flex justify-between items-center mb-3">
+                      <img
+                        src={method.logo}
+                        alt={method.label}
+                        className="h-6 w-auto object-contain"
+                      />
                       <button
                         type="button"
                         onClick={(e) => {

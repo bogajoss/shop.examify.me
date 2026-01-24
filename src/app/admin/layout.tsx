@@ -2,6 +2,7 @@
 
 import {
   BookOpen,
+  FileText,
   GraduationCap,
   LayoutDashboard,
   LogOut,
@@ -20,6 +21,7 @@ const sidebarLinks = [
   { name: "ওভারভিউ", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "অর্ডারসমূহ", href: "/admin/orders", icon: ShoppingBag },
   { name: "ব্যাচসমূহ", href: "/admin/batches", icon: BookOpen },
+  { name: "ব্লগসমূহ", href: "/admin/blogs", icon: FileText },
   { name: "শিক্ষার্থীবৃন্দ", href: "/admin/students", icon: Users },
   { name: "সেটিংস", href: "/admin/settings", icon: Settings },
 ];

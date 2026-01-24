@@ -15,6 +15,7 @@ export interface Course {
   lecture_notes?: string;
   standard_exams?: string;
   solve_sheets?: string;
+  batch_stats?: { label: string; value: string }[];
 }
 
 export interface FreeExam {

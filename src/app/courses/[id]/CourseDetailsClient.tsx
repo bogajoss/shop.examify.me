@@ -5,6 +5,7 @@ import {
   BookOpen,
   Calendar,
   Check,
+  CheckCircle2,
   Clock,
   FileText,
   ImageIcon,
@@ -177,22 +178,33 @@ export default function CourseDetailsClient({
                       <Calendar className="h-4 w-4 text-primary/60" />
                       <span>কোর্স এক্সেস: আজীবন</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <Zap className="h-4 w-4 text-primary/60" />
-                      <span>লাইভ এক্সাম: {course.live_exams}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <BookOpen className="h-4 w-4 text-primary/60" />
-                      <span>লেকচার নোট: {course.lecture_notes}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <ShieldCheck className="h-4 w-4 text-primary/60" />
-                      <span>স্ট্যান্ডার্ড এক্সাম: {course.standard_exams}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <FileText className="h-4 w-4 text-primary/60" />
-                      <span>সলভ শিট: {course.solve_sheets}</span>
-                    </div>
+                    {course.batch_stats && course.batch_stats.length > 0 ? (
+                      course.batch_stats.map((stat: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <CheckCircle2 className="h-4 w-4 text-primary/60" />
+                          <span>{stat.label}: {stat.value}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <Zap className="h-4 w-4 text-primary/60" />
+                          <span>লাইভ এক্সাম: {course.live_exams}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <BookOpen className="h-4 w-4 text-primary/60" />
+                          <span>লেকচার নোট: {course.lecture_notes}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <ShieldCheck className="h-4 w-4 text-primary/60" />
+                          <span>স্ট্যান্ডার্ড এক্সাম: {course.standard_exams}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <FileText className="h-4 w-4 text-primary/60" />
+                          <span>সলভ শিট: {course.solve_sheets}</span>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   <Button

@@ -315,3 +315,38 @@ ADD COLUMN IF NOT EXISTS live_exams text DEFAULT '০+',
 ADD COLUMN IF NOT EXISTS lecture_notes text DEFAULT '০+',
 ADD COLUMN IF NOT EXISTS standard_exams text DEFAULT '০+',
 ADD COLUMN IF NOT EXISTS solve_sheets text DEFAULT '০+';
+-- Migration: Create blogs table
+-- Date: 2026-01-24
+
+create table if not exists blogs (
+  id uuid default uuid_generate_v4() not null primary key,
+  title text not null,
+  content text not null,
+  excerpt text,
+  image_url text,
+  category text default 'General',
+  author text default 'Admin',
+  status text default 'published' check (status in ('draft', 'published')),
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_blogs_status on blogs(status);
+create index if not exists idx_blogs_created_at on blogs(created_at);
+-- Migration: Add dynamic stats to batches
+-- Date: 2026-01-24
+
+ALTER TABLE batches 
+ADD COLUMN IF NOT EXISTS batch_stats jsonb DEFAULT '[]';
+-- Migration: Add slug to blogs
+-- Date: 2026-01-24
+
+ALTER TABLE blogs 
+ADD COLUMN IF NOT EXISTS slug text UNIQUE;
+
+-- Generate initial slugs for existing blogs if any
+UPDATE blogs SET slug = id::text WHERE slug IS NULL;
+
+ALTER TABLE blogs ALTER COLUMN slug SET NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_blogs_slug ON blogs(slug);
