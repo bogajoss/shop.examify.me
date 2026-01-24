@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, FileText, Image as ImageIcon, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, FileText, Image as ImageIcon, ShieldCheck, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
@@ -39,35 +39,27 @@ export default function CourseCard({ course }: CourseCardProps) {
       </div>
       <div className="flex-1 p-6 flex flex-col justify-between gap-5">
         <div>
-          <h3 className="text-xl font-black mb-3 leading-tight group-hover:text-primary transition-colors line-clamp-2">
+          <h3 className="text-xl font-black mb-3 leading-tight group-hover:text-primary transition-colors">
             {course.title}
           </h3>
           
-          <div className="grid grid-cols-2 gap-x-3 gap-y-3 text-[11px] font-bold pt-1">
-            <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-              <div className="bg-primary/10 p-1.5 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                <Zap className="h-3.5 w-3.5" />
-              </div>
-              <span className="truncate">{course.live_exams || "৯৯+"} লাইভ এক্সাম</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-              <div className="bg-primary/10 p-1.5 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                <BookOpen className="h-3.5 w-3.5" />
-              </div>
-              <span className="truncate">{course.lecture_notes || "১০০+"} লেকচার নোট</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-              <div className="bg-primary/10 p-1.5 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                <ShieldCheck className="h-3.5 w-3.5" />
-              </div>
-              <span className="truncate">{course.standard_exams || "৯৯+"} এক্সাম</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-              <div className="bg-primary/10 p-1.5 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                <FileText className="h-3.5 w-3.5" />
-              </div>
-              <span className="truncate">{course.solve_sheets || "১৯৯৯+"} সলভ শিট</span>
-            </div>
+          <div className="flex flex-col gap-3 text-[11px] font-bold pt-1">
+            {(course.batch_stats && course.batch_stats.length > 0
+              ? course.batch_stats
+              : [
+                  { label: "লাইভ এক্সাম", value: course.live_exams || "৯৯+" },
+                  { label: "লেকচার নোট", value: course.lecture_notes || "১০০+" },
+                  { label: "এক্সাম", value: course.standard_exams || "৯৯+" },
+                  { label: "সলভ শিট", value: course.solve_sheets || "১৯৯৯+" },
+                ]
+            ).map((item, idx) => {
+              return (
+                <div key={idx} className="flex items-start gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
+                  <ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span className="whitespace-pre-line leading-relaxed">{item.label}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 

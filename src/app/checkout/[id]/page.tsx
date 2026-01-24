@@ -168,7 +168,7 @@ export default function Checkout() {
                 variant="secondary"
                 className="bg-white/50 dark:bg-black/20 border-primary/10 text-primary text-[10px] font-bold py-1"
               >
-                <CheckCircle2 className="h-3 w-3 mr-1" /> Life-time Access
+                <CheckCircle2 className="h-3 w-3 mr-1" /> Until Exam Ends
               </Badge>
               <Badge
                 variant="secondary"
@@ -187,7 +187,7 @@ export default function Checkout() {
                   1
                 </div>
                 <h4 className="font-black text-foreground">
-                  টাকা পাঠিয়ে দিন (সেন্ড মানি)
+                  Payment করুন (সেন্ড মানি)
                 </h4>
               </div>
 
@@ -271,6 +271,28 @@ export default function Checkout() {
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-sm shadow-lg shadow-primary/20">
                   2
+                </div>
+                <h4 className="font-black text-foreground">
+                  কিভাবে পেমেন্ট করবেন? (ভিডিও গাইড)
+                </h4>
+              </div>
+              
+              <div className="relative aspect-video w-full overflow-hidden rounded-2xl border-2 border-muted shadow-lg bg-muted">
+                <iframe
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                  title="Payment Tutorial"
+                  className="absolute inset-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-sm shadow-lg shadow-primary/20">
+                  3
                 </div>
                 <h4 className="font-black text-foreground">
                   পেমেন্ট ডিটেইলস দিন
@@ -386,7 +408,7 @@ export default function Checkout() {
                         অর্ডার প্রসেসিং...
                       </div>
                     ) : (
-                      "অর্ডার কনফার্ম করুন"
+                      "পেমেন্ট সম্পন্ন করুন"
                     )}
                   </Button>
                 </form>

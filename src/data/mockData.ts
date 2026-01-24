@@ -101,7 +101,7 @@ export const db = {
       batch: "HSC 25",
       batchId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
       description:
-        "মেডিকেল ভর্তি পরীক্ষার পূর্ণাঙ্গ প্রস্তুতি। সেকেন্ড টাইমারদের জন্য বিশেষায়িত কেয়ার এবং এক্সাম সিস্টেম।",
+        "একাডেমিক এবং বিশ্ববিদ্যালয় ভর্তি পরীক্ষার পূর্ণাঙ্গ প্রস্তুতি। সেকেন্ড টাইমারদের জন্য বিশেষায়িত কেয়ার এবং এক্সাম সিস্টেম।",
     },
     {
       id: "C-002",
@@ -118,7 +118,7 @@ export const db = {
     },
     {
       id: "C-003",
-      title: "Medical Admission Exam Batch",
+      title: "Admission Full Exam Batch",
       category: "Admission",
       price: 2000,
       oldPrice: 3000,
@@ -148,7 +148,7 @@ export const db = {
     },
     {
       id: "FE-003",
-      title: "Medical GK & English Test",
+      title: "Admission GK & English Test",
       subject: "GK & English",
       time: "10 min",
       questions: 3,
@@ -198,11 +198,11 @@ export const db = {
     },
     {
       id: "QB-005",
-      title: "Medical weekly - 2025",
+      title: "Admission weekly - 2025",
       category: "model-test",
       isLive: true,
       type: "mcq",
-      image: "https://placehold.co/400x400?text=Medical",
+      image: "https://placehold.co/400x400?text=Admission",
     },
   ] as QuestionBankItem[],
   qbQuestions: [

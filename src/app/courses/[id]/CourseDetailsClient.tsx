@@ -2,6 +2,7 @@
 
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   Calendar,
   Check,
@@ -9,6 +10,7 @@ import {
   Clock,
   FileText,
   ImageIcon,
+  PlayCircle,
   Share2,
   ShieldCheck,
   Star,
@@ -113,38 +115,76 @@ export default function CourseDetailsClient({
 
                     <div className="bg-primary/5 rounded-2xl p-5 border border-primary/10 mt-6 italic">
                       "এই কোর্সটি এমনভাবে ডিজাইন করা হয়েছে যাতে একজন শিক্ষার্থী একদম শুরু
-                      থেকে মেডিকেল স্ট্যান্ডার্ড প্রস্তুতি নিতে পারে। আমাদের স্পেশাল মেন্টরশিপ
+                      থেকে একাডেমিক এবং বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি নিতে পারে। আমাদের স্পেশাল মেন্টরশিপ
                       প্রোগ্রাম আপনাকে সাফল্যের পথে এগিয়ে রাখবে।"
                     </div>
                   </div>
+                </div>
+
+                {/* Video Tutorial Section */}
+                <div id="enroll-guide" className="pt-8 border-t border-border/50">
+                  <h3 className="font-black text-xl mb-6 text-primary flex items-center gap-2">
+                    <Zap className="h-5 w-5 fill-primary" /> কিভাবে এনরোল করবেন? (ভিডিও গাইড)
+                  </h3>
+                  <div className="relative aspect-video w-full overflow-hidden rounded-3xl border-4 border-muted shadow-2xl bg-muted">
+                    <iframe
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                      title="How to enroll in Examify"
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  <p className="mt-4 text-sm text-muted-foreground text-center font-medium">
+                    উপরে দেখানো ভিডিওটি ফলো করে আপনি খুব সহজেই কোর্সে এনরোল করতে পারবেন।
+                  </p>
                 </div>
 
                 <div className="space-y-4 pt-4">
                   <h3 className="font-black text-xl text-primary flex items-center gap-2">
                     <Check className="h-5 w-5" /> কোর্সের বিশেষত্ব
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {(course.features && course.features.length > 0
-                      ? course.features
-                      : [
-                          "লাইভ এক্সাম ও সলভ সেশন",
-                          "পিডিএফ সলভ শিট",
-                          "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
-                          "২৪/৭ সলভ গ্রুপ সাপোর্ট",
-                        ]
-                    ).map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-muted/30 group hover:border-primary/20 transition-all"
-                      >
-                        <div className="bg-primary/10 text-primary rounded-full p-1.5 shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
-                          <Check className="h-4 w-4" />
-                        </div>
-                        <span className="text-sm font-bold text-foreground">
-                          {item}
-                        </span>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-1 gap-3">
+                    {(course.batch_stats && course.batch_stats.length > 0
+                      ? course.batch_stats
+                      : (course.features && course.features.length > 0
+                          ? course.features.map(f => ({ label: f, value: "" }))
+                          : [
+                              "লাইভ এক্সাম ও সলভ সেশন",
+                              "পিডিএফ সলভ শিট",
+                              "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
+                              "২৪/৭ সলভ গ্রুপ সাপোর্ট",
+                            ].map(f => ({ label: f, value: "" }))
+                        )
+                    ).map((item, idx) => {
+                      const label = typeof item === 'string' ? item : item.label;
+                      const value = typeof item === 'string' ? "" : item.value;
+                      
+                      return (
+                        <details key={idx} className="group bg-muted/30 border border-border rounded-2xl overflow-hidden transition-all duration-300 open:bg-primary/[0.02] open:border-primary/20">
+                          <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
+                            <div className="flex items-center gap-3">
+                              <ArrowRight className="h-4 w-4 text-primary group-open:rotate-90 transition-transform" />
+                              <span className="text-sm font-black text-foreground">
+                                {label}
+                              </span>
+                            </div>
+                            <div className="text-muted-foreground group-open:rotate-180 transition-transform">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </div>
+                          </summary>
+                          {value && (
+                            <div className="px-11 pb-4 animate-in slide-in-from-top-2 duration-300">
+                              <p className="text-xs font-medium text-muted-foreground leading-relaxed whitespace-pre-line border-l-2 border-primary/20 pl-4">
+                                {value}
+                              </p>
+                            </div>
+                          )}
+                        </details>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -180,38 +220,31 @@ export default function CourseDetailsClient({
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] uppercase tracking-widest opacity-80 font-bold">এক্সেস ভ্যালিডিটি</span>
-                        <span className="text-sm font-black">আজীবন (Lifetime)</span>
+                        <span className="text-sm font-black">পরীক্ষা শেষ হওয়া পর্যন্ত</span>
                       </div>
                     </div>
-                    
-                    <div className="grid grid-cols-1 gap-3">
-                      {[
-                        { icon: Zap, label: "লাইভ এক্সাম", value: course.live_exams || "৯৯+" },
-                        { icon: BookOpen, label: "লেকচার নোট", value: course.lecture_notes || "১০০+" },
-                        { icon: ShieldCheck, label: "স্ট্যান্ডার্ড এক্সাম", value: course.standard_exams || "৯৯+" },
-                        { icon: FileText, label: "সলভ শিট", value: course.solve_sheets || "১৯৯৯+" },
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-primary/20 hover:bg-muted/30 transition-all group">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-primary/10 p-2.5 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                              <item.icon className="h-5 w-5" />
-                            </div>
-                            <span className="text-sm font-bold text-foreground/80">{item.label}</span>
-                          </div>
-                          <span className="text-sm font-black text-primary bg-primary/10 px-3 py-1 rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">{item.value}</span>
-                        </div>
-                      ))}
+
+                    <div className="space-y-3">
+                      <Button
+                        fullWidth
+                        variant="outline"
+                        size="lg"
+                        className="h-12 rounded-2xl text-base font-bold border-primary/20 text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                        onClick={() => document.getElementById('enroll-guide')?.scrollIntoView({ behavior: 'smooth' })}
+                      >
+                        <PlayCircle className="h-5 w-5" /> কিভাবে ভর্তি হবেন?
+                      </Button>
+                      
+                      <Button
+                        fullWidth
+                        size="lg"
+                        className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                        onClick={() => router.push(`/checkout/${course.id}`)}
+                      >
+                        ভর্তি হন (Enroll Now)
+                      </Button>
                     </div>
                   </div>
-
-                  <Button
-                    fullWidth
-                    size="lg"
-                    className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                    onClick={() => router.push(`/checkout/${course.id}`)}
-                  >
-                    ভর্তি হন (Enroll Now)
-                  </Button>
                 </div>
               </div>
             </div>
