@@ -160,24 +160,36 @@ export default function CourseDetailsClient({
                       const label = typeof item === 'string' ? item : item.label;
                       const value = typeof item === 'string' ? "" : item.value;
                       
+                      const iconConfigs = [
+                        { icon: Zap, color: "text-amber-500", bg: "bg-amber-500/10" },
+                        { icon: BookOpen, color: "text-indigo-500", bg: "bg-indigo-500/10" },
+                        { icon: ShieldCheck, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                        { icon: FileText, color: "text-rose-500", bg: "bg-rose-500/10" },
+                        { icon: CheckCircle2, color: "text-sky-500", bg: "bg-sky-500/10" },
+                        { icon: Clock, color: "text-orange-500", bg: "bg-orange-500/10" },
+                        { icon: Users, color: "text-violet-500", bg: "bg-violet-500/10" },
+                      ];
+                      const config = iconConfigs[idx % iconConfigs.length];
+                      const Icon = config.icon;
+
                       return (
-                        <details key={idx} className="group bg-muted/30 border border-border rounded-2xl overflow-hidden transition-all duration-300 open:bg-primary/[0.02] open:border-primary/20">
+                        <details key={idx} className="group bg-muted/30 border border-border rounded-2xl overflow-hidden transition-all duration-300 open:bg-card open:border-primary/20 shadow-sm hover:shadow-md">
                           <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
-                            <div className="flex items-center gap-3">
-                              <ArrowRight className="h-4 w-4 text-primary group-open:rotate-90 transition-transform" />
-                              <span className="text-sm font-black text-foreground">
+                            <div className="flex items-center gap-4">
+                              <div className={`p-2.5 rounded-xl ${config.bg} ${config.color} transition-all duration-300 group-open:scale-110`}>
+                                <Icon className="h-4 w-4" />
+                              </div>
+                              <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors">
                                 {label}
                               </span>
                             </div>
-                            <div className="text-muted-foreground group-open:rotate-180 transition-transform">
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-                              </svg>
+                            <div className="text-muted-foreground group-open:rotate-180 transition-transform duration-300">
+                              <ArrowRight className="h-4 w-4 rotate-90 group-open:rotate-0" />
                             </div>
                           </summary>
                           {value && (
-                            <div className="px-11 pb-4 animate-in slide-in-from-top-2 duration-300">
-                              <p className="text-xs font-medium text-muted-foreground leading-relaxed whitespace-pre-line border-l-2 border-primary/20 pl-4">
+                            <div className="px-6 pb-5 ml-12 animate-in slide-in-from-top-2 duration-300">
+                              <p className="text-xs font-medium text-muted-foreground leading-relaxed whitespace-pre-line border-l-2 border-primary/20 pl-5 py-1">
                                 {value}
                               </p>
                             </div>

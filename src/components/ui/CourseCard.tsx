@@ -53,9 +53,12 @@ export default function CourseCard({ course }: CourseCardProps) {
                   { label: "সলভ শিট", value: course.solve_sheets || "১৯৯৯+" },
                 ]
             ).map((item, idx) => {
+              const colors = ["text-primary", "text-emerald-500", "text-amber-500", "text-rose-500", "text-indigo-500"];
+              const color = colors[idx % colors.length];
+              
               return (
                 <div key={idx} className="flex items-start gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-                  <ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <ArrowRight className={`h-3.5 w-3.5 ${color} shrink-0`} />
                   <span className="whitespace-pre-line leading-relaxed">{item.label}</span>
                 </div>
               );
