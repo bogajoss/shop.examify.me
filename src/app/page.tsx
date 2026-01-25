@@ -18,7 +18,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import WhatsAppButton from "@/components/WhatsAppButton";
 import Button from "@/components/ui/Button";
 import CourseCard from "@/components/ui/CourseCard";
 import ExamCard from "@/components/ui/ExamCard";
@@ -533,9 +532,6 @@ export default function Home() {
           </section>
         </div>
       </main>
-
-      {/* WhatsApp Button */}
-      <WhatsAppButton />
 
       <Footer />
     </div>

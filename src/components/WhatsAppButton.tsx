@@ -1,8 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 
 export default function WhatsAppButton() {
+  const pathname = usePathname();
+  const isAdminPage = pathname?.startsWith("/admin");
+
+  if (isAdminPage) return null;
+
   return (
     <a
       href="https://wa.me/8801716840429"
@@ -15,7 +21,7 @@ export default function WhatsAppButton() {
         alt="WhatsApp"
         className="h-10 w-10 object-contain"
       />
-      <span className="absolute right-16 bg-black/80 text-white text-xs py-1 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+      <span className="absolute right-16 bg-black/80 text-white text-xs py-1 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none" >
         WhatsApp Support
       </span>
     </a>

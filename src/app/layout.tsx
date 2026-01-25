@@ -4,6 +4,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AdminProvider } from "@/context/AdminContext";
 import { AuthProvider } from "@/context/AuthContext";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const hindSiliguri = localFont({
   src: [
@@ -41,7 +42,10 @@ export default function RootLayout({
       >
         <AuthProvider>
           <AdminProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              {children}
+              <WhatsAppButton />
+            </ToastProvider>
           </AdminProvider>
         </AuthProvider>
       </body>

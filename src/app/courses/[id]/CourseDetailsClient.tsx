@@ -21,7 +21,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import WhatsAppButton from "@/components/WhatsAppButton";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import type { Course } from "@/data/mockData";
@@ -283,7 +282,6 @@ export default function CourseDetailsClient({
         </div>
       </main>
 
-      <WhatsAppButton />
       <Footer />
     </div>
   );
