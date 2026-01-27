@@ -132,12 +132,6 @@ export default function CourseDetailsClient({
                   </h3>
                   <div className="text-muted-foreground leading-relaxed text-base sm:text-lg space-y-4">
                     <p>{course.description}</p>
-
-                    <div className="bg-primary/5 rounded-2xl p-5 border border-primary/10 mt-6 italic">
-                      "এই কোর্সটি এমনভাবে ডিজাইন করা হয়েছে যাতে একজন শিক্ষার্থী একদম শুরু
-                      থেকে একাডেমিক এবং বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি নিতে পারে। আমাদের স্পেশাল মেন্টরশিপ
-                      প্রোগ্রাম আপনাকে সাফল্যের পথে এগিয়ে রাখবে।"
-                    </div>
                   </div>
                 </div>
 
