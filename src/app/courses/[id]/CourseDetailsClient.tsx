@@ -142,7 +142,7 @@ export default function CourseDetailsClient({
                   </h3>
                   <div className="relative aspect-video w-full overflow-hidden rounded-3xl border-4 border-muted shadow-2xl bg-muted">
                     <iframe
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                      src="https://www.youtube.com/embed/Mnt-7kZ-4I4" 
                       title="How to enroll in Examify"
                       className="absolute inset-0 w-full h-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
