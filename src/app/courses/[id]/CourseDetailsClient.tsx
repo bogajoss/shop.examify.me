@@ -103,6 +103,27 @@ export default function CourseDetailsClient({
                       <span>শেয়ার করুন</span>
                     </div>
                   </div>
+
+                  {/* Added Routine Button for Mobile/All Visibility */}
+                  {course.routine_url && (
+                    <div className="pt-4 lg:hidden">
+                      <a 
+                        href={course.routine_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block w-full"
+                      >
+                        <Button
+                          fullWidth
+                          variant="outline"
+                          size="lg"
+                          className="h-12 rounded-2xl text-base font-bold border-emerald-500/30 text-emerald-600 bg-emerald-50/50 hover:bg-emerald-50 transition-all flex items-center justify-center gap-2"
+                        >
+                          <FileText className="h-5 w-5" /> কোর্সের রুটিন দেখুন
+                        </Button>
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-6 border-t border-border/50">
