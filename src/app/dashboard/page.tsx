@@ -174,7 +174,7 @@ export default function Dashboard() {
                           <p className="font-black text-primary uppercase tracking-wider text-[10px]">
                             অ্যাডমিন নোট:
                           </p>
-                          <p className="font-medium leading-relaxed">
+                          <p className="font-medium leading-relaxed whitespace-pre-line">
                             <Linkify text={order.adminComment} />
                           </p>
                         </div>

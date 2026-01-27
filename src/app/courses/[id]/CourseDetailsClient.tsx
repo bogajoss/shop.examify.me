@@ -131,7 +131,7 @@ export default function CourseDetailsClient({
                     <BookOpen className="h-5 w-5" /> কোর্সের বিবরণ
                   </h3>
                   <div className="text-muted-foreground leading-relaxed text-base sm:text-lg space-y-4">
-                    <p>{course.description}</p>
+                    <p className="whitespace-pre-line">{course.description}</p>
                   </div>
                 </div>
 
