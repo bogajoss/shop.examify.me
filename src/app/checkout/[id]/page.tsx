@@ -140,28 +140,7 @@ export default function Checkout() {
           <ArrowLeft className="h-4 w-4" /> ফিরে যান
         </button>
 
-        {/* Video Tutorial Section (Now Above Card) */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 px-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black text-sm shadow-sm">
-              <Info className="h-4 w-4" />
-            </div>
-            <h4 className="font-black text-foreground">
-              কিভাবে পেমেন্ট করবেন? (ভিডিও গাইড)
-            </h4>
-          </div>
-          
-          <div className="relative aspect-video w-full overflow-hidden rounded-3xl border-4 border-muted shadow-2xl bg-muted">
-            <iframe
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              title="Payment Tutorial"
-              className="absolute inset-0 w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        </div>
-
+        
         <div className="rounded-3xl bg-card border border-border shadow-xl overflow-hidden">
           {/* Header Summary */}
           <div className="bg-primary/5 p-6 sm:p-8 border-b border-primary/10 space-y-4">
