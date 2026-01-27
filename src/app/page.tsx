@@ -81,6 +81,7 @@ export default function Home() {
           description: b.description || "",
           features: b.features || [],
           icon_url: b.icon_url || "",
+          routine_url: b.routine_url,
           live_exams: b.live_exams,
           lecture_notes: b.lecture_notes,
           standard_exams: b.standard_exams,

@@ -236,6 +236,24 @@ export default function CourseDetailsClient({
                     </div>
 
                     <div className="space-y-3">
+                      {course.routine_url && (
+                        <a 
+                          href={course.routine_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="block w-full"
+                        >
+                          <Button
+                            fullWidth
+                            variant="outline"
+                            size="lg"
+                            className="h-12 rounded-2xl text-base font-bold border-emerald-500/20 text-emerald-600 hover:bg-emerald-50 transition-all flex items-center justify-center gap-2"
+                          >
+                            <FileText className="h-5 w-5" /> রুটিন দেখুন
+                          </Button>
+                        </a>
+                      )}
+                      
                       <Button
                         fullWidth
                         variant="outline"

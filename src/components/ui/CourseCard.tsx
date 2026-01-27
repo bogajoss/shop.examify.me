@@ -75,15 +75,30 @@ export default function CourseCard({ course }: CourseCardProps) {
               ৳{course.price}
             </div>
           </div>
-          <div className="flex gap-2">
-            <Link href={`/courses/${course.id}`}>
-              <Button variant="outline" size="sm" className="rounded-xl font-bold">
-                বিস্তারিত
-              </Button>
-            </Link>
-            <Link href={`/checkout/${course.id}`}>
-              <Button size="sm" className="rounded-xl font-bold px-5">ভর্তি হন</Button>
-            </Link>
+          <div className="flex flex-wrap gap-2">
+            {course.routine_url && (
+              <a 
+                href={course.routine_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full mb-1"
+              >
+                <Button variant="outline" size="sm" className="w-full rounded-xl font-bold border-primary/30 text-primary hover:bg-primary/5 flex items-center justify-center gap-2 py-5">
+                  <FileText className="h-4 w-4" />
+                  রুটিন দেখুন
+                </Button>
+              </a>
+            )}
+            <div className="flex gap-2 w-full">
+              <Link href={`/courses/${course.id}`} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full rounded-xl font-bold">
+                  বিস্তারিত
+                </Button>
+              </Link>
+              <Link href={`/checkout/${course.id}`} className="flex-1">
+                <Button size="sm" className="w-full rounded-xl font-bold">ভর্তি হন</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

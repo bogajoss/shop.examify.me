@@ -59,6 +59,7 @@ export default async function CoursePage({ params }: Props) {
     batchId: batch.id,
     features: batch.features || [],
     icon_url: batch.icon_url,
+    routine_url: batch.routine_url,
     live_exams: batch.live_exams || "০+",
     lecture_notes: batch.lecture_notes || "০+",
     standard_exams: batch.standard_exams || "০+",

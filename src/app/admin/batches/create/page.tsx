@@ -24,6 +24,7 @@ const batchSchema = z.object({
   status: z.enum(["live", "ended"]),
   is_public: z.boolean(),
   icon_url: z.string().optional(),
+  routine_url: z.string().optional(),
   default_approval_message: z.string().optional(),
   linked_batch_ids: z.array(z.string()).optional(),
 });
@@ -62,6 +63,7 @@ export default function CreateBatch() {
         status: "live",
         is_public: false,
         icon_url: "",
+        routine_url: "",
         default_approval_message: "",
         linked_batch_ids: [],
       },
@@ -127,9 +129,15 @@ export default function CreateBatch() {
                 </div>
               </div>
   
-              <div className="space-y-2">
-                <Label htmlFor="icon_url">Image URL (Batch Cover)</Label>
-                <Input id="icon_url" {...register("icon_url")} placeholder="https://example.com/image.jpg" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="icon_url">Image URL (Batch Cover)</Label>
+                  <Input id="icon_url" {...register("icon_url")} placeholder="https://example.com/image.jpg" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="routine_url">Routine URL (Google Drive/PDF)</Label>
+                  <Input id="routine_url" {...register("routine_url")} placeholder="https://drive.google.com/..." />
+                </div>
               </div>
   
               <div className="space-y-2">
