@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, FileText, Hash, Play, User as UserIcon } from "lucide-react";
+import { Clock, FileText, Hash, MessageCircle, Play, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -170,13 +170,16 @@ export default function Dashboard() {
                       )}
 
                       {order.adminComment && (
-                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 text-xs text-foreground space-y-1">
-                          <p className="font-black text-primary uppercase tracking-wider text-[10px]">
-                            অ্যাডমিন নোট:
-                          </p>
-                          <p className="font-medium leading-relaxed whitespace-pre-line">
+                        <div className="p-4 bg-primary/10 rounded-2xl border-l-4 border-primary text-xs text-foreground space-y-2 relative overflow-hidden shadow-sm ring-1 ring-primary/20">
+                          <div className="flex items-center gap-2">
+                            <MessageCircle className="h-4 w-4 text-primary" />
+                            <p className="font-black text-primary uppercase tracking-wider text-[11px]">
+                              অ্যাডমিন নোট:
+                            </p>
+                          </div>
+                          <div className="font-bold leading-relaxed whitespace-pre-line text-[14px] pl-0.5 text-foreground">
                             <Linkify text={order.adminComment} />
-                          </p>
+                          </div>
                         </div>
                       )}
                     </div>
