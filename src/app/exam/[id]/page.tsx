@@ -18,75 +18,103 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq("id", id)
     .single();
 
-  if (exam) {
-    const title = `${exam.name} | Examify`;
-    let description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
+    if (exam) {
 
-    if (description.length < 110) {
-      description +=
-        " Enhance your preparation with our advanced exam platform, featuring real-time results and detailed performance analysis.";
+      const title = `${exam.name} | Examify`;
+
+      const description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
+
+  
+
+      return {
+
+        title,
+
+        description,
+
+        openGraph: {
+
+          title,
+
+          description,
+
+          images: ["https://examify.me/icon.png"],
+
+          type: "website",
+
+        },
+
+        twitter: {
+
+          card: "summary_large_image",
+
+          title,
+
+          description,
+
+          images: ["https://examify.me/icon.png"],
+
+        },
+
+      };
+
     }
 
-    const ogSearchParams = new URLSearchParams();
-    ogSearchParams.set("title", exam.name);
-    ogSearchParams.set("description", exam.course_name || "");
-    const ogImage = `/api/og?${ogSearchParams.toString()}`;
+  
+
+    const examInfo = db.freeExams.find((e) => e.id === id);
+
+  
+
+    if (!examInfo) {
+
+      return {
+
+        title: "Exam Not Found | Examify",
+
+      };
+
+    }
+
+  
+
+    const title = `${examInfo.title} | Examify`;
+
+    const description = `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`;
+
+  
 
     return {
+
       title,
+
       description,
+
       openGraph: {
+
         title,
+
         description,
-        images: [ogImage],
-        type: "website",
+
+        images: ["https://examify.me/icon.png"],
+
       },
+
       twitter: {
+
         card: "summary_large_image",
+
         title,
+
         description,
-        images: [ogImage],
+
+        images: ["https://examify.me/icon.png"],
+
       },
+
     };
+
   }
-
-  const examInfo = db.freeExams.find((e) => e.id === id);
-
-  if (!examInfo) {
-    return {
-      title: "Exam Not Found | Examify",
-    };
-  }
-
-  const title = `${examInfo.title} | Examify`;
-  let description = `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`;
-
-  if (description.length < 110) {
-    description +=
-      " Prepare for your exams with our comprehensive collection of free model tests and academic resources.";
-  }
-
-  const ogSearchParams = new URLSearchParams();
-  ogSearchParams.set("title", examInfo.title);
-  ogSearchParams.set("description", examInfo.subject);
-  const ogImage = `/api/og?${ogSearchParams.toString()}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: [ogImage],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-  };
-}
 
 export default async function ExamPage({ params }: Props) {
   const { id } = await params;

@@ -20,81 +20,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Course Not Found" };
   }
 
-    const title = batch.name;
+      const title = `${batch.name} | Examify`;
 
-    let description = batch.description || "Admission and Academic preparation platform.";
+      const description = batch.description || "Admission and Academic preparation platform.";
 
     
 
-    // Ensure description is between 110-160 characters for SEO
+      return {
 
-    if (description.length < 110) {
+        title,
 
-      description = `${description} Join Examify for top-notch academic and admission preparation with expert mentors and real-time exams.`.substring(0, 160);
+        description,
+
+        openGraph: {
+
+          title,
+
+          description,
+
+          images: ["https://examify.me/icon.png"],
+
+          type: "website",
+
+        },
+
+        twitter: {
+
+          card: "summary_large_image",
+
+          title,
+
+          description,
+
+          images: ["https://examify.me/icon.png"],
+
+        },
+
+      };
 
     }
-
-  
-
-    // Use dynamic OG image
-
-    const ogSearchParams = new URLSearchParams();
-
-    ogSearchParams.set("title", batch.name);
-
-    ogSearchParams.set("description", batch.category || "General");
-
-    const ogImage = `/api/og?${ogSearchParams.toString()}`;
-
-  
-
-    return {
-
-      title,
-
-      description,
-
-      openGraph: {
-
-        title: `${batch.name} | Examify`,
-
-        description,
-
-        images: [
-
-          {
-
-            url: ogImage,
-
-            width: 1200,
-
-            height: 630,
-
-            alt: batch.name,
-
-          },
-
-        ],
-
-        type: "website",
-
-      },
-
-      twitter: {
-
-        card: "summary_large_image",
-
-        title: `${batch.name} | Examify`,
-
-        description,
-
-        images: [ogImage],
-
-      },
-
-    };
-
-  }
 
 export default async function CoursePage({ params }: Props) {
   const { id } = await params;

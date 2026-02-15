@@ -3,26 +3,12 @@ import HomeClient from "./HomeClient";
 
 export const metadata: Metadata = {
   title: "Examify - Admission & Academic Preparation",
-  description:
-    "Advanced learning platform for admission and academic preparation in Bangladesh. Expert guidance, live exams, and comprehensive study materials for your success.",
+  description: "Advanced learning platform for admission and academic preparation in Bangladesh.",
   openGraph: {
-    title: "Examify - Admission & Academic Preparation",
-    description: "Advanced learning platform for admission and academic preparation in Bangladesh.",
-    images: [
-      {
-        url: "/api/og",
-        width: 1200,
-        height: 630,
-        alt: "Examify - Admission & Academic Preparation",
-      },
-    ],
-    type: "website",
+    images: ["https://examify.me/icon.png"],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Examify - Admission & Academic Preparation",
-    description: "Advanced learning platform for admission and academic preparation in Bangladesh.",
-    images: ["/api/og"],
+    images: ["https://examify.me/icon.png"],
   },
 };
 

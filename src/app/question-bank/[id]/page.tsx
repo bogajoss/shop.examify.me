@@ -17,36 +17,45 @@ export async function generateMetadata({
     return { title: "Question Bank Not Found" };
   }
 
-  const title = `${item.title} | Examify`;
-  let description = `Practice ${item.title} questions on Examify. Prepare for your exams with our comprehensive question bank.`;
+    const title = `${item.title} | Examify`;
 
-  if (description.length < 110) {
-    description +=
-      " Access thousands of curated questions with detailed solutions to boost your academic and admission preparation.";
+    const description = `Practice ${item.title} questions on Examify. Prepare for your exams with our comprehensive question bank.`;
+
+  
+
+    return {
+
+      title,
+
+      description,
+
+      openGraph: {
+
+        title,
+
+        description,
+
+        images: ["https://examify.me/icon.png"],
+
+        type: "website",
+
+      },
+
+      twitter: {
+
+        card: "summary_large_image",
+
+        title,
+
+        description,
+
+        images: ["https://examify.me/icon.png"],
+
+      },
+
+    };
+
   }
-
-  const ogSearchParams = new URLSearchParams();
-  ogSearchParams.set("title", item.title);
-  ogSearchParams.set("description", item.category || "");
-  const ogImage = `/api/og?${ogSearchParams.toString()}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: [ogImage],
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-  };
-}
 
 export default async function QuestionBankPage({ params }: PageProps) {
   const { id } = await params;
