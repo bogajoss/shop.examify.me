@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const courseUrls = (courses || []).map((course) => ({
     url: `${baseUrl}/courses/${course.id}`,
-    lastModified: course.updated_at || new Error().toISOString(),
+    lastModified: course.updated_at || new Date().toISOString(),
   }));
 
   return [
