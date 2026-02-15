@@ -6,8 +6,14 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const title = searchParams.get('title')?.slice(0, 100) || 'Examify';
-    const description = searchParams.get('description')?.slice(0, 160) || 'Admission & Academic Preparation Platform';
+    // Get parameters from URL, following documentation pattern
+    const hasTitle = searchParams.has('title');
+    const title = hasTitle
+      ? searchParams.get('title')?.slice(0, 100)
+      : 'Examify - Admission & Academic Preparation';
+    
+    const description = searchParams.get('description')?.slice(0, 160) || 
+      'Advanced learning platform for admission and academic preparation in Bangladesh.';
 
     // Fetch the font for Bengali support
     let fontData: ArrayBuffer | null = null;
