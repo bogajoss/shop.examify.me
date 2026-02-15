@@ -1,7 +1,7 @@
 "use server";
 
-import { supabaseAdmin } from "@/lib/supabase-admin";
 import { revalidatePath } from "next/cache";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function createBlogAction(formData: {
   title: string;
@@ -41,7 +41,7 @@ export async function updateBlogAction(
     category?: string;
     author?: string;
     status?: "draft" | "published";
-  }
+  },
 ) {
   try {
     const { data, error } = await supabaseAdmin

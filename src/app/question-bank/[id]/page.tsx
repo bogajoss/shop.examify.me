@@ -7,7 +7,9 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { id } = await params;
   const item = db.questionBanks.find((i) => i.id === id);
 
@@ -16,7 +18,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const title = `${item.title} | Examify`;
-  const description = `Practice ${item.title} questions on Examify. Prepare for your exams with our comprehensive question bank.`;
+  let description = `Practice ${item.title} questions on Examify. Prepare for your exams with our comprehensive question bank.`;
+
+  if (description.length < 110) {
+    description +=
+      " Access thousands of curated questions with detailed solutions to boost your academic and admission preparation.";
+  }
+
+  const ogSearchParams = new URLSearchParams();
+  ogSearchParams.set("title", item.title);
+  ogSearchParams.set("description", item.category || "");
+  const ogImage = `/api/og?${ogSearchParams.toString()}`;
 
   return {
     title,
@@ -24,12 +36,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
+      images: [ogImage],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [ogImage],
     },
   };
 }

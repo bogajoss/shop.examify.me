@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  Calendar,
+  Edit,
+  Eye,
+  FileText,
+  Plus,
+  Trash2,
+  User,
+} from "lucide-react";
 import Link from "next/link";
-import { Plus, Edit, Trash2, Eye, FileText, Calendar, User } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { useToast } from "@/components/ui/Toast";
-import Button from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { useEffect, useState } from "react";
 import { deleteBlogAction } from "@/app/actions/blog-actions";
+import { Badge } from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -69,7 +77,10 @@ export default function AdminBlogsPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-64 rounded-3xl bg-card border border-border animate-pulse" />
+            <div
+              key={i}
+              className="h-64 rounded-3xl bg-card border border-border animate-pulse"
+            />
           ))}
         </div>
       ) : blogs.length > 0 ? (
@@ -93,7 +104,11 @@ export default function AdminBlogsPage() {
                   </div>
                 )}
                 <div className="absolute top-4 left-4">
-                  <Badge variant={blog.status === "published" ? "success" : "secondary"}>
+                  <Badge
+                    variant={
+                      blog.status === "published" ? "success" : "secondary"
+                    }
+                  >
                     {blog.status === "published" ? "Published" : "Draft"}
                   </Badge>
                 </div>
@@ -122,12 +137,18 @@ export default function AdminBlogsPage() {
                 <div className="pt-4 mt-auto border-t border-border/50 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Link href={`/blogs/${blog.id}`} target="_blank">
-                      <button className="p-2 hover:text-primary transition-colors" title="View">
+                      <button
+                        className="p-2 hover:text-primary transition-colors"
+                        title="View"
+                      >
                         <Eye className="h-4 w-4" />
                       </button>
                     </Link>
                     <Link href={`/admin/blogs/edit/${blog.id}`}>
-                      <button className="p-2 hover:text-primary transition-colors" title="Edit">
+                      <button
+                        className="p-2 hover:text-primary transition-colors"
+                        title="Edit"
+                      >
                         <Edit className="h-4 w-4" />
                       </button>
                     </Link>
@@ -148,7 +169,9 @@ export default function AdminBlogsPage() {
         <div className="text-center py-20 bg-muted/10 rounded-[2.5rem] border-2 border-dashed border-border">
           <FileText className="h-16 w-16 text-muted-foreground/20 mx-auto mb-4" />
           <p className="text-xl font-bold">কোনো ব্লগ পাওয়া যায়নি</p>
-          <p className="text-muted-foreground text-sm">নতুন একটি ব্লগ তৈরি করে শুরু করুন।</p>
+          <p className="text-muted-foreground text-sm">
+            নতুন একটি ব্লগ তৈরি করে শুরু করুন।
+          </p>
         </div>
       )}
     </div>

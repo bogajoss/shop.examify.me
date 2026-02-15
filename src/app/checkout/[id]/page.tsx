@@ -41,7 +41,7 @@ export default function Checkout() {
   const [course, setCourse] = useState<any>(null);
   const [isCourseLoading, setIsCourseLoading] = useState(true);
 
-  const existingOrder = user?.orders?.find(o => o.courseId === id);
+  const existingOrder = user?.orders?.find((o) => o.courseId === id);
 
   useEffect(() => {
     async function fetchCourse() {
@@ -109,7 +109,11 @@ export default function Checkout() {
       return;
     }
 
-    if (existingOrder && (existingOrder.status === "Pending" || existingOrder.status === "Approved")) {
+    if (
+      existingOrder &&
+      (existingOrder.status === "Pending" ||
+        existingOrder.status === "Approved")
+    ) {
       showToast("আপনার একটি অর্ডার ইতিমধ্যে প্রসেসিং অবস্থায় আছে।", "info");
       return;
     }
@@ -148,7 +152,6 @@ export default function Checkout() {
           <ArrowLeft className="h-4 w-4" /> ফিরে যান
         </button>
 
-        
         <div className="rounded-3xl bg-card border border-border shadow-xl overflow-hidden">
           {/* Header Summary */}
           <div className="bg-primary/5 p-6 sm:p-8 border-b border-primary/10 space-y-4">
@@ -198,8 +201,8 @@ export default function Checkout() {
                     অর্ডার পেন্ডিং আছে
                   </h3>
                   <p className="text-sm text-amber-600 dark:text-amber-500 font-medium">
-                    আপনার এই কোর্সের পেমেন্টটি বর্তমানে ভেরিফিকেশনের জন্য পেন্ডিং অবস্থায় আছে। 
-                    অ্যাডমিন অ্যাপ্রুভ করলে আপনি ড্যাশবোর্ড থেকে কোর্সে এক্সেস পাবেন।
+                    আপনার এই কোর্সের পেমেন্টটি বর্তমানে ভেরিফিকেশনের জন্য পেন্ডিং অবস্থায়
+                    আছে। অ্যাডমিন অ্যাপ্রুভ করলে আপনি ড্যাশবোর্ড থেকে কোর্সে এক্সেস পাবেন।
                   </p>
                 </div>
                 <Button
@@ -220,7 +223,8 @@ export default function Checkout() {
                     আপনি ইতিমধ্যে এনরোলড!
                   </h3>
                   <p className="text-sm text-emerald-600 dark:text-emerald-500 font-medium">
-                    এই কোর্সে আপনার এক্সেস ইতিমধ্যে সচল করা হয়েছে। এখনই ক্লাস ও পরীক্ষা শুরু করতে পারেন।
+                    এই কোর্সে আপনার এক্সেস ইতিমধ্যে সচল করা হয়েছে। এখনই ক্লাস ও পরীক্ষা
+                    শুরু করতে পারেন।
                   </p>
                 </div>
                 <Button
@@ -272,7 +276,9 @@ export default function Checkout() {
                         key={method.id}
                         role="button"
                         tabIndex={0}
-                        onClick={() => setValue("paymentMethod", method.id as any)}
+                        onClick={() =>
+                          setValue("paymentMethod", method.id as any)
+                        }
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ")
                             setValue("paymentMethod", method.id as any);
@@ -313,7 +319,8 @@ export default function Checkout() {
                   </div>
                   {errors.paymentMethod && (
                     <p className="text-[11px] text-destructive font-bold flex items-center gap-1.5 ml-1 animate-pulse">
-                      <Info className="h-3 w-3" /> {errors.paymentMethod.message}
+                      <Info className="h-3 w-3" />{" "}
+                      {errors.paymentMethod.message}
                     </p>
                   )}
                 </div>
@@ -330,7 +337,10 @@ export default function Checkout() {
                   </div>
 
                   {user ? (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <form
+                      onSubmit={handleSubmit(onSubmit)}
+                      className="space-y-5"
+                    >
                       <div className="space-y-4">
                         <div className="space-y-1.5">
                           <label

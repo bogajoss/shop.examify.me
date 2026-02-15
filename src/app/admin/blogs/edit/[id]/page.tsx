@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { ArrowLeft, Save, FileText, Image as ImageIcon, Type, AlignLeft, Globe } from "lucide-react";
+import {
+  AlignLeft,
+  ArrowLeft,
+  FileText,
+  Globe,
+  Image as ImageIcon,
+  Save,
+  Type,
+} from "lucide-react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { updateBlogAction } from "@/app/actions/blog-actions";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
-import { updateBlogAction } from "@/app/actions/blog-actions";
 
 export default function EditBlogPage() {
   const { id } = useParams();
@@ -79,7 +87,11 @@ export default function EditBlogPage() {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center py-20 animate-pulse font-bold text-muted-foreground">লোড হচ্ছে...</div>;
+    return (
+      <div className="flex justify-center py-20 animate-pulse font-bold text-muted-foreground">
+        লোড হচ্ছে...
+      </div>
+    );
   }
 
   return (
@@ -98,7 +110,10 @@ export default function EditBlogPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-card border border-border rounded-[2rem] p-6 sm:p-8 shadow-sm space-y-6">
@@ -111,7 +126,9 @@ export default function EditBlogPage() {
                 placeholder="ব্লগ টাইটেল..."
                 className="w-full h-14 px-6 rounded-2xl bg-muted/30 border border-border focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-lg font-bold"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
               />
             </div>
 
@@ -128,7 +145,9 @@ export default function EditBlogPage() {
                   placeholder="custom-link-here"
                   className="flex-1 h-12 px-4 rounded-r-xl bg-muted/30 border border-border focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm font-mono"
                   value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, slug: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -141,7 +160,9 @@ export default function EditBlogPage() {
                 placeholder="ব্লগের বিস্তারিত লিখুন এখানে..."
                 className="w-full min-h-[450px] p-6 rounded-2xl bg-muted/30 border border-border focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all resize-none leading-relaxed"
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, content: e.target.value })
+                }
               />
             </div>
           </div>
@@ -159,7 +180,9 @@ export default function EditBlogPage() {
                 placeholder="https://example.com/image.jpg"
                 className="w-full h-11 px-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm"
                 value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, image_url: e.target.value })
+                }
               />
             </div>
 
@@ -171,26 +194,36 @@ export default function EditBlogPage() {
                 placeholder="সংক্ষেপে ব্লগের বিষয়বস্তু..."
                 className="w-full h-24 p-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm resize-none"
                 value={formData.excerpt}
-                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, excerpt: e.target.value })
+                }
               />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-muted-foreground ml-1">লেখক</label>
+                <label className="text-sm font-bold text-muted-foreground ml-1">
+                  লেখক
+                </label>
                 <input
                   type="text"
                   className="w-full h-11 px-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm"
                   value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, author: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-muted-foreground ml-1">স্ট্যাটাস</label>
+                <label className="text-sm font-bold text-muted-foreground ml-1">
+                  স্ট্যাটাস
+                </label>
                 <select
                   className="w-full h-11 px-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm appearance-none"
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value as any })
+                  }
                 >
                   <option value="published">Published</option>
                   <option value="draft">Draft</option>
@@ -203,7 +236,13 @@ export default function EditBlogPage() {
               disabled={isSubmitting}
               className="w-full h-14 rounded-2xl font-black text-lg gap-2 shadow-xl shadow-primary/20"
             >
-              {isSubmitting ? "আপডেট হচ্ছে..." : <><Save className="h-5 w-5" /> আপডেট সেভ করুন</>}
+              {isSubmitting ? (
+                "আপডেট হচ্ছে..."
+              ) : (
+                <>
+                  <Save className="h-5 w-5" /> আপডেট সেভ করুন
+                </>
+              )}
             </Button>
           </div>
         </div>

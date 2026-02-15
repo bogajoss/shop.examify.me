@@ -20,19 +20,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (exam) {
     const title = `${exam.name} | Examify`;
-    const description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
+    let description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
+
+    if (description.length < 110) {
+      description +=
+        " Enhance your preparation with our advanced exam platform, featuring real-time results and detailed performance analysis.";
+    }
+
+    const ogSearchParams = new URLSearchParams();
+    ogSearchParams.set("title", exam.name);
+    ogSearchParams.set("description", exam.course_name || "");
+    const ogImage = `/api/og?${ogSearchParams.toString()}`;
+
     return {
       title,
       description,
       openGraph: {
         title,
         description,
+        images: [ogImage],
         type: "website",
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
+        images: [ogImage],
       },
     };
   }
@@ -45,23 +58,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const title = `${examInfo.title} | Examify`;
+  let description = `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`;
+
+  if (description.length < 110) {
+    description +=
+      " Prepare for your exams with our comprehensive collection of free model tests and academic resources.";
+  }
+
+  const ogSearchParams = new URLSearchParams();
+  ogSearchParams.set("title", examInfo.title);
+  ogSearchParams.set("description", examInfo.subject);
+  const ogImage = `/api/og?${ogSearchParams.toString()}`;
+
   return {
-    title: `${examInfo.title} | Examify`,
-    description: `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`,
+    title,
+    description,
     openGraph: {
-      title: `${examInfo.title} | Examify`,
-      description: `Take the ${examInfo.title} on Examify.`,
-      images: [
-        `https://placehold.co/1200x630?text=${encodeURIComponent(examInfo.title)}`,
-      ],
+      title,
+      description,
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${examInfo.title} | Examify`,
-      description: `Take the ${examInfo.title} on Examify.`,
-      images: [
-        `https://placehold.co/1200x630?text=${encodeURIComponent(examInfo.title)}`,
-      ],
+      title,
+      description,
+      images: [ogImage],
     },
   };
 }

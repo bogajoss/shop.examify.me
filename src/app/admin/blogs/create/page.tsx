@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, FileText, Image as ImageIcon, Type, AlignLeft, Globe } from "lucide-react";
+import {
+  AlignLeft,
+  ArrowLeft,
+  FileText,
+  Globe,
+  Image as ImageIcon,
+  Save,
+  Type,
+} from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createBlogAction } from "@/app/actions/blog-actions";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
-import { createBlogAction } from "@/app/actions/blog-actions";
 
 export default function CreateBlogPage() {
   const router = useRouter();
@@ -58,7 +66,10 @@ export default function CreateBlogPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-card border border-border rounded-[2rem] p-6 sm:p-8 shadow-sm space-y-6">
@@ -73,7 +84,10 @@ export default function CreateBlogPage() {
                 value={formData.title}
                 onChange={(e) => {
                   const title = e.target.value;
-                  const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+                  const slug = title
+                    .toLowerCase()
+                    .replace(/ /g, "-")
+                    .replace(/[^\w-]+/g, "");
                   setFormData({ ...formData, title, slug });
                 }}
               />
@@ -92,7 +106,9 @@ export default function CreateBlogPage() {
                   placeholder="custom-link-here"
                   className="flex-1 h-12 px-4 rounded-r-xl bg-muted/30 border border-border focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all text-sm font-mono"
                   value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, slug: e.target.value })
+                  }
                 />
               </div>
               <p className="text-[10px] text-muted-foreground ml-1 italic">
@@ -108,7 +124,9 @@ export default function CreateBlogPage() {
                 placeholder="ব্লগের বিস্তারিত লিখুন এখানে..."
                 className="w-full min-h-[400px] p-6 rounded-2xl bg-muted/30 border border-border focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all resize-none leading-relaxed"
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, content: e.target.value })
+                }
               />
               <p className="text-[10px] text-muted-foreground ml-1 italic">
                 * আপনি চাইলে HTML ট্যাগ ব্যবহার করে ডিজাইন করতে পারেন।
@@ -129,7 +147,9 @@ export default function CreateBlogPage() {
                 placeholder="https://example.com/image.jpg"
                 className="w-full h-11 px-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm"
                 value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, image_url: e.target.value })
+                }
               />
             </div>
 
@@ -141,26 +161,36 @@ export default function CreateBlogPage() {
                 placeholder="সংক্ষেপে ব্লগের বিষয়বস্তু..."
                 className="w-full h-24 p-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm resize-none"
                 value={formData.excerpt}
-                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, excerpt: e.target.value })
+                }
               />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-muted-foreground ml-1">লেখক</label>
+                <label className="text-sm font-bold text-muted-foreground ml-1">
+                  লেখক
+                </label>
                 <input
                   type="text"
                   className="w-full h-11 px-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm"
                   value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, author: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-muted-foreground ml-1">স্ট্যাটাস</label>
+                <label className="text-sm font-bold text-muted-foreground ml-1">
+                  স্ট্যাটাস
+                </label>
                 <select
                   className="w-full h-11 px-4 rounded-xl bg-muted/30 border border-border focus:border-primary transition-all text-sm appearance-none"
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value as any })
+                  }
                 >
                   <option value="published">Published</option>
                   <option value="draft">Draft</option>
@@ -173,7 +203,13 @@ export default function CreateBlogPage() {
               disabled={isSubmitting}
               className="w-full h-14 rounded-2xl font-black text-lg gap-2 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
             >
-              {isSubmitting ? "তৈরি হচ্ছে..." : <><Save className="h-5 w-5" /> ব্লগ সেভ করুন</>}
+              {isSubmitting ? (
+                "তৈরি হচ্ছে..."
+              ) : (
+                <>
+                  <Save className="h-5 w-5" /> ব্লগ সেভ করুন
+                </>
+              )}
             </Button>
           </div>
         </div>

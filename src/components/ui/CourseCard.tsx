@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowRight, BookOpen, FileText, Image as ImageIcon, ShieldCheck, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  FileText,
+  Image as ImageIcon,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
@@ -42,7 +49,7 @@ export default function CourseCard({ course }: CourseCardProps) {
           <h3 className="text-xl font-black mb-3 leading-tight group-hover:text-primary transition-colors">
             {course.title}
           </h3>
-          
+
           <div className="flex flex-col gap-3 text-[11px] font-bold pt-1">
             {(course.batch_stats && course.batch_stats.length > 0
               ? course.batch_stats
@@ -53,13 +60,24 @@ export default function CourseCard({ course }: CourseCardProps) {
                   { label: "সলভ শিট", value: course.solve_sheets || "১৯৯৯+" },
                 ]
             ).map((item, idx) => {
-              const colors = ["text-primary", "text-emerald-500", "text-amber-500", "text-rose-500", "text-indigo-500"];
+              const colors = [
+                "text-primary",
+                "text-emerald-500",
+                "text-amber-500",
+                "text-rose-500",
+                "text-indigo-500",
+              ];
               const color = colors[idx % colors.length];
-              
+
               return (
-                <div key={idx} className="flex items-start gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
+                <div
+                  key={idx}
+                  className="flex items-start gap-2 text-muted-foreground group-hover:text-foreground transition-colors"
+                >
                   <ArrowRight className={`h-3.5 w-3.5 ${color} shrink-0`} />
-                  <span className="whitespace-pre-line leading-relaxed">{item.label}</span>
+                  <span className="whitespace-pre-line leading-relaxed">
+                    {item.label}
+                  </span>
                 </div>
               );
             })}
@@ -77,13 +95,17 @@ export default function CourseCard({ course }: CourseCardProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             {course.routine_url && (
-              <a 
-                href={course.routine_url} 
-                target="_blank" 
+              <a
+                href={course.routine_url}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-full mb-1"
               >
-                <Button variant="outline" size="sm" className="w-full rounded-xl font-bold border-primary/30 text-primary hover:bg-primary/5 flex items-center justify-center gap-2 py-5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-xl font-bold border-primary/30 text-primary hover:bg-primary/5 flex items-center justify-center gap-2 py-5"
+                >
                   <FileText className="h-4 w-4" />
                   রুটিন দেখুন
                 </Button>
@@ -91,12 +113,18 @@ export default function CourseCard({ course }: CourseCardProps) {
             )}
             <div className="flex gap-2 w-full">
               <Link href={`/courses/${course.id}`} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full rounded-xl font-bold">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-xl font-bold"
+                >
                   বিস্তারিত
                 </Button>
               </Link>
               <Link href={`/checkout/${course.id}`} className="flex-1">
-                <Button size="sm" className="w-full rounded-xl font-bold">ভর্তি হন</Button>
+                <Button size="sm" className="w-full rounded-xl font-bold">
+                  ভর্তি হন
+                </Button>
               </Link>
             </div>
           </div>

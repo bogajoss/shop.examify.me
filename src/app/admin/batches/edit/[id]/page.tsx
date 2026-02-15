@@ -4,16 +4,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import Button from "@/components/ui/Button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/Card";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { Label } from "@/components/ui/Label";
-import { Checkbox } from "@/components/ui/Checkbox";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 
 const batchSchema = z.object({
   name: z.string().min(1, "Batch name is required"),
@@ -37,9 +43,11 @@ export default function EditBatch() {
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [allBatches, setAllBatches] = useState<{ id: string; name: string }[]>(
-    []
+    [],
   );
-  const [batchStats, setBatchStats] = useState<{ label: string; value: string }[]>([]);
+  const [batchStats, setBatchStats] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const {
     register,
@@ -94,7 +102,10 @@ export default function EditBatch() {
         setValue("is_public", data.is_public);
         setValue("icon_url", data.icon_url || "");
         setValue("routine_url", data.routine_url || "");
-        setValue("default_approval_message", data.default_approval_message || "");
+        setValue(
+          "default_approval_message",
+          data.default_approval_message || "",
+        );
         setValue("linked_batch_ids", data.linked_batch_ids || []);
         setBatchStats(data.batch_stats || []);
       } catch (err) {
@@ -139,12 +150,19 @@ export default function EditBatch() {
   return (
     <div className="container mx-auto py-10 max-w-4xl space-y-8">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => router.back()} className="rounded-full h-10 w-10 p-0">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => router.back()}
+          className="rounded-full h-10 w-10 p-0"
+        >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Batch</h1>
-          <p className="text-muted-foreground">Modify the details and features of your course batch.</p>
+          <p className="text-muted-foreground">
+            Modify the details and features of your course batch.
+          </p>
         </div>
       </div>
 
@@ -152,36 +170,68 @@ export default function EditBatch() {
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
-            <CardDescription>Main details that appear on the course cards and hero section.</CardDescription>
+            <CardDescription>
+              Main details that appear on the course cards and hero section.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Batch Name</Label>
-                <Input id="name" {...register("name")} placeholder="e.g. Crack GST A Unit" />
-                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+                <Input
+                  id="name"
+                  {...register("name")}
+                  placeholder="e.g. Crack GST A Unit"
+                />
+                {errors.name && (
+                  <p className="text-xs text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <Input id="category" {...register("category")} placeholder="e.g. GST A Unit" />
-                {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
+                <Input
+                  id="category"
+                  {...register("category")}
+                  placeholder="e.g. GST A Unit"
+                />
+                {errors.category && (
+                  <p className="text-xs text-destructive">
+                    {errors.category.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="icon_url">Image URL (Batch Cover)</Label>
-                <Input id="icon_url" {...register("icon_url")} placeholder="https://example.com/image.jpg" />
+                <Input
+                  id="icon_url"
+                  {...register("icon_url")}
+                  placeholder="https://example.com/image.jpg"
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="routine_url">Routine URL (Google Drive/PDF)</Label>
-                <Input id="routine_url" {...register("routine_url")} placeholder="https://drive.google.com/..." />
+                <Label htmlFor="routine_url">
+                  Routine URL (Google Drive/PDF)
+                </Label>
+                <Input
+                  id="routine_url"
+                  {...register("routine_url")}
+                  placeholder="https://drive.google.com/..."
+                />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" {...register("description")} className="min-h-[100px]" />
+              <Textarea
+                id="description"
+                {...register("description")}
+                className="min-h-[100px]"
+              />
             </div>
           </CardContent>
         </Card>
@@ -191,14 +241,18 @@ export default function EditBatch() {
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle>Course Features</CardTitle>
-                <CardDescription>Add features that will appear on the course cards and sidebar.</CardDescription>
+                <CardDescription>
+                  Add features that will appear on the course cards and sidebar.
+                </CardDescription>
               </div>
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 className="font-bold"
-                onClick={() => setBatchStats([...batchStats, { label: "", value: "" }])}
+                onClick={() =>
+                  setBatchStats([...batchStats, { label: "", value: "" }])
+                }
               >
                 <Plus className="h-4 w-4 mr-2" /> Add Feature
               </Button>
@@ -208,20 +262,27 @@ export default function EditBatch() {
             {batchStats.length > 0 ? (
               <div className="grid grid-cols-1 gap-4">
                 {batchStats.map((stat, idx) => (
-                  <div key={idx} className="relative bg-muted/30 p-4 rounded-xl border border-border group">
+                  <div
+                    key={idx}
+                    className="relative bg-muted/30 p-4 rounded-xl border border-border group"
+                  >
                     <Button
                       type="button"
                       variant="destructive"
                       size="sm"
                       className="absolute -top-2 -right-2 h-7 w-7 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => setBatchStats(batchStats.filter((_, i) => i !== idx))}
+                      onClick={() =>
+                        setBatchStats(batchStats.filter((_, i) => i !== idx))
+                      }
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="md:col-span-1 space-y-2">
-                        <Label className="text-[10px] uppercase font-black opacity-60">Title</Label>
-                        <Input 
+                        <Label className="text-[10px] uppercase font-black opacity-60">
+                          Title
+                        </Label>
+                        <Input
                           value={stat.label}
                           onChange={(e) => {
                             const newStats = [...batchStats];
@@ -232,8 +293,10 @@ export default function EditBatch() {
                         />
                       </div>
                       <div className="md:col-span-2 space-y-2">
-                        <Label className="text-[10px] uppercase font-black opacity-60">Details</Label>
-                        <Input 
+                        <Label className="text-[10px] uppercase font-black opacity-60">
+                          Details
+                        </Label>
+                        <Input
                           value={stat.value}
                           onChange={(e) => {
                             const newStats = [...batchStats];
@@ -258,17 +321,27 @@ export default function EditBatch() {
         <Card>
           <CardHeader>
             <CardTitle>Pricing & Status</CardTitle>
-            <CardDescription>Control visibility and pricing for this batch.</CardDescription>
+            <CardDescription>
+              Control visibility and pricing for this batch.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="price">Price (৳)</Label>
-                <Input id="price" type="number" {...register("price", { valueAsNumber: true })} />
+                <Input
+                  id="price"
+                  type="number"
+                  {...register("price", { valueAsNumber: true })}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="old_price">Old Price (৳)</Label>
-                <Input id="old_price" type="number" {...register("old_price", { valueAsNumber: true })} />
+                <Input
+                  id="old_price"
+                  type="number"
+                  {...register("old_price", { valueAsNumber: true })}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
@@ -293,7 +366,9 @@ export default function EditBatch() {
                     />
                   )}
                 />
-                <Label htmlFor="is_public" className="text-sm font-medium">Make Public?</Label>
+                <Label htmlFor="is_public" className="text-sm font-medium">
+                  Make Public?
+                </Label>
               </div>
             </div>
           </CardContent>
@@ -302,14 +377,18 @@ export default function EditBatch() {
         <Card>
           <CardHeader>
             <CardTitle>Automation</CardTitle>
-            <CardDescription>Configure automatic messages for students.</CardDescription>
+            <CardDescription>
+              Configure automatic messages for students.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="default_approval_message">Auto-Approve Message (Bengali)</Label>
-              <Textarea 
-                id="default_approval_message" 
-                {...register("default_approval_message")} 
+              <Label htmlFor="default_approval_message">
+                Auto-Approve Message (Bengali)
+              </Label>
+              <Textarea
+                id="default_approval_message"
+                {...register("default_approval_message")}
                 placeholder="e.g. আপনাদের কোর্সটি সফলভাবে এনরোল হয়েছে..."
               />
             </div>
@@ -320,7 +399,11 @@ export default function EditBatch() {
           <Button variant="outline" type="button" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting} className="min-w-[150px]">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="min-w-[150px]"
+          >
             {isSubmitting ? "Updating..." : "Update Batch"}
           </Button>
         </div>

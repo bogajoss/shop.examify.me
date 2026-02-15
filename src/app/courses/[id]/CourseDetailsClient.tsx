@@ -92,7 +92,9 @@ export default function CourseDetailsClient({
                   <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground font-medium pt-2">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span>{course.students > 0 ? course.students : 450}+ শিক্ষার্থী</span>
+                      <span>
+                        {course.students > 0 ? course.students : 450}+ শিক্ষার্থী
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
@@ -107,9 +109,9 @@ export default function CourseDetailsClient({
                   {/* Added Routine Button for Mobile/All Visibility */}
                   {course.routine_url && (
                     <div className="pt-4 lg:hidden">
-                      <a 
-                        href={course.routine_url} 
-                        target="_blank" 
+                      <a
+                        href={course.routine_url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="block w-full"
                       >
@@ -136,13 +138,17 @@ export default function CourseDetailsClient({
                 </div>
 
                 {/* Video Tutorial Section */}
-                <div id="enroll-guide" className="pt-8 border-t border-border/50">
+                <div
+                  id="enroll-guide"
+                  className="pt-8 border-t border-border/50"
+                >
                   <h3 className="font-black text-xl mb-6 text-primary flex items-center gap-2">
-                    <Zap className="h-5 w-5 fill-primary" /> কিভাবে এনরোল করবেন? (ভিডিও গাইড)
+                    <Zap className="h-5 w-5 fill-primary" /> কিভাবে এনরোল করবেন?
+                    (ভিডিও গাইড)
                   </h3>
                   <div className="relative aspect-video w-full overflow-hidden rounded-3xl border-4 border-muted shadow-2xl bg-muted">
                     <iframe
-                      src="https://www.youtube.com/embed/Mnt-7kZ-4I4" 
+                      src="https://www.youtube.com/embed/Mnt-7kZ-4I4"
                       title="How to enroll in Examify"
                       className="absolute inset-0 w-full h-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -150,7 +156,8 @@ export default function CourseDetailsClient({
                     ></iframe>
                   </div>
                   <p className="mt-4 text-sm text-muted-foreground text-center font-medium">
-                    উপরে দেখানো ভিডিওটি ফলো করে আপনি খুব সহজেই কোর্সে এনরোল করতে পারবেন।
+                    উপরে দেখানো ভিডিওটি ফলো করে আপনি খুব সহজেই কোর্সে এনরোল করতে
+                    পারবেন।
                   </p>
                 </div>
 
@@ -161,36 +168,69 @@ export default function CourseDetailsClient({
                   <div className="grid grid-cols-1 gap-3">
                     {(course.batch_stats && course.batch_stats.length > 0
                       ? course.batch_stats
-                      : (course.features && course.features.length > 0
-                          ? course.features.map(f => ({ label: f, value: "" }))
-                          : [
-                              "লাইভ এক্সাম ও সলভ সেশন",
-                              "পিডিএফ সলভ শিট",
-                              "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
-                              "২৪/৭ সলভ গ্রুপ সাপোর্ট",
-                            ].map(f => ({ label: f, value: "" }))
-                        )
+                      : course.features && course.features.length > 0
+                        ? course.features.map((f) => ({ label: f, value: "" }))
+                        : [
+                            "লাইভ এক্সাম ও সলভ সেশন",
+                            "পিডিএফ সলভ শিট",
+                            "অধ্যায়ভিত্তিক ও পূর্ণাঙ্গ মডেল টেস্ট",
+                            "২৪/৭ সলভ গ্রুপ সাপোর্ট",
+                          ].map((f) => ({ label: f, value: "" }))
                     ).map((item, idx) => {
-                      const label = typeof item === 'string' ? item : item.label;
-                      const value = typeof item === 'string' ? "" : item.value;
-                      
+                      const label =
+                        typeof item === "string" ? item : item.label;
+                      const value = typeof item === "string" ? "" : item.value;
+
                       const iconConfigs = [
-                        { icon: Zap, color: "text-amber-500", bg: "bg-amber-500/10" },
-                        { icon: BookOpen, color: "text-indigo-500", bg: "bg-indigo-500/10" },
-                        { icon: ShieldCheck, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-                        { icon: FileText, color: "text-rose-500", bg: "bg-rose-500/10" },
-                        { icon: CheckCircle2, color: "text-sky-500", bg: "bg-sky-500/10" },
-                        { icon: Clock, color: "text-orange-500", bg: "bg-orange-500/10" },
-                        { icon: Users, color: "text-violet-500", bg: "bg-violet-500/10" },
+                        {
+                          icon: Zap,
+                          color: "text-amber-500",
+                          bg: "bg-amber-500/10",
+                        },
+                        {
+                          icon: BookOpen,
+                          color: "text-indigo-500",
+                          bg: "bg-indigo-500/10",
+                        },
+                        {
+                          icon: ShieldCheck,
+                          color: "text-emerald-500",
+                          bg: "bg-emerald-500/10",
+                        },
+                        {
+                          icon: FileText,
+                          color: "text-rose-500",
+                          bg: "bg-rose-500/10",
+                        },
+                        {
+                          icon: CheckCircle2,
+                          color: "text-sky-500",
+                          bg: "bg-sky-500/10",
+                        },
+                        {
+                          icon: Clock,
+                          color: "text-orange-500",
+                          bg: "bg-orange-500/10",
+                        },
+                        {
+                          icon: Users,
+                          color: "text-violet-500",
+                          bg: "bg-violet-500/10",
+                        },
                       ];
                       const config = iconConfigs[idx % iconConfigs.length];
                       const Icon = config.icon;
 
                       return (
-                        <details key={idx} className="group bg-muted/30 border border-border rounded-2xl overflow-hidden transition-all duration-300 open:bg-card open:border-primary/20 shadow-sm hover:shadow-md">
+                        <details
+                          key={idx}
+                          className="group bg-muted/30 border border-border rounded-2xl overflow-hidden transition-all duration-300 open:bg-card open:border-primary/20 shadow-sm hover:shadow-md"
+                        >
                           <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
                             <div className="flex items-center gap-4">
-                              <div className={`p-2.5 rounded-xl ${config.bg} ${config.color} transition-all duration-300 group-open:scale-110`}>
+                              <div
+                                className={`p-2.5 rounded-xl ${config.bg} ${config.color} transition-all duration-300 group-open:scale-110`}
+                              >
                                 <Icon className="h-4 w-4" />
                               </div>
                               <span className="text-sm font-black text-foreground group-hover:text-primary transition-colors">
@@ -245,16 +285,20 @@ export default function CourseDetailsClient({
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] uppercase tracking-widest opacity-80 font-bold">এক্সেস ভ্যালিডিটি</span>
-                        <span className="text-sm font-black">পরীক্ষা শেষ হওয়া পর্যন্ত</span>
+                        <span className="text-[10px] uppercase tracking-widest opacity-80 font-bold">
+                          এক্সেস ভ্যালিডিটি
+                        </span>
+                        <span className="text-sm font-black">
+                          পরীক্ষা শেষ হওয়া পর্যন্ত
+                        </span>
                       </div>
                     </div>
 
                     <div className="space-y-3">
                       {course.routine_url && (
-                        <a 
-                          href={course.routine_url} 
-                          target="_blank" 
+                        <a
+                          href={course.routine_url}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="block w-full"
                         >
@@ -268,17 +312,21 @@ export default function CourseDetailsClient({
                           </Button>
                         </a>
                       )}
-                      
+
                       <Button
                         fullWidth
                         variant="outline"
                         size="lg"
                         className="h-12 rounded-2xl text-base font-bold border-primary/20 text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
-                        onClick={() => document.getElementById('enroll-guide')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() =>
+                          document
+                            .getElementById("enroll-guide")
+                            ?.scrollIntoView({ behavior: "smooth" })
+                        }
                       >
                         <PlayCircle className="h-5 w-5" /> কিভাবে ভর্তি হবেন?
                       </Button>
-                      
+
                       <Button
                         fullWidth
                         size="lg"

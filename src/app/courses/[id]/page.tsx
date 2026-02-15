@@ -21,8 +21,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = `${batch.name} | Examify`;
-  const description = batch.description || "Admission and Academic preparation platform.";
-  const image = batch.icon_url || "/favicon.ico";
+  let description =
+    batch.description || "Admission and Academic preparation platform.";
+
+  // Ensure description is between 110-160 characters for SEO
+  if (description.length < 110) {
+    const suffix =
+      " Enroll now on Examify for comprehensive admission and academic preparation with expert guidance and live exams.";
+    description = (description + suffix).substring(0, 160);
+  }
+
+  // Use dynamic OG image
+  const ogSearchParams = new URLSearchParams();
+  ogSearchParams.set("title", batch.name);
+  ogSearchParams.set("description", batch.description || "");
+  const ogImage = `/api/og?${ogSearchParams.toString()}`;
 
   return {
     title,
@@ -30,14 +43,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: [image],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: batch.name,
+        },
+      ],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [image],
+      images: [ogImage],
     },
   };
 }
@@ -58,7 +78,7 @@ export default async function CoursePage({ params }: Props) {
   // Fetch approved student count
   const { count: studentCount } = await supabase
     .from("orders")
-    .select("*", { count: 'exact', head: true })
+    .select("*", { count: "exact", head: true })
     .eq("batch_id", id)
     .eq("status", "approved");
 
