@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { data: batch } = await supabase
     .from("batches")
-    .select("name, description, icon_url")
+    .select("name, description, icon_url, category")
     .eq("id", id)
     .single();
 
@@ -20,47 +20,81 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Course Not Found" };
   }
 
-  const title = `${batch.name} | Examify`;
-  let description =
-    batch.description || "Admission and Academic preparation platform.";
+    const title = batch.name;
 
-  // Ensure description is between 110-160 characters for SEO
-  if (description.length < 110) {
-    const suffix =
-      " Enroll now on Examify for comprehensive admission and academic preparation with expert guidance and live exams.";
-    description = (description + suffix).substring(0, 160);
+    let description = batch.description || "Admission and Academic preparation platform.";
+
+    
+
+    // Ensure description is between 110-160 characters for SEO
+
+    if (description.length < 110) {
+
+      description = `${description} Join Examify for top-notch academic and admission preparation with expert mentors and real-time exams.`.substring(0, 160);
+
+    }
+
+  
+
+    // Use dynamic OG image
+
+    const ogSearchParams = new URLSearchParams();
+
+    ogSearchParams.set("title", batch.name);
+
+    ogSearchParams.set("description", batch.category || "General");
+
+    const ogImage = `/api/og?${ogSearchParams.toString()}`;
+
+  
+
+    return {
+
+      title,
+
+      description,
+
+      openGraph: {
+
+        title: `${batch.name} | Examify`,
+
+        description,
+
+        images: [
+
+          {
+
+            url: ogImage,
+
+            width: 1200,
+
+            height: 630,
+
+            alt: batch.name,
+
+          },
+
+        ],
+
+        type: "website",
+
+      },
+
+      twitter: {
+
+        card: "summary_large_image",
+
+        title: `${batch.name} | Examify`,
+
+        description,
+
+        images: [ogImage],
+
+      },
+
+    };
+
   }
-
-  // Use dynamic OG image
-  const ogSearchParams = new URLSearchParams();
-  ogSearchParams.set("title", batch.name);
-  ogSearchParams.set("description", batch.description || "");
-  const ogImage = `/api/og?${ogSearchParams.toString()}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: batch.name,
-        },
-      ],
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-  };
-}
 
 export default async function CoursePage({ params }: Props) {
   const { id } = await params;
