@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { data: batch } = await supabase
     .from("batches")
-    .select("name, description")
+    .select("name, description, icon_url")
     .eq("id", id)
     .single();
 
@@ -20,9 +20,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Course Not Found" };
   }
 
+  const title = `${batch.name} | Examify`;
+  const description = batch.description || "Admission and Academic preparation platform.";
+  const image = batch.icon_url || "/favicon.ico";
+
   return {
-    title: `${batch.name} | Examify`,
-    description: batch.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [image],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
   };
 }
 

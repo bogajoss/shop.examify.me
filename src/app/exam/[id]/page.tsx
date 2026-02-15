@@ -19,9 +19,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .single();
 
   if (exam) {
+    const title = `${exam.name} | Examify`;
+    const description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
     return {
-      title: `${exam.name} | Examify`,
-      description: `Take the ${exam.name} on Examify.`,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+      },
     };
   }
 
@@ -37,7 +49,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${examInfo.title} | Examify`,
     description: `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`,
     openGraph: {
-      title: examInfo.title,
+      title: `${examInfo.title} | Examify`,
+      description: `Take the ${examInfo.title} on Examify.`,
+      images: [
+        `https://placehold.co/1200x630?text=${encodeURIComponent(examInfo.title)}`,
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${examInfo.title} | Examify`,
       description: `Take the ${examInfo.title} on Examify.`,
       images: [
         `https://placehold.co/1200x630?text=${encodeURIComponent(examInfo.title)}`,
