@@ -22,6 +22,7 @@ import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { calculateBatchPrice } from "@/lib/utils";
 
 const checkoutSchema = z.object({
   senderPhone: z.string().min(11, "সঠিক ফোন নম্বর দিন (১১ ডিজিট)"),
@@ -54,10 +55,7 @@ export default function Checkout() {
 
         if (error) throw error;
 
-        const isExpired =
-          data.offer_expires_at && new Date(data.offer_expires_at) < new Date();
-        const currentPrice = isExpired ? data.old_price || data.price : data.price;
-        const displayOldPrice = isExpired ? 0 : data.old_price;
+        const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(data);
 
         setCourse({
           id: data.id,

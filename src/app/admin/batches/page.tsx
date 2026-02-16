@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { supabase } from "@/lib/supabase";
+import { calculateBatchPrice } from "@/lib/utils";
 
 interface Batch {
   id: string;
@@ -122,7 +123,10 @@ export default function AdminBatches() {
         </div>
       ) : batches.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-4 sm:px-0">
-          {batches.map((batch) => (
+          {batches.map((batch) => {
+            const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(batch);
+            
+            return (
             <div
               key={batch.id}
               className="bg-card border border-border rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all flex flex-col justify-between group relative overflow-hidden"
@@ -159,23 +163,29 @@ export default function AdminBatches() {
                       {batch.category || "General"}
                     </Badge>
                     <div className="flex items-center gap-1.5 ml-auto">
-                      {batch.old_price > 0 && (
+                      {displayOldPrice > 0 && (
                         <span className="text-[10px] text-destructive line-through font-bold opacity-60">
-                          ৳{batch.old_price}
+                          ৳{displayOldPrice}
                         </span>
                       )}
                       <span className="text-lg font-black text-primary">
-                        ৳{batch.price}
+                        ৳{currentPrice}
                       </span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground font-medium line-clamp-2 leading-relaxed">
                     {batch.description || "এই ব্যাচটির জন্য কোনো বিবরণ দেওয়া হয়নি।"}
                   </p>
-                  {batch.offer_expires_at && new Date(batch.offer_expires_at) > new Date() && (
+                  {!isExpired && batch.offer_expires_at && (
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md w-fit mt-1">
                       <Clock className="h-3 w-3" />
                       Offer Ends: {new Date(batch.offer_expires_at).toLocaleString()}
+                    </div>
+                  )}
+                  {isExpired && batch.offer_expires_at && (
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground bg-muted px-2 py-1 rounded-md w-fit mt-1">
+                      <Clock className="h-3 w-3" />
+                      Offer Expired
                     </div>
                   )}
                 </div>
@@ -229,7 +239,8 @@ export default function AdminBatches() {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="mx-4 sm:mx-0 text-center py-24 border-2 border-dashed border-border rounded-[2.5rem] bg-muted/10 space-y-4">

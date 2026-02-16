@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { calculateBatchPrice } from "@/lib/utils";
 import CourseDetailsClient from "./CourseDetailsClient";
 
 interface Props {
@@ -73,10 +74,7 @@ export default async function CoursePage({ params }: Props) {
     notFound();
   }
 
-  const isExpired =
-    batch.offer_expires_at && new Date(batch.offer_expires_at) < new Date();
-  const currentPrice = isExpired ? batch.old_price || batch.price : batch.price;
-  const displayOldPrice = isExpired ? 0 : batch.old_price;
+  const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(batch);
 
   // Fetch approved student count
   const { count: studentCount } = await supabase

@@ -32,7 +32,7 @@ const batchSchema = z.object({
   icon_url: z.string().optional(),
   routine_url: z.string().optional(),
   default_approval_message: z.string().optional(),
-  offer_expires_at: z.string().optional(),
+  offer_expires_at: z.string().nullable().optional(),
   linked_batch_ids: z.array(z.string()).optional(),
 });
 
@@ -83,6 +83,7 @@ export default function CreateBatch() {
       icon_url: "",
       routine_url: "",
       default_approval_message: "",
+      offer_expires_at: null,
       linked_batch_ids: [],
     },
   });
@@ -323,8 +324,8 @@ export default function CreateBatch() {
                     const duration = e.target.value;
                     setOfferDuration(duration);
                     if (duration === "none") {
-                      setValue("offer_expires_at", "");
-                    } else {
+                      setValue("offer_expires_at", null);
+                    } else if (duration !== "custom") {
                       const now = new Date();
                       if (duration === "24h")
                         now.setHours(now.getHours() + 24);
@@ -347,8 +348,22 @@ export default function CreateBatch() {
                   <option value="7d">7 Days</option>
                   <option value="15d">15 Days</option>
                   <option value="30d">30 Days</option>
+                  <option value="custom">Custom Date</option>
                 </select>
-                {offerDuration !== "none" && (
+
+                {offerDuration === "custom" && (
+                  <Input
+                    type="datetime-local"
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setValue("offer_expires_at", new Date(e.target.value).toISOString());
+                      }
+                    }}
+                    className="mt-2"
+                  />
+                )}
+
+                {watch("offer_expires_at") && (
                   <p className="text-[10px] text-primary font-bold">
                     Expires: {new Date(watch("offer_expires_at") || "").toLocaleString()}
                   </p>

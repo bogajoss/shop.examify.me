@@ -25,6 +25,7 @@ import QuestionBankCard from "@/components/ui/QuestionBankCard";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
+import { calculateBatchPrice } from "@/lib/utils";
 
 export default function HomeClient() {
   const { user } = useAuth();
@@ -70,10 +71,7 @@ export default function HomeClient() {
 
         // Map Supabase batch to Course interface
         const mappedCourses = (data || []).map((b) => {
-          const isExpired =
-            b.offer_expires_at && new Date(b.offer_expires_at) < new Date();
-          const currentPrice = isExpired ? b.old_price || b.price : b.price;
-          const displayOldPrice = isExpired ? 0 : b.old_price;
+          const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(b);
 
           return {
             id: b.id,
@@ -95,7 +93,8 @@ export default function HomeClient() {
           standard_exams: b.standard_exams,
           solve_sheets: b.solve_sheets,
           batch_stats: b.batch_stats,
-        }));
+        };
+      });
 
         setCourses(mappedCourses);
       } catch (err) {

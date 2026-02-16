@@ -32,7 +32,7 @@ const batchSchema = z.object({
   icon_url: z.string().optional(),
   routine_url: z.string().optional(),
   default_approval_message: z.string().optional(),
-  offer_expires_at: z.string().optional(),
+  offer_expires_at: z.string().nullable().optional(),
   linked_batch_ids: z.array(z.string()).optional(),
 });
 
@@ -71,6 +71,7 @@ export default function EditBatch() {
       icon_url: "",
       routine_url: "",
       default_approval_message: "",
+      offer_expires_at: null,
       linked_batch_ids: [],
     },
   });
@@ -109,7 +110,7 @@ export default function EditBatch() {
           "default_approval_message",
           data.default_approval_message || "",
         );
-        setValue("offer_expires_at", data.offer_expires_at || "");
+        setValue("offer_expires_at", data.offer_expires_at);
         setValue("linked_batch_ids", data.linked_batch_ids || []);
         setBatchStats(data.batch_stats || []);
 
@@ -360,7 +361,7 @@ export default function EditBatch() {
                     const duration = e.target.value;
                     setOfferDuration(duration);
                     if (duration === "none") {
-                      setValue("offer_expires_at", "");
+                      setValue("offer_expires_at", null);
                     } else if (duration !== "custom") {
                       const now = new Date();
                       if (duration === "24h")
@@ -379,8 +380,8 @@ export default function EditBatch() {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="none">No Expiry (Permanent)</option>
-                  <option value="custom" disabled={offerDuration !== "custom"}>
-                    {offerDuration === "custom" ? "Current Expiry" : "Custom"}
+                  <option value="custom">
+                    {offerDuration === "custom" ? "Custom/Current Expiry" : "Set Custom Date"}
                   </option>
                   <option value="24h">Reset to 24 Hours</option>
                   <option value="3d">Reset to 3 Days</option>
@@ -388,6 +389,20 @@ export default function EditBatch() {
                   <option value="15d">Reset to 15 Days</option>
                   <option value="30d">Reset to 30 Days</option>
                 </select>
+
+                {offerDuration === "custom" && (
+                  <Input
+                    type="datetime-local"
+                    defaultValue={watch("offer_expires_at") ? new Date(new Date(watch("offer_expires_at")!).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setValue("offer_expires_at", new Date(e.target.value).toISOString());
+                      }
+                    }}
+                    className="mt-2"
+                  />
+                )}
+
                 {watch("offer_expires_at") && (
                   <p className="text-[10px] text-primary font-bold">
                     Expires: {new Date(watch("offer_expires_at") || "").toLocaleString()}
