@@ -32,6 +32,7 @@ const batchSchema = z.object({
   icon_url: z.string().optional(),
   routine_url: z.string().optional(),
   default_approval_message: z.string().optional(),
+  offer_expires_at: z.string().optional(),
   linked_batch_ids: z.array(z.string()).optional(),
 });
 
@@ -40,6 +41,7 @@ type BatchFormValues = z.infer<typeof batchSchema>;
 export default function CreateBatch() {
   const router = useRouter();
   const { showToast } = useToast();
+  const [offerDuration, setOfferDuration] = useState<string>("none");
   const [allBatches, setAllBatches] = useState<{ id: string; name: string }[]>(
     [],
   );
@@ -65,6 +67,8 @@ export default function CreateBatch() {
     register,
     handleSubmit,
     control,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<BatchFormValues>({
     resolver: zodResolver(batchSchema),
@@ -293,7 +297,7 @@ export default function CreateBatch() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="price">Price (৳)</Label>
                 <Input
@@ -310,6 +314,49 @@ export default function CreateBatch() {
                   {...register("old_price", { valueAsNumber: true })}
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="offer_duration">Discount Duration</Label>
+                <select
+                  id="offer_duration"
+                  value={offerDuration}
+                  onChange={(e) => {
+                    const duration = e.target.value;
+                    setOfferDuration(duration);
+                    if (duration === "none") {
+                      setValue("offer_expires_at", "");
+                    } else {
+                      const now = new Date();
+                      if (duration === "24h")
+                        now.setHours(now.getHours() + 24);
+                      else if (duration === "3d")
+                        now.setDate(now.getDate() + 3);
+                      else if (duration === "7d")
+                        now.setDate(now.getDate() + 7);
+                      else if (duration === "15d")
+                        now.setDate(now.getDate() + 15);
+                      else if (duration === "30d")
+                        now.setDate(now.getDate() + 30);
+                      setValue("offer_expires_at", now.toISOString());
+                    }
+                  }}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="none">No Expiry (Permanent)</option>
+                  <option value="24h">24 Hours</option>
+                  <option value="3d">3 Days</option>
+                  <option value="7d">7 Days</option>
+                  <option value="15d">15 Days</option>
+                  <option value="30d">30 Days</option>
+                </select>
+                {offerDuration !== "none" && (
+                  <p className="text-[10px] text-primary font-bold">
+                    Expires: {new Date(watch("offer_expires_at") || "").toLocaleString()}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <select

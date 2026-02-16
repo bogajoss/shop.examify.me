@@ -73,6 +73,11 @@ export default async function CoursePage({ params }: Props) {
     notFound();
   }
 
+  const isExpired =
+    batch.offer_expires_at && new Date(batch.offer_expires_at) < new Date();
+  const currentPrice = isExpired ? batch.old_price || batch.price : batch.price;
+  const displayOldPrice = isExpired ? 0 : batch.old_price;
+
   // Fetch approved student count
   const { count: studentCount } = await supabase
     .from("orders")
@@ -84,8 +89,10 @@ export default async function CoursePage({ params }: Props) {
     id: batch.id,
     title: batch.name,
     category: batch.category || "General",
-    price: batch.price || 0,
-    oldPrice: batch.old_price || 0,
+    price: currentPrice || 0,
+    oldPrice: displayOldPrice || 0,
+    offer_expires_at: batch.offer_expires_at,
+    is_offer_expired: isExpired,
     students: studentCount || 0,
     status: batch.status === "live" ? "Published" : "Draft",
     batch: batch.name.split(" ")[0],

@@ -54,12 +54,19 @@ export default function Checkout() {
 
         if (error) throw error;
 
+        const isExpired =
+          data.offer_expires_at && new Date(data.offer_expires_at) < new Date();
+        const currentPrice = isExpired ? data.old_price || data.price : data.price;
+        const displayOldPrice = isExpired ? 0 : data.old_price;
+
         setCourse({
           id: data.id,
           title: data.name,
-          price: data.price,
-          oldPrice: data.old_price,
+          price: currentPrice,
+          oldPrice: displayOldPrice,
           batchId: data.id,
+          offer_expires_at: data.offer_expires_at,
+          is_offer_expired: isExpired,
         });
       } catch (err) {
         console.error("Error fetching course:", err);
@@ -165,14 +172,25 @@ export default function Checkout() {
                 </h3>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-[10px] font-bold text-destructive line-through decoration-2">
-                  ৳{course.oldPrice}
-                </p>
+                {course.oldPrice > 0 && (
+                  <p className="text-[10px] font-bold text-destructive line-through decoration-2">
+                    ৳{course.oldPrice}
+                  </p>
+                )}
                 <p className="text-2xl font-black text-primary">
                   ৳{course.price}
                 </p>
               </div>
             </div>
+
+            {!course.is_offer_expired && course.offer_expires_at && (
+              <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 flex items-center gap-3 animate-pulse">
+                <Clock className="h-4 w-4 text-rose-500" />
+                <p className="text-[11px] font-bold text-rose-600">
+                  অফারটি শেষ হবে: {new Date(course.offer_expires_at).toLocaleString("bn-BD")}। এর পরে মূল্য বেড়ে যাবে।
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-2">
               <Badge

@@ -12,6 +12,8 @@ export interface Course {
   features: string[];
   icon_url?: string;
   routine_url?: string;
+  offer_expires_at?: string;
+  is_offer_expired?: boolean;
   live_exams?: string;
   lecture_notes?: string;
   standard_exams?: string;

@@ -85,6 +85,7 @@ create table if not exists batches (
   mandatory_end_time text,
   optional_start_time text,
   optional_end_time text,
+  offer_expires_at timestamp with time zone,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

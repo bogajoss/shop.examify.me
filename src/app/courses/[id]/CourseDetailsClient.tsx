@@ -269,14 +269,22 @@ export default function CourseDetailsClient({
                 </div>
                 <div className="p-8 space-y-8">
                   <div className="text-center space-y-1">
-                    <p className="text-sm text-destructive line-through font-black opacity-60">
-                      ৳{course.oldPrice}
-                    </p>
+                    {course.oldPrice > 0 && (
+                      <p className="text-sm text-destructive line-through font-black opacity-60">
+                        ৳{course.oldPrice}
+                      </p>
+                    )}
                     <div className="flex items-center justify-center gap-1">
                       <span className="text-5xl font-black text-primary">
                         ৳{course.price}
                       </span>
                     </div>
+                    {!course.is_offer_expired && course.offer_expires_at && (
+                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-rose-500 bg-rose-50 py-1 px-2 rounded-lg mt-2 animate-pulse">
+                        <Clock className="h-3 w-3" />
+                        এই অফারটি শেষ হবে: {new Date(course.offer_expires_at).toLocaleString("bn-BD")}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-4">
@@ -346,12 +354,19 @@ export default function CourseDetailsClient({
         {/* Mobile Sticky Footer */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-xl border-t border-border z-50 lg:hidden flex items-center justify-between gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] pb-8 sm:pb-4 animate-in slide-in-from-bottom-full duration-500">
           <div className="flex flex-col">
-            <span className="text-xs text-destructive line-through font-bold opacity-60">
-              ৳{course.oldPrice}
-            </span>
+            {course.oldPrice > 0 && (
+              <span className="text-xs text-destructive line-through font-bold opacity-60">
+                ৳{course.oldPrice}
+              </span>
+            )}
             <span className="text-3xl font-black text-primary">
               ৳{course.price}
             </span>
+            {!course.is_offer_expired && course.offer_expires_at && (
+              <span className="text-[8px] font-black text-rose-500 animate-pulse">
+                অফার সীমিত সময়ের জন্য
+              </span>
+            )}
           </div>
           <Button
             className="flex-1 h-14 rounded-2xl text-lg font-black shadow-lg shadow-primary/20"

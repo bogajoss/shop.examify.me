@@ -9,6 +9,7 @@ export interface Batch {
   features: string[];
   is_public: boolean;
   status: "live" | "ended";
+  offer_expires_at?: string;
   default_approval_message?: string;
   created_at: string;
 }

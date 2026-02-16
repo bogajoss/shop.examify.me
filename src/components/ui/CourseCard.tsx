@@ -3,6 +3,7 @@
 import {
   ArrowRight,
   BookOpen,
+  Clock,
   FileText,
   Image as ImageIcon,
   ShieldCheck,
@@ -43,6 +44,14 @@ export default function CourseCard({ course }: CourseCardProps) {
             {course.batch}
           </Badge>
         </div>
+        {!course.is_offer_expired && course.offer_expires_at && (
+          <div className="absolute bottom-3 left-3">
+            <Badge className="bg-rose-500 text-white font-bold px-2 py-0.5 border-none shadow-lg animate-pulse flex items-center gap-1 text-[9px]">
+              <Clock className="h-3 w-3" />
+              অফার শেষ: {new Date(course.offer_expires_at).toLocaleDateString("bn-BD")}
+            </Badge>
+          </div>
+        )}
       </div>
       <div className="flex-1 p-6 flex flex-col justify-between gap-5">
         <div>
@@ -86,9 +95,11 @@ export default function CourseCard({ course }: CourseCardProps) {
 
         <div className="flex items-center justify-between gap-3 mt-auto pt-5 border-t border-border/50">
           <div className="flex flex-col items-start">
-            <span className="text-[11px] text-destructive line-through font-bold opacity-60">
-              ৳{course.oldPrice}
-            </span>
+            {course.oldPrice > 0 && (
+              <span className="text-[11px] text-destructive line-through font-bold opacity-60">
+                ৳{course.oldPrice}
+              </span>
+            )}
             <div className="text-2xl font-black text-primary">
               ৳{course.price}
             </div>

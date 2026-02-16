@@ -69,14 +69,22 @@ export default function HomeClient() {
         });
 
         // Map Supabase batch to Course interface
-        const mappedCourses = (data || []).map((b) => ({
-          id: b.id,
-          title: b.name,
-          category: b.category || "General",
-          price: b.price || 0,
-          oldPrice: b.old_price || 0,
-          students: countMap[b.id] || 0,
-          status: b.status === "live" ? "Published" : "Draft",
+        const mappedCourses = (data || []).map((b) => {
+          const isExpired =
+            b.offer_expires_at && new Date(b.offer_expires_at) < new Date();
+          const currentPrice = isExpired ? b.old_price || b.price : b.price;
+          const displayOldPrice = isExpired ? 0 : b.old_price;
+
+          return {
+            id: b.id,
+            title: b.name,
+            category: b.category || "General",
+            price: currentPrice || 0,
+            oldPrice: displayOldPrice || 0,
+            offer_expires_at: b.offer_expires_at,
+            is_offer_expired: isExpired,
+            students: countMap[b.id] || 0,
+            status: b.status === "live" ? "Published" : "Draft",
           batch: b.name.split(" ")[0], // Extract batch name like "HSC"
           description: b.description || "",
           features: b.features || [],

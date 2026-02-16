@@ -2,6 +2,7 @@
 
 import {
   Calendar,
+  Clock,
   Copy,
   Edit,
   Eye,
@@ -26,6 +27,7 @@ interface Batch {
   is_public: boolean;
   price: number;
   old_price: number;
+  offer_expires_at?: string;
   category: string;
 }
 
@@ -170,6 +172,12 @@ export default function AdminBatches() {
                   <p className="text-sm text-muted-foreground font-medium line-clamp-2 leading-relaxed">
                     {batch.description || "এই ব্যাচটির জন্য কোনো বিবরণ দেওয়া হয়নি।"}
                   </p>
+                  {batch.offer_expires_at && new Date(batch.offer_expires_at) > new Date() && (
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md w-fit mt-1">
+                      <Clock className="h-3 w-3" />
+                      Offer Ends: {new Date(batch.offer_expires_at).toLocaleString()}
+                    </div>
+                  )}
                 </div>
               </div>
 
