@@ -24,6 +24,7 @@ import Header from "@/components/layout/Header";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import type { Course } from "@/data/mockData";
+import { formatBengaliDate, toBengaliNumber } from "@/lib/utils";
 
 interface CourseDetailsClientProps {
   course: Course;
@@ -92,9 +93,7 @@ export default function CourseDetailsClient({
                   <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-muted-foreground font-medium pt-2">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span>
-                        {course.students > 0 ? course.students : 450}+ শিক্ষার্থী
-                      </span>
+                      <span>{toBengaliNumber(course.students)}+ শিক্ষার্থী</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
@@ -282,7 +281,8 @@ export default function CourseDetailsClient({
                     {!course.is_offer_expired && course.offer_expires_at && (
                       <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-rose-500 bg-rose-50 py-1 px-2 rounded-lg mt-2 animate-pulse">
                         <Clock className="h-3 w-3" />
-                        এই অফারটি শেষ হবে: {new Date(course.offer_expires_at).toLocaleString("bn-BD")}
+                        এই অফারটি শেষ হবে:{" "}
+                        {formatBengaliDate(course.offer_expires_at)}
                       </div>
                     )}
                   </div>
@@ -363,8 +363,9 @@ export default function CourseDetailsClient({
               ৳{course.price}
             </span>
             {!course.is_offer_expired && course.offer_expires_at && (
-              <span className="text-[8px] font-black text-rose-500 animate-pulse">
-                অফার সীমিত সময়ের জন্য
+              <span className="text-[9px] font-black text-rose-500 animate-pulse flex items-center gap-1">
+                <Clock className="h-2 w-2" />
+                শেষ হবে: {formatBengaliDate(course.offer_expires_at)}
               </span>
             )}
           </div>

@@ -3,7 +3,8 @@ import HomeClient from "./HomeClient";
 
 export const metadata: Metadata = {
   title: "Examify - Admission & Academic Preparation",
-  description: "Advanced learning platform for admission and academic preparation in Bangladesh.",
+  description:
+    "Advanced learning platform for admission and academic preparation in Bangladesh.",
   openGraph: {
     images: ["https://examify.me/icon.png"],
   },

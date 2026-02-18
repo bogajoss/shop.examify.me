@@ -55,7 +55,8 @@ export default function Checkout() {
 
         if (error) throw error;
 
-        const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(data);
+        const { currentPrice, displayOldPrice, isExpired } =
+          calculateBatchPrice(data);
 
         setCourse({
           id: data.id,
@@ -185,7 +186,9 @@ export default function Checkout() {
               <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 flex items-center gap-3 animate-pulse">
                 <Clock className="h-4 w-4 text-rose-500" />
                 <p className="text-[11px] font-bold text-rose-600">
-                  অফারটি শেষ হবে: {new Date(course.offer_expires_at).toLocaleString("bn-BD")}। এর পরে মূল্য বেড়ে যাবে।
+                  অফারটি শেষ হবে:{" "}
+                  {new Date(course.offer_expires_at).toLocaleString("bn-BD")}।
+                  এর পরে মূল্য বেড়ে যাবে।
                 </p>
               </div>
             )}

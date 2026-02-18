@@ -327,8 +327,7 @@ export default function CreateBatch() {
                       setValue("offer_expires_at", null);
                     } else if (duration !== "custom") {
                       const now = new Date();
-                      if (duration === "24h")
-                        now.setHours(now.getHours() + 24);
+                      if (duration === "24h") now.setHours(now.getHours() + 24);
                       else if (duration === "3d")
                         now.setDate(now.getDate() + 3);
                       else if (duration === "7d")
@@ -356,7 +355,10 @@ export default function CreateBatch() {
                     type="datetime-local"
                     onChange={(e) => {
                       if (e.target.value) {
-                        setValue("offer_expires_at", new Date(e.target.value).toISOString());
+                        setValue(
+                          "offer_expires_at",
+                          new Date(e.target.value).toISOString(),
+                        );
                       }
                     }}
                     className="mt-2"
@@ -365,7 +367,8 @@ export default function CreateBatch() {
 
                 {watch("offer_expires_at") && (
                   <p className="text-[10px] text-primary font-bold">
-                    Expires: {new Date(watch("offer_expires_at") || "").toLocaleString()}
+                    Expires:{" "}
+                    {new Date(watch("offer_expires_at") || "").toLocaleString()}
                   </p>
                 )}
               </div>

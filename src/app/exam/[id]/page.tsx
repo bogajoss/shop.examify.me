@@ -18,90 +18,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq("id", id)
     .single();
 
-    if (exam) {
+  if (exam) {
+    const title = `${exam.name} | Examify`;
 
-      const title = `${exam.name} | Examify`;
-
-      const description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
-
-  
-
-      return {
-
-        title,
-
-        description,
-
-        openGraph: {
-
-          title,
-
-          description,
-
-          images: ["https://examify.me/icon.png"],
-
-          type: "website",
-
-        },
-
-        twitter: {
-
-          card: "summary_large_image",
-
-          title,
-
-          description,
-
-          images: ["https://examify.me/icon.png"],
-
-        },
-
-      };
-
-    }
-
-  
-
-    const examInfo = db.freeExams.find((e) => e.id === id);
-
-  
-
-    if (!examInfo) {
-
-      return {
-
-        title: "Exam Not Found | Examify",
-
-      };
-
-    }
-
-  
-
-    const title = `${examInfo.title} | Examify`;
-
-    const description = `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`;
-
-  
+    const description = `Take the ${exam.name} on Examify. Test your knowledge in ${exam.course_name || "General"}.`;
 
     return {
-
       title,
 
       description,
 
       openGraph: {
-
         title,
 
         description,
 
         images: ["https://examify.me/icon.png"],
 
+        type: "website",
       },
 
       twitter: {
-
         card: "summary_large_image",
 
         title,
@@ -109,12 +46,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description,
 
         images: ["https://examify.me/icon.png"],
-
       },
-
     };
-
   }
+
+  const examInfo = db.freeExams.find((e) => e.id === id);
+
+  if (!examInfo) {
+    return {
+      title: "Exam Not Found | Examify",
+    };
+  }
+
+  const title = `${examInfo.title} | Examify`;
+
+  const description = `Take the ${examInfo.title} on Examify. Test your knowledge in ${examInfo.subject}.`;
+
+  return {
+    title,
+
+    description,
+
+    openGraph: {
+      title,
+
+      description,
+
+      images: ["https://examify.me/icon.png"],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+
+      title,
+
+      description,
+
+      images: ["https://examify.me/icon.png"],
+    },
+  };
+}
 
 export default async function ExamPage({ params }: Props) {
   const { id } = await params;

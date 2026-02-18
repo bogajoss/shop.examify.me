@@ -24,39 +24,34 @@ const hindSiliguri = localFont({
 });
 
 export const metadata: Metadata = {
-
   metadataBase: new URL("https://shop.examify.me"),
 
   title: "Examify - Admission & Academic Preparation",
 
   description:
-
     "Advanced learning platform for admission and academic preparation in Bangladesh.",
 
   openGraph: {
-
     title: "Examify - Admission & Academic Preparation",
 
-    description: "Advanced learning platform for admission and academic preparation in Bangladesh.",
+    description:
+      "Advanced learning platform for admission and academic preparation in Bangladesh.",
 
     images: ["https://examify.me/icon.png"],
 
     type: "website",
-
   },
 
   twitter: {
-
     card: "summary_large_image",
 
     title: "Examify - Admission & Academic Preparation",
 
-    description: "Advanced learning platform for admission and academic preparation in Bangladesh.",
+    description:
+      "Advanced learning platform for admission and academic preparation in Bangladesh.",
 
     images: ["https://examify.me/icon.png"],
-
   },
-
 };
 
 export default function RootLayout({

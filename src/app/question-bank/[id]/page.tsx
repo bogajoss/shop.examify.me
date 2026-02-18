@@ -17,45 +17,36 @@ export async function generateMetadata({
     return { title: "Question Bank Not Found" };
   }
 
-    const title = `${item.title} | Examify`;
+  const title = `${item.title} | Examify`;
 
-    const description = `Practice ${item.title} questions on Examify. Prepare for your exams with our comprehensive question bank.`;
+  const description = `Practice ${item.title} questions on Examify. Prepare for your exams with our comprehensive question bank.`;
 
-  
+  return {
+    title,
 
-    return {
+    description,
+
+    openGraph: {
+      title,
+
+      description,
+
+      images: ["https://examify.me/icon.png"],
+
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
 
       title,
 
       description,
 
-      openGraph: {
-
-        title,
-
-        description,
-
-        images: ["https://examify.me/icon.png"],
-
-        type: "website",
-
-      },
-
-      twitter: {
-
-        card: "summary_large_image",
-
-        title,
-
-        description,
-
-        images: ["https://examify.me/icon.png"],
-
-      },
-
-    };
-
-  }
+      images: ["https://examify.me/icon.png"],
+    },
+  };
+}
 
 export default async function QuestionBankPage({ params }: PageProps) {
   const { id } = await params;

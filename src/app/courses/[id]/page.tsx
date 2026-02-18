@@ -21,45 +21,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Course Not Found" };
   }
 
-      const title = `${batch.name} | Examify`;
+  const title = `${batch.name} | Examify`;
 
-      const description = batch.description || "Admission and Academic preparation platform.";
+  const description =
+    batch.description || "Admission and Academic preparation platform.";
 
-    
+  return {
+    title,
 
-      return {
+    description,
 
-        title,
+    openGraph: {
+      title,
 
-        description,
+      description,
 
-        openGraph: {
+      images: ["https://examify.me/icon.png"],
 
-          title,
+      type: "website",
+    },
 
-          description,
+    twitter: {
+      card: "summary_large_image",
 
-          images: ["https://examify.me/icon.png"],
+      title,
 
-          type: "website",
+      description,
 
-        },
-
-        twitter: {
-
-          card: "summary_large_image",
-
-          title,
-
-          description,
-
-          images: ["https://examify.me/icon.png"],
-
-        },
-
-      };
-
-    }
+      images: ["https://examify.me/icon.png"],
+    },
+  };
+}
 
 export default async function CoursePage({ params }: Props) {
   const { id } = await params;
@@ -74,7 +66,8 @@ export default async function CoursePage({ params }: Props) {
     notFound();
   }
 
-  const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(batch);
+  const { currentPrice, displayOldPrice, isExpired } =
+    calculateBatchPrice(batch);
 
   // Fetch approved student count
   const { count: studentCount } = await supabase

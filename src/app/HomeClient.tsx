@@ -25,7 +25,7 @@ import QuestionBankCard from "@/components/ui/QuestionBankCard";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/data/mockData";
 import { supabase } from "@/lib/supabase";
-import { calculateBatchPrice } from "@/lib/utils";
+import { calculateBatchPrice, toBengaliNumber } from "@/lib/utils";
 
 export default function HomeClient() {
   const { user } = useAuth();
@@ -71,7 +71,8 @@ export default function HomeClient() {
 
         // Map Supabase batch to Course interface
         const mappedCourses = (data || []).map((b) => {
-          const { currentPrice, displayOldPrice, isExpired } = calculateBatchPrice(b);
+          const { currentPrice, displayOldPrice, isExpired } =
+            calculateBatchPrice(b);
 
           return {
             id: b.id,
@@ -83,18 +84,18 @@ export default function HomeClient() {
             is_offer_expired: isExpired,
             students: countMap[b.id] || 0,
             status: b.status === "live" ? "Published" : "Draft",
-          batch: b.name.split(" ")[0], // Extract batch name like "HSC"
-          description: b.description || "",
-          features: b.features || [],
-          icon_url: b.icon_url || "",
-          routine_url: b.routine_url,
-          live_exams: b.live_exams,
-          lecture_notes: b.lecture_notes,
-          standard_exams: b.standard_exams,
-          solve_sheets: b.solve_sheets,
-          batch_stats: b.batch_stats,
-        };
-      });
+            batch: b.name.split(" ")[0], // Extract batch name like "HSC"
+            description: b.description || "",
+            features: b.features || [],
+            icon_url: b.icon_url || "",
+            routine_url: b.routine_url,
+            live_exams: b.live_exams,
+            lecture_notes: b.lecture_notes,
+            standard_exams: b.standard_exams,
+            solve_sheets: b.solve_sheets,
+            batch_stats: b.batch_stats,
+          };
+        });
 
         setCourses(mappedCourses);
       } catch (err) {
@@ -215,10 +216,10 @@ export default function HomeClient() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-12 pt-8 border-t border-border/50 max-w-4xl mx-auto px-4">
               {[
-                { label: "শিক্ষার্থী", value: "৫,০০০+" },
-                { label: "মেন্টর", value: "২০+" },
-                { label: "এক্সাম", value: "৫০০+" },
-                { label: "সফলতার হার", value: "৯৮%" },
+                { label: "শিক্ষার্থী", value: `${toBengaliNumber(5000)}+` },
+                { label: "মেন্টর", value: `${toBengaliNumber(20)}+` },
+                { label: "এক্সাম", value: `${toBengaliNumber(500)}+` },
+                { label: "সফলতার হার", value: `${toBengaliNumber(98)}%` },
               ].map((stat) => (
                 <div
                   key={stat.label}

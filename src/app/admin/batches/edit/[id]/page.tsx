@@ -364,8 +364,7 @@ export default function EditBatch() {
                       setValue("offer_expires_at", null);
                     } else if (duration !== "custom") {
                       const now = new Date();
-                      if (duration === "24h")
-                        now.setHours(now.getHours() + 24);
+                      if (duration === "24h") now.setHours(now.getHours() + 24);
                       else if (duration === "3d")
                         now.setDate(now.getDate() + 3);
                       else if (duration === "7d")
@@ -381,7 +380,9 @@ export default function EditBatch() {
                 >
                   <option value="none">No Expiry (Permanent)</option>
                   <option value="custom">
-                    {offerDuration === "custom" ? "Custom/Current Expiry" : "Set Custom Date"}
+                    {offerDuration === "custom"
+                      ? "Custom/Current Expiry"
+                      : "Set Custom Date"}
                   </option>
                   <option value="24h">Reset to 24 Hours</option>
                   <option value="3d">Reset to 3 Days</option>
@@ -393,10 +394,22 @@ export default function EditBatch() {
                 {offerDuration === "custom" && (
                   <Input
                     type="datetime-local"
-                    defaultValue={watch("offer_expires_at") ? new Date(new Date(watch("offer_expires_at")!).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
+                    defaultValue={
+                      watch("offer_expires_at")
+                        ? new Date(
+                            new Date(watch("offer_expires_at")!).getTime() -
+                              new Date().getTimezoneOffset() * 60000,
+                          )
+                            .toISOString()
+                            .slice(0, 16)
+                        : ""
+                    }
                     onChange={(e) => {
                       if (e.target.value) {
-                        setValue("offer_expires_at", new Date(e.target.value).toISOString());
+                        setValue(
+                          "offer_expires_at",
+                          new Date(e.target.value).toISOString(),
+                        );
                       }
                     }}
                     className="mt-2"
@@ -405,7 +418,8 @@ export default function EditBatch() {
 
                 {watch("offer_expires_at") && (
                   <p className="text-[10px] text-primary font-bold">
-                    Expires: {new Date(watch("offer_expires_at") || "").toLocaleString()}
+                    Expires:{" "}
+                    {new Date(watch("offer_expires_at") || "").toLocaleString()}
                   </p>
                 )}
               </div>

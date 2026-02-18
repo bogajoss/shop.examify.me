@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import type { Course } from "@/data/mockData";
+import { formatBengaliDate } from "@/lib/utils";
 
 interface CourseCardProps {
   course: Course;
@@ -48,7 +49,7 @@ export default function CourseCard({ course }: CourseCardProps) {
           <div className="absolute bottom-3 left-3">
             <Badge className="bg-rose-500 text-white font-bold px-2 py-0.5 border-none shadow-lg animate-pulse flex items-center gap-1 text-[9px]">
               <Clock className="h-3 w-3" />
-              অফার শেষ: {new Date(course.offer_expires_at).toLocaleDateString("bn-BD")}
+              অফার শেষ: {formatBengaliDate(course.offer_expires_at)}
             </Badge>
           </div>
         )}
