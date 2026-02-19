@@ -23,6 +23,7 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/context/AuthContext";
 import type { Course } from "@/data/mockData";
 import { formatBengaliDate, toBengaliNumber } from "@/lib/utils";
 
@@ -34,6 +35,9 @@ export default function CourseDetailsClient({
   course,
 }: CourseDetailsClientProps) {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
+
+  const existingOrder = user?.orders?.find((o) => o.courseId === course.id);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -126,6 +130,57 @@ export default function CourseDetailsClient({
                     </div>
                   )}
                 </div>
+
+                {existingOrder && (
+                  <div className="pt-2">
+                    {existingOrder.status === "Approved" ? (
+                      <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                        <div className="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                          <CheckCircle2 className="h-6 w-6" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+                            আপনি এই কোর্সে এনরোলড!
+                          </p>
+                          <p className="text-xs font-medium text-emerald-600 dark:text-emerald-500">
+                            আপনার এক্সেস সচল করা হয়েছে। ড্যাশবোর্ড থেকে ক্লাস
+                            শুরু করুন।
+                          </p>
+                        </div>
+                      </div>
+                    ) : existingOrder.status === "Pending" ? (
+                      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                        <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+                          <Clock className="h-6 w-6 animate-pulse" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="text-sm font-black text-amber-700 dark:text-amber-400">
+                            পেমেন্ট যাচাই করা হচ্ছে
+                          </p>
+                          <p className="text-xs font-medium text-amber-600 dark:text-amber-500">
+                            অ্যাডমিন আপনার পেমেন্টটি যাচাই করছে। ভেরিফাই হলে আপনি
+                            এক্সেস পাবেন।
+                          </p>
+                        </div>
+                      </div>
+                    ) : existingOrder.status === "Rejected" ? (
+                      <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                        <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
+                          <ShieldCheck className="h-6 w-6" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="text-sm font-black text-rose-700 dark:text-rose-400">
+                            পূর্ববর্তী পেমেন্ট রিজেক্ট করা হয়েছে
+                          </p>
+                          <p className="text-xs font-medium text-rose-600 dark:text-rose-500">
+                            অনুগ্রহ করে সঠিক তথ্য দিয়ে পুনরায় এনরোল করুন অথবা
+                            সাপোর্টে যোগাযোগ করুন।
+                          </p>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                )}
 
                 <div className="pt-6 border-t border-border/50">
                   <h3 className="font-black text-xl mb-4 text-primary flex items-center gap-2">
@@ -335,14 +390,55 @@ export default function CourseDetailsClient({
                         <PlayCircle className="h-5 w-5" /> কিভাবে ভর্তি হবেন?
                       </Button>
 
-                      <Button
-                        fullWidth
-                        size="lg"
-                        className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                        onClick={() => router.push(`/checkout/${course.id}`)}
-                      >
-                        ভর্তি হন (Enroll Now)
-                      </Button>
+                      {isLoading ? (
+                        <Button
+                          fullWidth
+                          size="lg"
+                          className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 animate-pulse"
+                          disabled
+                        >
+                          লোড হচ্ছে...
+                        </Button>
+                      ) : existingOrder?.status === "Approved" ? (
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 justify-center p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="h-5 w-5" />
+                            <span className="text-sm font-bold">আপনি এনরোলড আছেন</span>
+                          </div>
+                          <Button
+                            fullWidth
+                            size="lg"
+                            className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all bg-emerald-600 hover:bg-emerald-700"
+                            onClick={() => router.push("/dashboard")}
+                          >
+                            ড্যাশবোর্ডে যান
+                          </Button>
+                        </div>
+                      ) : existingOrder?.status === "Pending" ? (
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 justify-center p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-2xl text-amber-600 dark:text-amber-400">
+                            <Clock className="h-5 w-5 animate-pulse" />
+                            <span className="text-sm font-bold">পেমেন্ট যাচাই করা হচ্ছে</span>
+                          </div>
+                          <Button
+                            fullWidth
+                            size="lg"
+                            className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all bg-amber-600 hover:bg-amber-700"
+                            onClick={() => router.push("/dashboard")}
+                          >
+                            ড্যাশবোর্ড দেখুন
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          fullWidth
+                          size="lg"
+                          className="h-14 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                          onClick={() => router.push(`/checkout/${course.id}`)}
+                        >
+                          ভর্তি হন (Enroll Now)
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -369,13 +465,39 @@ export default function CourseDetailsClient({
               </span>
             )}
           </div>
-          <Button
-            className="flex-1 h-14 rounded-2xl text-lg font-black shadow-lg shadow-primary/20"
-            size="lg"
-            onClick={() => router.push(`/checkout/${course.id}`)}
-          >
-            ভর্তি হন
-          </Button>
+          {isLoading ? (
+            <Button
+              className="flex-1 h-14 rounded-2xl text-lg font-black shadow-lg shadow-primary/20 animate-pulse"
+              size="lg"
+              disabled
+            >
+              লোড হচ্ছে...
+            </Button>
+          ) : existingOrder?.status === "Approved" ? (
+            <Button
+              className="flex-1 h-14 rounded-2xl text-lg font-black shadow-lg shadow-emerald-600/20 bg-emerald-600 hover:bg-emerald-700"
+              size="lg"
+              onClick={() => router.push("/dashboard")}
+            >
+              ড্যাশবোর্ডে যান
+            </Button>
+          ) : existingOrder?.status === "Pending" ? (
+            <Button
+              className="flex-1 h-14 rounded-2xl text-lg font-black shadow-lg shadow-amber-600/20 bg-amber-600 hover:bg-amber-700"
+              size="lg"
+              onClick={() => router.push("/dashboard")}
+            >
+              ড্যাশবোর্ড দেখুন
+            </Button>
+          ) : (
+            <Button
+              className="flex-1 h-14 rounded-2xl text-lg font-black shadow-lg shadow-primary/20"
+              size="lg"
+              onClick={() => router.push(`/checkout/${course.id}`)}
+            >
+              ভর্তি হন
+            </Button>
+          )}
         </div>
       </main>
 
