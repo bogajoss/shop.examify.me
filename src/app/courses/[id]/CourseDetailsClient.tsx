@@ -461,7 +461,7 @@ export default function CourseDetailsClient({
             {!course.is_offer_expired && course.offer_expires_at && (
               <span className="text-[9px] font-black text-rose-500 animate-pulse flex items-center gap-1">
                 <Clock className="h-2 w-2" />
-                শেষ হবে: {formatBengaliDate(course.offer_expires_at)}
+               এই অফারটি শেষ হবে: {formatBengaliDate(course.offer_expires_at)}
               </span>
             )}
           </div>
