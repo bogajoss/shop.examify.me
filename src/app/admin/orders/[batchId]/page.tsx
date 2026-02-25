@@ -33,6 +33,7 @@ interface Order {
   status: "pending" | "approved" | "rejected";
   assigned_token?: string;
   admin_comment?: string;
+  expires_at?: string | null;
   student: {
     name: string;
     roll: string;
@@ -42,12 +43,28 @@ interface Order {
   };
 }
 
+const DURATIONS = [
+  { label: "Lifetime", value: "lifetime" },
+  { label: "3 Days", value: "3" },
+  { label: "7 Days", value: "7" },
+  { label: "15 Days", value: "15" },
+  { label: "30 Days", value: "30" },
+  { label: "60 Days", value: "60" },
+  { label: "90 Days", value: "90" },
+  { label: "Custom", value: "custom" },
+];
+
 export default function BatchOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [batchName, setBatchName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [comments, setComments] = useState<{ [key: string]: string }>({});
+  const [selectedDurations, setSelectedDurations] = useState<{
+    [key: string]: string;
+  }>({});
+  const [customDates, setCustomDates] = useState<{ [key: string]: string }>({});
+  
   const { showToast } = useToast();
   const { admin } = useAdmin();
   const params = useParams();
@@ -87,14 +104,17 @@ export default function BatchOrders() {
       if (error) throw error;
       setOrders(data || []);
 
-      // Initialize comments state with existing comments
+      // Initialize comments and durations state
       const initialComments: { [key: string]: string } = {};
+      const initialDurations: { [key: string]: string } = {};
       data?.forEach((o) => {
         if (o.admin_comment) {
           initialComments[o.id] = o.admin_comment;
         }
+        initialDurations[o.id] = "lifetime"; // Default to lifetime
       });
       setComments(initialComments);
+      setSelectedDurations(initialDurations);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -130,7 +150,26 @@ export default function BatchOrders() {
       }
 
       if (newStatus === "approved") {
-        const result = await approveOrderAction(orderId, comment);
+        let expiresAt: string | null = null;
+        const duration = selectedDurations[orderId];
+
+        if (duration === "lifetime") {
+          expiresAt = null;
+        } else if (duration === "custom") {
+          const customDate = customDates[orderId];
+          if (!customDate) {
+            showToast("কাস্টম তারিখ সিলেক্ট করুন", "error");
+            return;
+          }
+          expiresAt = new Date(customDate).toISOString();
+        } else {
+          const days = parseInt(duration);
+          const date = new Date();
+          date.setDate(date.getDate() + days);
+          expiresAt = date.toISOString();
+        }
+
+        const result = await approveOrderAction(orderId, comment, expiresAt);
         if (result.success) {
           showToast(
             result.message || "অর্ডার অ্যাপ্রুভ এবং এনরোল করা হয়েছে!",
@@ -197,6 +236,7 @@ export default function BatchOrders() {
                 <th className="px-6 py-4">কোর্স/ব্যাচ</th>
                 <th className="px-6 py-4">পেমেন্ট ডিটেইলস</th>
                 <th className="px-6 py-4">TrxID</th>
+                <th className="px-6 py-4">মেয়াদ</th>
                 <th className="px-6 py-4">অ্যাডমিন নোট</th>
                 <th className="px-6 py-4">স্ট্যাটাস</th>
                 <th className="px-6 py-4 text-right">অ্যাকশন</th>
@@ -206,7 +246,7 @@ export default function BatchOrders() {
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-6 py-12 text-center text-muted-foreground"
                   >
                     <div className="flex flex-col items-center gap-3">
@@ -258,6 +298,47 @@ export default function BatchOrders() {
                       <span className="font-mono text-xs bg-muted px-2 py-1 rounded border border-border/50 text-foreground/80">
                         {order.trx_id}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {order.status === "pending" ? (
+                        <div className="flex flex-col gap-2">
+                          <select
+                            className="h-9 px-2 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            value={selectedDurations[order.id] || "lifetime"}
+                            onChange={(e) =>
+                              setSelectedDurations((prev) => ({
+                                ...prev,
+                                [order.id]: e.target.value,
+                              }))
+                            }
+                          >
+                            {DURATIONS.map((d) => (
+                              <option key={d.value} value={d.value}>
+                                {d.label}
+                              </option>
+                            ))}
+                          </select>
+                          {selectedDurations[order.id] === "custom" && (
+                            <input
+                              type="date"
+                              className="h-9 px-2 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                              value={customDates[order.id] || ""}
+                              onChange={(e) =>
+                                setCustomDates((prev) => ({
+                                  ...prev,
+                                  [order.id]: e.target.value,
+                                }))
+                              }
+                            />
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {order.expires_at
+                            ? new Date(order.expires_at).toLocaleDateString()
+                            : "Lifetime"}
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <input
@@ -427,6 +508,51 @@ export default function BatchOrders() {
                 <div className="bg-muted rounded-lg p-3 font-mono text-sm font-bold text-center border border-border/50 select-all">
                   {order.trx_id}
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                  মেয়াদ (Access Duration)
+                </p>
+                {order.status === "pending" ? (
+                  <div className="flex flex-col gap-2">
+                    <select
+                      className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                      value={selectedDurations[order.id] || "lifetime"}
+                      onChange={(e) =>
+                        setSelectedDurations((prev) => ({
+                          ...prev,
+                          [order.id]: e.target.value,
+                        }))
+                      }
+                    >
+                      {DURATIONS.map((d) => (
+                        <option key={d.value} value={d.value}>
+                          {d.label}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedDurations[order.id] === "custom" && (
+                      <input
+                        type="date"
+                        className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                        value={customDates[order.id] || ""}
+                        onChange={(e) =>
+                          setCustomDates((prev) => ({
+                            ...prev,
+                            [order.id]: e.target.value,
+                          }))
+                        }
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm font-semibold text-foreground">
+                    {order.expires_at
+                      ? new Date(order.expires_at).toLocaleDateString()
+                      : "Lifetime"}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1.5">

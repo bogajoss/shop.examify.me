@@ -6,9 +6,10 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 export async function approveOrderAction(
   orderId: string,
   adminComment?: string,
+  expiresAt?: string | null,
 ) {
   try {
-    console.log("Approving order:", orderId);
+    console.log("Approving order:", orderId, "expiresAt:", expiresAt);
 
     // 1. Get the order details
     const { data: order, error: orderFetchError } = await supabaseAdmin
@@ -27,12 +28,13 @@ export async function approveOrderAction(
 
     console.log("Order found:", order);
 
-    // 2. Update order status
+    // 2. Update order status and expiration
     const { error: updateError } = await supabaseAdmin
       .from("orders")
       .update({
         status: "approved",
         admin_comment: finalComment,
+        expires_at: expiresAt,
       })
       .eq("id", orderId);
 
