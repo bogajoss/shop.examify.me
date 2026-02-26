@@ -21,6 +21,13 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAdmin } from "@/context/AdminContext";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -53,8 +60,27 @@ const DURATIONS = [
   { label: "30 Days", value: "30" },
   { label: "60 Days", value: "60" },
   { label: "90 Days", value: "90" },
+  { label: "180 Days", value: "180" },
+  { label: "365 Days", value: "365" },
   { label: "Custom", value: "custom" },
 ];
+
+const DAYS = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+const MONTHS = [
+  { label: "Jan", value: "01" },
+  { label: "Feb", value: "02" },
+  { label: "Mar", value: "03" },
+  { label: "Apr", value: "04" },
+  { label: "May", value: "05" },
+  { label: "Jun", value: "06" },
+  { label: "Jul", value: "07" },
+  { label: "Aug", value: "08" },
+  { label: "Sep", value: "09" },
+  { label: "Oct", value: "10" },
+  { label: "Nov", value: "11" },
+  { label: "Dec", value: "12" },
+];
+const YEARS = ["2025", "2026", "2027", "2028", "2029", "2030"];
 
 export default function BatchOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -206,6 +232,27 @@ export default function BatchOrders() {
     }
   };
 
+  const handleCustomDateUpdate = (
+    orderId: string,
+    part: "day" | "month" | "year",
+    value: string,
+  ) => {
+    const current = customDates[orderId] || "2026-01-01";
+    const parts = current.split("-");
+    let y = parts[0];
+    let m = parts[1];
+    let d = parts[2];
+
+    if (part === "year") y = value;
+    if (part === "month") m = value;
+    if (part === "day") d = value;
+
+    setCustomDates((prev) => ({
+      ...prev,
+      [orderId]: `${y}-${m}-${d}`,
+    }));
+  };
+
   const filteredOrders = orders.filter(
     (o) =>
       o.trx_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -338,18 +385,49 @@ export default function BatchOrders() {
                           ))}
                         </select>
                         {selectedDurations[order.id] === "custom" && (
-                          <input
-                            type="text"
-                            placeholder="YYYY-MM-DD"
-                            className="h-8 px-2 rounded-lg border border-border bg-background text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all w-full"
-                            value={customDates[order.id] || ""}
-                            onChange={(e) =>
-                              setCustomDates((prev) => ({
-                                ...prev,
-                                [order.id]: e.target.value,
-                              }))
-                            }
-                          />
+                          <div className="flex gap-1">
+                            <Select
+                              value={(customDates[order.id] || "2026-01-01").split("-")[2]}
+                              onValueChange={(val) => handleCustomDateUpdate(order.id, "day", val)}
+                            >
+                              <SelectTrigger className="h-8 w-[45px] px-1 text-[10px] focus:ring-1 focus:ring-primary/20">
+                                <SelectValue placeholder="D" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {DAYS.map((d) => (
+                                  <SelectItem key={d} value={d} className="text-[10px]">{d}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <Select
+                              value={(customDates[order.id] || "2026-01-01").split("-")[1]}
+                              onValueChange={(val) => handleCustomDateUpdate(order.id, "month", val)}
+                            >
+                              <SelectTrigger className="h-8 w-[55px] px-1 text-[10px] focus:ring-1 focus:ring-primary/20">
+                                <SelectValue placeholder="M" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {MONTHS.map((m) => (
+                                  <SelectItem key={m.value} value={m.value} className="text-[10px]">{m.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <Select
+                              value={(customDates[order.id] || "2026-01-01").split("-")[0]}
+                              onValueChange={(val) => handleCustomDateUpdate(order.id, "year", val)}
+                            >
+                              <SelectTrigger className="h-8 w-[65px] px-1 text-[10px] focus:ring-1 focus:ring-primary/20">
+                                <SelectValue placeholder="Y" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {YEARS.map((y) => (
+                                  <SelectItem key={y} value={y} className="text-[10px]">{y}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         )}
                       </div>
                     </td>
@@ -567,18 +645,49 @@ export default function BatchOrders() {
                     ))}
                   </select>
                   {selectedDurations[order.id] === "custom" && (
-                    <input
-                      type="text"
-                      placeholder="YYYY-MM-DD"
-                      className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
-                      value={customDates[order.id] || ""}
-                      onChange={(e) =>
-                        setCustomDates((prev) => ({
-                          ...prev,
-                          [order.id]: e.target.value,
-                        }))
-                      }
-                    />
+                    <div className="flex gap-2">
+                      <Select
+                        value={(customDates[order.id] || "2026-01-01").split("-")[2]}
+                        onValueChange={(val) => handleCustomDateUpdate(order.id, "day", val)}
+                      >
+                        <SelectTrigger className="flex-1 h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:ring-1 focus:ring-primary/20">
+                          <SelectValue placeholder="D" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DAYS.map((d) => (
+                            <SelectItem key={d} value={d}>দিন: {d}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <Select
+                        value={(customDates[order.id] || "2026-01-01").split("-")[1]}
+                        onValueChange={(val) => handleCustomDateUpdate(order.id, "month", val)}
+                      >
+                        <SelectTrigger className="flex-1 h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:ring-1 focus:ring-primary/20">
+                          <SelectValue placeholder="M" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {MONTHS.map((m) => (
+                            <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <Select
+                        value={(customDates[order.id] || "2026-01-01").split("-")[0]}
+                        onValueChange={(val) => handleCustomDateUpdate(order.id, "year", val)}
+                      >
+                        <SelectTrigger className="flex-1 h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:ring-1 focus:ring-primary/20">
+                          <SelectValue placeholder="Y" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {YEARS.map((y) => (
+                            <SelectItem key={y} value={y}>{y}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   )}
                 </div>
               </div>
