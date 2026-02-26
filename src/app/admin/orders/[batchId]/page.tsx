@@ -339,7 +339,8 @@ export default function BatchOrders() {
                         </select>
                         {selectedDurations[order.id] === "custom" && (
                           <input
-                            type="date"
+                            type="text"
+                            placeholder="YYYY-MM-DD"
                             className="h-8 px-2 rounded-lg border border-border bg-background text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all w-full"
                             value={customDates[order.id] || ""}
                             onChange={(e) =>
@@ -567,7 +568,8 @@ export default function BatchOrders() {
                   </select>
                   {selectedDurations[order.id] === "custom" && (
                     <input
-                      type="date"
+                      type="text"
+                      placeholder="YYYY-MM-DD"
                       className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
                       value={customDates[order.id] || ""}
                       onChange={(e) =>
