@@ -113,6 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           token: o.assigned_token || null,
           adminComment: o.admin_comment || null,
           date: new Date(o.created_at).toLocaleDateString("en-GB"),
+          expiresAt: o.expires_at || null,
         };
       });
 

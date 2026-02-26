@@ -74,6 +74,7 @@ export interface Order {
   token: string | null;
   adminComment?: string | null;
   date: string;
+  expiresAt?: string | null;
 }
 
 export interface User {

@@ -8,6 +8,7 @@ import {
   Check,
   CreditCard,
   Hash,
+  RotateCw,
   Search,
   X,
 } from "lucide-react";
@@ -22,6 +23,7 @@ import Button from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { useAdmin } from "@/context/AdminContext";
 import { supabase } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 
 interface Order {
   id: string;
@@ -64,6 +66,9 @@ export default function BatchOrders() {
     [key: string]: string;
   }>({});
   const [customDates, setCustomDates] = useState<{ [key: string]: string }>({});
+  const [isLoadingAction, setIsLoadingAction] = useState<{
+    [key: string]: boolean;
+  }>({});
   
   const { showToast } = useToast();
   const { admin } = useAdmin();
@@ -107,14 +112,25 @@ export default function BatchOrders() {
       // Initialize comments and durations state
       const initialComments: { [key: string]: string } = {};
       const initialDurations: { [key: string]: string } = {};
+      const initialCustomDates: { [key: string]: string } = {};
+
       data?.forEach((o) => {
         if (o.admin_comment) {
           initialComments[o.id] = o.admin_comment;
         }
-        initialDurations[o.id] = "lifetime"; // Default to lifetime
+
+        if (o.expires_at) {
+          initialDurations[o.id] = "custom";
+          initialCustomDates[o.id] = new Date(o.expires_at)
+            .toISOString()
+            .split("T")[0];
+        } else {
+          initialDurations[o.id] = "lifetime";
+        }
       });
       setComments(initialComments);
       setSelectedDurations(initialDurations);
+      setCustomDates(initialCustomDates);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -137,6 +153,7 @@ export default function BatchOrders() {
     }
 
     try {
+      setIsLoadingAction((prev) => ({ ...prev, [orderId]: true }));
       const comment = comments[orderId];
       if (newStatus === "rejected") {
         const result = await rejectOrderAction(orderId, comment);
@@ -161,7 +178,8 @@ export default function BatchOrders() {
             showToast("কাস্টম তারিখ সিলেক্ট করুন", "error");
             return;
           }
-          expiresAt = new Date(customDate).toISOString();
+          // Set to end of day (23:59:59) in local time
+          expiresAt = new Date(`${customDate}T23:59:59`).toISOString();
         } else {
           const days = parseInt(duration);
           const date = new Date();
@@ -183,6 +201,8 @@ export default function BatchOrders() {
     } catch (error) {
       console.error("Error updating status:", error);
       showToast("স্ট্যাটাস আপডেট ব্যর্থ হয়েছে", "error");
+    } finally {
+      setIsLoadingAction((prev) => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -227,19 +247,19 @@ export default function BatchOrders() {
       </div>
 
       {/* Desktop View Table */}
-      <div className="hidden lg:block bg-card border border-border rounded-xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-muted/30 text-muted-foreground font-semibold border-b border-border uppercase tracking-wider text-[11px]">
+      <div className="hidden lg:block bg-card border border-border rounded-xl shadow-sm overflow-hidden mx-4 md:mx-0">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-border">
+          <table className="w-full text-sm text-left border-collapse">
+            <thead className="bg-muted/30 text-muted-foreground font-semibold border-b border-border uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="px-6 py-4">শিক্ষার্থী</th>
-                <th className="px-6 py-4">কোর্স/ব্যাচ</th>
-                <th className="px-6 py-4">পেমেন্ট ডিটেইলস</th>
-                <th className="px-6 py-4">TrxID</th>
-                <th className="px-6 py-4">মেয়াদ</th>
-                <th className="px-6 py-4">অ্যাডমিন নোট</th>
-                <th className="px-6 py-4">স্ট্যাটাস</th>
-                <th className="px-6 py-4 text-right">অ্যাকশন</th>
+                <th className="px-4 py-4 whitespace-nowrap">শিক্ষার্থী</th>
+                <th className="px-4 py-4 whitespace-nowrap">কোর্স/ব্যাচ</th>
+                <th className="px-4 py-4 whitespace-nowrap">পেমেন্ট ডিটেইলস</th>
+                <th className="px-4 py-4 whitespace-nowrap">TrxID</th>
+                <th className="px-4 py-4 whitespace-nowrap">মেয়াদ</th>
+                <th className="px-4 py-4 whitespace-nowrap">অ্যাডমিন নোট</th>
+                <th className="px-4 py-4">স্ট্যাটাস</th>
+                <th className="px-4 py-4 text-right whitespace-nowrap">অ্যাকশন</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -261,13 +281,13 @@ export default function BatchOrders() {
                     key={order.id}
                     className="hover:bg-muted/10 transition-colors"
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2 min-w-[140px]">
                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                           {order.student?.name?.charAt(0) || "U"}
                         </div>
-                        <div>
-                          <p className="font-bold text-foreground">
+                        <div className="min-w-0">
+                          <p className="font-bold text-foreground truncate max-w-[120px]">
                             {order.student?.name || "Unknown"}
                           </p>
                           <p className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
@@ -277,74 +297,66 @@ export default function BatchOrders() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-foreground font-medium">
-                        <BookOpen className="h-3.5 w-3.5 text-primary/60" />
-                        {order.batch?.name || "Unknown Batch"}
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2 text-foreground font-medium min-w-[120px]">
+                        <BookOpen className="h-3.5 w-3.5 text-primary/60 shrink-0" />
+                        <span className="truncate">{order.batch?.name || "Unknown Batch"}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-foreground text-base">
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col min-w-[130px]">
+                        <span className="font-bold text-foreground text-sm">
                           ৳{order.amount}
                         </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                          <CreditCard className="h-3 w-3 text-[#25D366]" />
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1.5 truncate">
+                          <CreditCard className="h-2.5 w-2.5 text-[#25D366] shrink-0" />
                           {order.payment_method} • {order.payment_number}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-xs bg-muted px-2 py-1 rounded border border-border/50 text-foreground/80">
+                    <td className="px-4 py-4">
+                      <span className="font-mono text-[10px] bg-muted px-2 py-1 rounded border border-border/50 text-foreground/80 whitespace-nowrap">
                         {order.trx_id}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      {order.status === "pending" ? (
-                        <div className="flex flex-col gap-2">
-                          <select
-                            className="h-9 px-2 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                            value={selectedDurations[order.id] || "lifetime"}
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col gap-1.5 min-w-[110px]">
+                        <select
+                          className="h-8 px-2 rounded-lg border border-border bg-background text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all w-full"
+                          value={selectedDurations[order.id] || "lifetime"}
+                          onChange={(e) =>
+                            setSelectedDurations((prev) => ({
+                              ...prev,
+                              [order.id]: e.target.value,
+                            }))
+                          }
+                        >
+                          {DURATIONS.map((d) => (
+                            <option key={d.value} value={d.value}>
+                              {d.label}
+                            </option>
+                          ))}
+                        </select>
+                        {selectedDurations[order.id] === "custom" && (
+                          <input
+                            type="date"
+                            className="h-8 px-2 rounded-lg border border-border bg-background text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all w-full"
+                            value={customDates[order.id] || ""}
                             onChange={(e) =>
-                              setSelectedDurations((prev) => ({
+                              setCustomDates((prev) => ({
                                 ...prev,
                                 [order.id]: e.target.value,
                               }))
                             }
-                          >
-                            {DURATIONS.map((d) => (
-                              <option key={d.value} value={d.value}>
-                                {d.label}
-                              </option>
-                            ))}
-                          </select>
-                          {selectedDurations[order.id] === "custom" && (
-                            <input
-                              type="date"
-                              className="h-9 px-2 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                              value={customDates[order.id] || ""}
-                              onChange={(e) =>
-                                setCustomDates((prev) => ({
-                                  ...prev,
-                                  [order.id]: e.target.value,
-                                }))
-                              }
-                            />
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs font-medium text-muted-foreground">
-                          {order.expires_at
-                            ? new Date(order.expires_at).toLocaleDateString()
-                            : "Lifetime"}
-                        </span>
-                      )}
+                          />
+                        )}
+                      </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <input
                         type="text"
                         placeholder="নোট লিখুন..."
-                        className="w-32 md:w-48 h-9 px-3 rounded-lg border border-border bg-background text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                        className="w-full min-w-[120px] h-8 px-3 rounded-lg border border-border bg-background text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
                         value={comments[order.id] || ""}
                         onChange={(e) =>
                           setComments((prev) => ({
@@ -352,10 +364,9 @@ export default function BatchOrders() {
                             [order.id]: e.target.value,
                           }))
                         }
-                        disabled={order.status !== "pending"}
                       />
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <Badge
                         variant={
                           order.status === "approved"
@@ -364,40 +375,63 @@ export default function BatchOrders() {
                               ? "destructive"
                               : "warning"
                         }
-                        className="uppercase text-[9px] px-2 py-0.5 tracking-tighter"
+                        className="uppercase text-[8px] px-1.5 py-0.5 tracking-tighter"
                       >
                         {order.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-4 text-right">
                       {order.status === "pending" ? (
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5">
                           <Button
                             size="sm"
-                            className="bg-green-600 hover:bg-green-700 text-white gap-1 px-4 h-8 text-xs"
+                            className="bg-green-600 hover:bg-green-700 text-white gap-1 px-2.5 h-7 text-[10px]"
                             onClick={() =>
                               handleStatusChange(order.id, "approved")
                             }
+                            disabled={isLoadingAction[order.id]}
                           >
                             <Check className="h-3 w-3" /> Approve
                           </Button>
                           <Button
                             size="sm"
                             variant="destructive"
-                            className="gap-1 px-4 h-8 text-xs"
+                            className="gap-1 px-2.5 h-7 text-[10px]"
                             onClick={() =>
                               handleStatusChange(order.id, "rejected")
                             }
+                            disabled={isLoadingAction[order.id]}
                           >
                             <X className="h-3 w-3" /> Reject
                           </Button>
                         </div>
                       ) : (
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${order.status === "approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
-                        >
-                          {order.status}
-                        </span>
+                        <div className="flex items-center justify-end gap-2">
+                          {order.status === "approved" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-[10px] gap-1 border-primary/20 text-primary hover:bg-primary/5 px-2"
+                              onClick={() =>
+                                handleStatusChange(order.id, "approved")
+                              }
+                              disabled={isLoadingAction[order.id]}
+                            >
+                              <RotateCw
+                                className={cn(
+                                  "h-2.5 w-2.5",
+                                  isLoadingAction[order.id] && "animate-spin",
+                                )}
+                              />{" "}
+                              Update
+                            </Button>
+                          )}
+                          <span
+                            className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${order.status === "approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}
+                          >
+                            {order.status}
+                          </span>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -405,7 +439,7 @@ export default function BatchOrders() {
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-6 py-20 text-center text-muted-foreground"
                   >
                     <div className="flex flex-col items-center justify-center gap-3">
@@ -421,7 +455,7 @@ export default function BatchOrders() {
       </div>
 
       {/* Mobile & Tablet Card View */}
-      <div className="lg:hidden space-y-4 px-4">
+      <div className="lg:hidden space-y-4 px-4 pb-8">
         {isLoading ? (
           <div className="text-center py-12">
             <div className="h-8 w-8 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -431,11 +465,11 @@ export default function BatchOrders() {
           filteredOrders.map((order) => (
             <div
               key={order.id}
-              className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-4 relative overflow-hidden"
+              className="bg-card border border-border rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 relative overflow-hidden"
             >
               {/* Status Ribbon */}
               <div
-                className={`absolute top-0 right-0 px-4 py-1 rounded-bl-xl text-[10px] font-bold uppercase tracking-widest ${
+                className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl text-[9px] font-bold uppercase tracking-widest ${
                   order.status === "approved"
                     ? "bg-green-500 text-white"
                     : order.status === "rejected"
@@ -446,123 +480,115 @@ export default function BatchOrders() {
                 {order.status}
               </div>
 
-              <div className="flex items-start gap-3 pt-2">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl font-bold shrink-0">
+              <div className="flex items-start gap-3 pt-1">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg font-bold shrink-0">
                   {order.student?.name?.charAt(0)}
                 </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-lg text-foreground truncate">
+                <div className="min-w-0 pr-16">
+                  <h3 className="font-bold text-base sm:text-lg text-foreground truncate">
                     {order.student?.name}
                   </h3>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-muted-foreground mt-0.5">
                     <span className="flex items-center gap-1 font-mono">
-                      <Hash className="h-3 w-3" /> {order.student?.roll}
+                      <Hash className="h-2.5 w-2.5" /> {order.student?.roll}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />{" "}
+                      <Calendar className="h-2.5 w-2.5" />{" "}
                       {new Date(order.created_at).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/50">
-                <div className="space-y-1">
-                  <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+              <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/50">
+                <div className="space-y-0.5">
+                  <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                     কোর্স
                   </p>
-                  <p className="text-sm font-semibold text-foreground line-clamp-1">
+                  <p className="text-xs font-semibold text-foreground line-clamp-1">
                     {order.batch?.name}
                   </p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                <div className="space-y-0.5 text-right sm:text-left">
+                  <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                     পরিমান
                   </p>
-                  <p className="text-lg font-black text-primary">
+                  <p className="text-base font-black text-primary">
                     ৳{order.amount}
                   </p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                <div className="space-y-0.5">
+                  <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                     পেমেন্ট মেথড
                   </p>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-xs font-semibold text-foreground">
                     {order.payment_method}
                   </p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                <div className="space-y-0.5 text-right sm:text-left">
+                  <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                     বিকাশ/নগদ নং
                   </p>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-xs font-semibold text-foreground">
                     {order.payment_number}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+              <div className="space-y-1">
+                <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                   Transaction ID (TrxID)
                 </p>
-                <div className="bg-muted rounded-lg p-3 font-mono text-sm font-bold text-center border border-border/50 select-all">
+                <div className="bg-muted rounded-lg p-2 font-mono text-xs font-bold text-center border border-border/50 select-all truncate">
                   {order.trx_id}
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                   মেয়াদ (Access Duration)
                 </p>
-                {order.status === "pending" ? (
-                  <div className="flex flex-col gap-2">
-                    <select
-                      className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                      value={selectedDurations[order.id] || "lifetime"}
+                <div className="flex flex-col gap-2">
+                  <select
+                    className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+                    value={selectedDurations[order.id] || "lifetime"}
+                    onChange={(e) =>
+                      setSelectedDurations((prev) => ({
+                        ...prev,
+                        [order.id]: e.target.value,
+                      }))
+                    }
+                  >
+                    {DURATIONS.map((d) => (
+                      <option key={d.value} value={d.value}>
+                        {d.label}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedDurations[order.id] === "custom" && (
+                    <input
+                      type="date"
+                      className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+                      value={customDates[order.id] || ""}
                       onChange={(e) =>
-                        setSelectedDurations((prev) => ({
+                        setCustomDates((prev) => ({
                           ...prev,
                           [order.id]: e.target.value,
                         }))
                       }
-                    >
-                      {DURATIONS.map((d) => (
-                        <option key={d.value} value={d.value}>
-                          {d.label}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedDurations[order.id] === "custom" && (
-                      <input
-                        type="date"
-                        className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                        value={customDates[order.id] || ""}
-                        onChange={(e) =>
-                          setCustomDates((prev) => ({
-                            ...prev,
-                            [order.id]: e.target.value,
-                          }))
-                        }
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm font-semibold text-foreground">
-                    {order.expires_at
-                      ? new Date(order.expires_at).toLocaleDateString()
-                      : "Lifetime"}
-                  </p>
-                )}
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1.5">
-                <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                <p className="text-[9px] uppercase text-muted-foreground font-bold tracking-wider">
                   অ্যাডমিন নোট
                 </p>
                 <input
                   type="text"
                   placeholder="নোট লিখুন..."
-                  className="w-full h-11 px-4 rounded-xl border border-border bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full h-10 px-3 rounded-xl border border-border bg-muted/30 text-xs focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
                   value={comments[order.id] || ""}
                   onChange={(e) =>
                     setComments((prev) => ({
@@ -570,35 +596,54 @@ export default function BatchOrders() {
                       [order.id]: e.target.value,
                     }))
                   }
-                  disabled={order.status !== "pending"}
                 />
               </div>
 
-              {order.status === "pending" && (
-                <div className="flex gap-3 pt-2">
+              {order.status === "pending" ? (
+                <div className="flex gap-3 pt-1">
                   <Button
                     type="button"
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white h-11 rounded-xl shadow-lg shadow-green-500/20"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white h-10 rounded-xl shadow-lg shadow-green-500/20 text-xs"
                     onClick={() => handleStatusChange(order.id, "approved")}
+                    disabled={isLoadingAction[order.id]}
                   >
-                    <Check className="h-4 w-4 mr-2" /> Approve
+                    <Check className="h-3.5 w-3.5 mr-1.5" /> Approve
                   </Button>
                   <Button
                     type="button"
                     variant="destructive"
-                    className="flex-1 h-11 rounded-xl shadow-lg shadow-red-500/20"
+                    className="flex-1 h-10 rounded-xl shadow-lg shadow-red-500/20 text-xs"
                     onClick={() => handleStatusChange(order.id, "rejected")}
+                    disabled={isLoadingAction[order.id]}
                   >
-                    <X className="h-4 w-4 mr-2" /> Reject
+                    <X className="h-3.5 w-3.5 mr-1.5" /> Reject
                   </Button>
                 </div>
+              ) : (
+                order.status === "approved" && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-10 rounded-xl border-primary/20 text-primary font-bold shadow-sm text-xs"
+                    onClick={() => handleStatusChange(order.id, "approved")}
+                    disabled={isLoadingAction[order.id]}
+                  >
+                    <RotateCw
+                      className={cn(
+                        "h-3.5 w-3.5 mr-2",
+                        isLoadingAction[order.id] && "animate-spin",
+                      )}
+                    />{" "}
+                    Update Access Info
+                  </Button>
+                )
               )}
             </div>
           ))
         ) : (
           <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl">
-            <AlertCircle className="h-12 w-12 text-muted-foreground opacity-20 mx-auto mb-4" />
-            <p className="text-muted-foreground">কোনো অর্ডার পাওয়া যায়নি।</p>
+            <AlertCircle className="h-10 w-10 text-muted-foreground opacity-20 mx-auto mb-4" />
+            <p className="text-muted-foreground text-sm">কোনো অর্ডার পাওয়া যায়নি।</p>
           </div>
         )}
       </div>

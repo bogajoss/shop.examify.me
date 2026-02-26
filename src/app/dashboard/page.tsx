@@ -145,6 +145,14 @@ export default function Dashboard() {
                             <span className="text-primary font-bold">
                               ৳{order.amount}
                             </span>
+                            {order.status === "Approved" && (
+                              <>
+                                <span className="h-1 w-1 rounded-full bg-border" />
+                                <span className={order.expiresAt ? "text-amber-600 font-bold" : "text-emerald-600 font-bold"}>
+                                  {order.expiresAt ? `মেয়াদ: ${new Date(order.expiresAt).toLocaleDateString("en-GB")}` : "লাইফটাইম"}
+                                </span>
+                              </>
+                            )}
                           </p>
                         </div>
                         <Badge
